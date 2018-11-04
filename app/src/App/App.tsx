@@ -1,7 +1,8 @@
 import * as React from 'react';
-import './App.css';
-
+import 'src/App/App.css';
 import logo from 'src/media/logo.svg';
+import { StatelessComponent } from 'src/StatelessComponent/StatelessComponent';
+import { StatefulComponent } from 'src/StatefulComponent/StatefulComponent';
 
 class App extends React.Component {
   public render() {
@@ -12,7 +13,12 @@ class App extends React.Component {
           <h1 className="App-title">Welcome to React</h1>
         </header>
         <p className="App-intro">
-          To get started, edit <code>src/App.tsx</code> and save to reload.
+        <StatelessComponent
+          dummyField="dummy text"
+        />
+        <StatefulComponent
+          dummyProp="hello"
+        />
         </p>
       </div>
     );
