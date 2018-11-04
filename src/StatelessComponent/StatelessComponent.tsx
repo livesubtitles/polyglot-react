@@ -7,9 +7,7 @@ export interface StatelessComponentProps {
 export const StatelessComponent = (props: StatelessComponentProps) => {
     return (
         <div>
-            <p>
-                StatelessComponent
-            </p>
+            <p>StatelessComponent</p>
         </div>
     );
 }

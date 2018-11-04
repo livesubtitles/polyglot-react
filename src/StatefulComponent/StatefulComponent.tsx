@@ -19,9 +19,7 @@ export class StatefulComponent extends React.Component<StatefulComponentProps, S
     render() {
         return (
             <div>
-                <p>
-                    Stateful Component
-                </p>
+                <p>Stateful Component</p>
             </div>
         );
     }
