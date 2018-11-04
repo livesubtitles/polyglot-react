@@ -12,15 +12,15 @@ class App extends React.Component {
           <img src={logo} className="App-logo" alt="logo" />
           <h1 className="App-title">Welcome to React</h1>
         </header>
-        <p className="App-intro">
+        <div className="App-intro">
         <StatelessComponent
           dummyField="dummy text"
         />
         <StatefulComponent
           dummyProp="hello"
         />
-        </p>
-      </div>
+        </div>
+        </div>
     );
   }
 }
