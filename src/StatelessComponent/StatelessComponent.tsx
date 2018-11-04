@@ -8,7 +8,7 @@ export const StatelessComponent = (props: StatelessComponentProps) => {
     return (
         <div>
             <p>
-                StatelessComponent
+                Stateless Component
             </p>
         </div>
     );
