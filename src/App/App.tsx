@@ -1,10 +1,22 @@
 import * as React from 'react';
 import 'src/App/App.css';
 import logo from 'src/media/logo.svg';
+import { UrlInput } from 'src/UrlInput/UrlInput';
 import { StatelessComponent } from 'src/StatelessComponent/StatelessComponent';
 import { StatefulComponent } from 'src/StatefulComponent/StatefulComponent';
 
-class App extends React.Component {
+interface AppProps {}
+
+class App extends React.Component<AppProps, {}> {
+  constructor(props: AppProps) {
+    super(props);
+    this.handleSearch = this.handleSearch.bind(this);
+  }
+
+  private handleSearch(search: string): void {
+    console.log(search);
+  }
+
   public render() {
     return (
       <div className="App">
@@ -16,6 +28,7 @@ class App extends React.Component {
         <StatelessComponent
           dummyField="dummy text"
         />
+        <UrlInput onSearch={this.handleSearch}/>
         <StatefulComponent
           dummyProp="hello"
         />
