@@ -2,8 +2,6 @@ import * as React from 'react';
 import 'src/App/App.css';
 import logo from 'src/media/logo.svg';
 import { UrlInput } from 'src/UrlInput/UrlInput';
-import { StatelessComponent } from 'src/StatelessComponent/StatelessComponent';
-import { StatefulComponent } from 'src/StatefulComponent/StatefulComponent';
 
 interface AppProps {}
 
@@ -25,13 +23,7 @@ class App extends React.Component<AppProps, {}> {
           <h1 className="App-title">Welcome to React</h1>
         </header>
         <div className="App-intro">
-        <StatelessComponent
-          dummyField="dummy text"
-        />
         <UrlInput onSearch={this.handleSearch}/>
-        <StatefulComponent
-          dummyProp="hello"
-        />
         </div>
         </div>
     );
