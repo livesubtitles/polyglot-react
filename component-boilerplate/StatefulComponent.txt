@@ -1,0 +1,27 @@
+import * as React from 'react';
+
+export interface PLACEHOLDERProps {
+    dummyProp: string;
+}
+
+interface PLACEHOLDERState {
+    dummyStateField: number;
+}
+
+export class PLACEHOLDER extends React.Component<PLACEHOLDERProps, PLACEHOLDERState> {
+    constructor(props: PLACEHOLDERProps) {
+        super(props);
+        this.state = {
+            dummyStateField: 2
+        };
+    }
+
+    render() {
+        return (
+            <div>
+                <p>Stateful Component</p>
+            </div>
+        );
+    }
+
+}

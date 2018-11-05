@@ -1,0 +1,15 @@
+import * as React from 'react'
+
+export interface PLACEHOLDERProps {
+    dummyField: string;
+}
+
+export const PLACEHOLDER = (props: PLACEHOLDERProps) => {
+    return (
+        <div>
+            <p>
+                Stateless Component
+            </p>
+        </div>
+    );
+}
