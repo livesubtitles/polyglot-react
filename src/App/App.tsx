@@ -1,8 +1,8 @@
 import * as React from 'react';
-import 'App/App.css';
-import logo from 'media/logo.svg';
-import { StatelessComponent } from 'StatelessComponent/StatelessComponent';
-import { StatefulComponent } from 'StatefulComponent/StatefulComponent';
+import 'src/App/App.css';
+import logo from 'src/media/logo.svg';
+import { StatelessComponent } from 'src/StatelessComponent/StatelessComponent';
+import { StatefulComponent } from 'src/StatefulComponent/StatefulComponent';
 
 class App extends React.Component {
   public render() {
