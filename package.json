@@ -12,7 +12,8 @@
     "start": "react-scripts-ts start",
     "build": "react-scripts-ts build",
     "test": "react-scripts-ts test --env=jsdom --modulePaths=''",
-    "eject": "react-scripts-ts eject"
+    "eject": "react-scripts-ts eject",
+    "heroku-postbuild": "npm install && npm run build"
   },
   "devDependencies": {
     "@types/jest": "^23.3.9",
