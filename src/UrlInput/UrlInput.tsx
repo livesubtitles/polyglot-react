@@ -21,6 +21,7 @@ export class UrlInput extends React.Component<UrlInputProps, UrlInputState> {
     }
 
     private handleChange(event): void {
+      console.log("Change: " + event.target.value);
       this.setState({search: event.target.value});
     }
 
@@ -30,7 +31,7 @@ export class UrlInput extends React.Component<UrlInputProps, UrlInputState> {
 
     render() {
         return (
-            <UrlInputView onChange={this.handleChange} onButtonClick={this.handleButtonClick}/>
+            <UrlInputView defaultValue={this.state.search} onChange={this.handleChange} onButtonClick={this.handleButtonClick}/>
         );
     }
 
