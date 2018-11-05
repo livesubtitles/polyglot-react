@@ -12,7 +12,7 @@ export interface UrlInputViewProps {
 export const UrlInputView: React.SFC<UrlInputViewProps> = (props: UrlInputViewProps) => {
     return (
         <div>
-            <TextField onChange={props.onChange}/>
+            <TextField label="Link to video" onChange={props.onChange}/>
             <IconButton onClick={props.onButtonClick}><SearchIcon /></IconButton>
         </div>
     );
