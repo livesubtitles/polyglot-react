@@ -1,21 +1,18 @@
 import * as React from 'react';
 import "src/commonCSS.css";
-import { UrlInput } from 'src/UrlInput/UrlInput';
-import { postJSON } from 'src/utils/web';
+// import { postJSON } from 'src/utils/web';
 import CircularProgress from '@material-ui/core/CircularProgress';
-import { ProcessResponse, InitialStreamPostArguments } from "src/utils/interfaces";
-import { LanguageAutocomplete } from "src/LanguageAutocomplete/LanguageAutocomplete";
+// import { ProcessResponse, InitialStreamPostArguments } from "src/utils/interfaces";
+import { Search } from "src/Search/Search";
 
-const SERVER_URL = "https://vast-plains-75205.herokuapp.com";
-
-interface MainContentProps {}
+// const SERVER_URL = "https://vast-plains-75205.herokuapp.com";
 
 interface MainContentState {
     loading: boolean;
 }
 
-export class MainContent extends React.Component<MainContentProps, MainContentState> {
-    constructor(props: MainContentProps) {
+export class MainContent extends React.Component<{}, MainContentState> {
+    constructor(props) {
         super(props);
         this.state = {
           loading: false
@@ -23,12 +20,13 @@ export class MainContent extends React.Component<MainContentProps, MainContentSt
         this.handleSearch = this.handleSearch.bind(this);
     }
 
-    private async handleSearch(search: string): Promise<void> {
+    private async handleSearch(search: string, lang: string): Promise<void> {
       console.log(search);
+      console.log(lang);
       this.setState({ loading: true });
-      const postPayload: InitialStreamPostArguments = { url: search, lang: "es-ES" };
-      const res: ProcessResponse = await postJSON<ProcessResponse, InitialStreamPostArguments>(SERVER_URL, "stream", postPayload);
-      console.log(res);
+      // const postPayload: InitialStreamPostArguments = { url: search, lang: lang };
+      // const res: ProcessResponse = await postJSON<ProcessResponse, InitialStreamPostArguments>(SERVER_URL, "stream", postPayload);
+      // console.log(res);
       this.setState({ loading: false });
     }
 
@@ -39,10 +37,7 @@ export class MainContent extends React.Component<MainContentProps, MainContentSt
       return (
         <div className="flexListRoot">
           <div className="flexListItem">
-          <UrlInput onSearch={this.handleSearch}/>
-          </div>
-          <div className="flexListItem">
-          <LanguageAutocomplete />
+          <Search onSearch={this.handleSearch} />
           </div>
         </div>);
     }
