@@ -4,6 +4,7 @@ import { UrlInput } from 'src/UrlInput/UrlInput';
 import { postJSON } from 'src/utils/web';
 import CircularProgress from '@material-ui/core/CircularProgress';
 import { ProcessResponse, InitialStreamPostArguments } from "src/utils/interfaces";
+import { LanguageAutocomplete } from "src/LanguageAutocomplete/LanguageAutocomplete";
 
 const SERVER_URL = "https://vast-plains-75205.herokuapp.com";
 
@@ -36,8 +37,13 @@ export class MainContent extends React.Component<MainContentProps, MainContentSt
         return (<CircularProgress/>);
       }
       return (
-        <div className="centerFlex">
+        <div className="flexListRoot">
+          <div className="flexListItem">
           <UrlInput onSearch={this.handleSearch}/>
+          </div>
+          <div className="flexListItem">
+          <LanguageAutocomplete />
+          </div>
         </div>);
     }
 

@@ -1,0 +1,187 @@
+import * as React from "react";
+import { deburr } from "lodash";
+import Autosuggest from "react-autosuggest";
+import match from "autosuggest-highlight/match";
+import parse from "autosuggest-highlight/parse";
+import TextField from "@material-ui/core/TextField";
+import Paper from "@material-ui/core/Paper";
+import MenuItem from "@material-ui/core/MenuItem";
+import "src/commonCSS.css";
+import { withStyles, WithStyles, createStyles } from "@material-ui/core/styles";
+
+const suggestions = [
+  { label: "Afrikaans", value: "af-ZA" },
+  { label: "Amharic", value: "am-ET" },
+  { label: "Armenian", value: "hy-AM" },
+  { label: "Azerbaijani", value: "az-AZ" },
+  { label: "French", value: "fr-FR" },
+  { label: "Italian", value: "it-IT" },
+  { label: "Spanish", value: "es-ES" }
+];
+
+function renderInputComponent(inputProps) {
+  const { classes, inputRef = () => {}, ref, ...other } = inputProps;
+
+  return (
+    <TextField
+      InputProps={{
+        inputRef: node => {
+          ref(node);
+          inputRef(node);
+        },
+        classes: {
+          input: classes.input
+        }
+      }}
+      {...other}
+    />
+  );
+}
+
+function renderSuggestion(suggestion, { query, isHighlighted }) {
+  const matches = match(suggestion.label, query);
+  const parts = parse(suggestion.label, matches);
+
+  return (
+    <MenuItem selected={isHighlighted} component="div">
+      <div>
+        {parts.map((part, index) => {
+          return part.highlight ? (
+            <span key={String(index)} style={{ fontWeight: 500 }}>
+              {part.text}
+            </span>
+          ) : (
+            <strong key={String(index)} style={{ fontWeight: 300 }}>
+              {part.text}
+            </strong>
+          );
+        })}
+      </div>
+    </MenuItem>
+  );
+}
+
+function getSuggestions(value) {
+  const inputValue = deburr(value.trim()).toLowerCase();
+  const inputLength = inputValue.length;
+  let count = 0;
+
+  return inputLength === 0
+    ? []
+    : suggestions.filter(suggestion => {
+        const keep =
+          count < 5 &&
+          suggestion.label.slice(0, inputLength).toLowerCase() === inputValue;
+
+        if (keep) {
+          count += 1;
+        }
+
+        return keep;
+      });
+}
+
+function getSuggestionValue(suggestion) {
+  return suggestion.label;
+}
+
+const styles = theme => createStyles({
+  container: {
+  },
+  suggestionsContainerOpen: {
+    position: "absolute",
+    zIndex: 1,
+    marginTop: theme.spacing.unit,
+    left: 0,
+    right: 0
+  },
+  suggestion: {
+    display: "block"
+  },
+  suggestionsList: {
+    margin: 0,
+    padding: 0,
+    listStyleType: "none"
+  },
+});
+
+interface Suggestion {
+  label: string;
+}
+
+interface LanguageAutocompleteState {
+  single: string;
+  suggestions: Suggestion[]
+}
+
+class LanguageAutocompleteComponent extends React.Component<WithStyles<typeof styles>, LanguageAutocompleteState> {
+  constructor(props) {
+    super(props);
+    this.state = {
+      single: "",
+      suggestions: []
+    };
+    this.handleSuggestionsFetchRequested = this.handleSuggestionsFetchRequested.bind(this);
+    this.handleSuggestionsClearRequested = this.handleSuggestionsClearRequested.bind(this);
+    this.handleChange = this.handleChange.bind(this);
+  }
+
+
+  private handleSuggestionsFetchRequested = ({ value }) => {
+    this.setState({
+      suggestions: getSuggestions(value)
+    });
+  };
+
+  private handleSuggestionsClearRequested = () => {
+    this.setState({
+      suggestions: []
+    });
+  };
+
+  private handleChange = (event, { newValue }) => {
+    this.setState({
+      single: newValue
+    });
+  };
+
+  render() {
+    const { classes } = this.props;
+
+    const autosuggestProps = {
+      renderInputComponent,
+      suggestions: this.state.suggestions,
+      onSuggestionsFetchRequested: this.handleSuggestionsFetchRequested,
+      onSuggestionsClearRequested: this.handleSuggestionsClearRequested,
+      getSuggestionValue,
+      renderSuggestion
+    };
+
+    return (
+      <div>
+        <Autosuggest
+          {...autosuggestProps}
+          inputProps={{
+            classes,
+            placeholder: "Language of video",
+            value: this.state.single,
+            onChange: this.handleChange
+          }}
+          theme={{
+            container: classes.container,
+            suggestionsContainerOpen: classes.suggestionsContainerOpen,
+            suggestionsList: classes.suggestionsList,
+            suggestion: classes.suggestion
+          }}
+          renderSuggestionsContainer={options => (
+            <Paper {...options.containerProps} square>
+              {options.children}
+            </Paper>
+          )}
+        />
+      </div>
+    );
+  }
+}
+const LanguageAutocomplete = withStyles(styles)(LanguageAutocompleteComponent);
+export { LanguageAutocomplete };
