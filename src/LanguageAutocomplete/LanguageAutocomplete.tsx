@@ -1,6 +1,6 @@
 import * as React from "react";
 import { deburr } from "lodash";
-import Autosuggest from "react-autosuggest";
+import * as Autosuggest from "react-autosuggest";
 import match from "autosuggest-highlight/match";
 import parse from "autosuggest-highlight/parse";
 import TextField from "@material-ui/core/TextField";
@@ -87,6 +87,7 @@ function getSuggestionValue(suggestion) {
 
 const styles = theme => createStyles({
   container: {
+    position: "absolute"
   },
   suggestionsContainerOpen: {
     position: "absolute",
@@ -111,7 +112,7 @@ interface Suggestion {
 
 interface LanguageAutocompleteState {
   single: string;
-  suggestions: Suggestion[]
+  suggestions: Suggestion[];
 }
 
 class LanguageAutocompleteComponent extends React.Component<WithStyles<typeof styles>, LanguageAutocompleteState> {
@@ -158,7 +159,6 @@ class LanguageAutocompleteComponent extends React.Component<WithStyles<typeof st
     };
 
     return (
-      <div>
         <Autosuggest
           {...autosuggestProps}
           inputProps={{
@@ -179,7 +179,6 @@ class LanguageAutocompleteComponent extends React.Component<WithStyles<typeof st
             </Paper>
           )}
         />
-      </div>
     );
   }
 }
