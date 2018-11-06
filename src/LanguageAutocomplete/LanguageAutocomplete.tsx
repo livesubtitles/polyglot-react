@@ -183,9 +183,10 @@ class LanguageAutocompleteComponent extends React.Component<LanguageAutocomplete
           {...autosuggestProps}
           inputProps={{
             classes,
-            placeholder: "Language of video",
+            label: this.props.isErrorSuggestion ? "Invalid language" : "Language of video",
             value: this.state.single,
-            onChange: this.handleChange
+            onChange: this.handleChange,
+            error: this.props.isErrorSuggestion
           }}
           theme={{
             container: classes.container,
