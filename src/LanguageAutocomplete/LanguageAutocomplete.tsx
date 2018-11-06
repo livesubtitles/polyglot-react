@@ -14,9 +14,25 @@ const suggestions = [
   { label: "Amharic", value: "am-ET" },
   { label: "Armenian", value: "hy-AM" },
   { label: "Azerbaijani", value: "az-AZ" },
+  { label: "Indonesian", value: "id-ID" },
+  { label: "Malay", value: "ms-MY" },
+  { label: "Bengali", value: "bn-BD" },
+  { label: "Catalan", value: "ca-ES" },
+  { label: "Czech", value: "cs-CZ" },
+  { label: "Danish", value: "da-DK" },
+  { label: "German", value: "de-DE" },
+  { label: "English", value: "en-US" },
+  { label: "Spanish", value: "es-ES" },
   { label: "French", value: "fr-FR" },
+  { label: "Filipino", value: "it-IT" },
   { label: "Italian", value: "it-IT" },
-  { label: "Spanish", value: "es-ES" }
+  { label: "Portuguese", value: "pt-PT" },
+  { label: "Romanian", value: "ro-RO" },
+  { label: "Greek", value: "el-GR" },
+  { label: "Turkish", value: "tr-TR" },
+  { label: "Russian", value: "ru-RU" },
+  { label: "Japanese", value: "ja-JP" },
+  { label: "Korean", value: "ko-KR" }
 ];
 
 function renderInputComponent(inputProps) {
