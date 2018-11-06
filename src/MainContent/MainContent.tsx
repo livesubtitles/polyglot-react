@@ -37,9 +37,7 @@ export class MainContent extends React.Component<{}, MainContentState> {
       }
       return (
         <div className="flexListRoot">
-          <div className="flexListItem">
           <Search onSearch={this.handleSearch} />
-          </div>
         </div>);
     }
 
