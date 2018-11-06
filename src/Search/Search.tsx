@@ -3,14 +3,18 @@ import { UrlInputView } from 'src/UrlInputView/UrlInputView';
 import { LanguageAutocomplete } from 'src/LanguageAutocomplete/LanguageAutocomplete';
 import IconButton from '@material-ui/core/IconButton';
 import SearchIcon from '@material-ui/icons/Search';
+import { LanguageSuggestion } from "src/utils/interfaces";
 
 export interface SearchProps {
-    onSearch(search: string, lang: string): void;
+    onSearch(search: string, lang: LanguageSuggestion): void;
 }
 
 interface SearchState {
     search: string;
-    lang: string;
+    lang: LanguageSuggestion;
+    langText: string;
+    isErrorURL: boolean;
+    isErrorSuggestion: boolean;
 }
 
 export class Search extends React.Component<SearchProps, SearchState> {
@@ -18,26 +22,42 @@ export class Search extends React.Component<SearchProps, SearchState> {
         super(props);
         this.state = {
             search: "",
-            lang: ""
+            lang: null,
+            langText: "",
+            isErrorSuggestion: false,
+            isErrorURL: false
         };
 
-        this.handleChange = this.handleChange.bind(this);
+        this.handleChangeURL = this.handleChangeURL.bind(this);
         this.handleButtonClick = this.handleButtonClick.bind(this);
+        this.handleSuggestionSelected = this.handleSuggestionSelected.bind(this);
+        this.handleChangeValueSuggestion = this.handleChangeValueSuggestion.bind(this);
     }
 
-    private handleChange(event): void {
-      console.log("Change: " + event.target.value);
-      this.setState({search: event.target.value});
+    private handleChangeURL(event): void {
+      this.setState({search: event.target.value, isErrorURL: false});
+    }
+
+    private handleSuggestionSelected(event, { suggestion }): void {
+      this.setState({ lang: suggestion });
+    }
+
+    private handleChangeValueSuggestion(langText: string) {
+      this.setState({ langText, isErrorSuggestion: false });
     }
 
     private handleButtonClick(event) {
       if (this.state.search === "") {
         // Show warning
+        this.setState({isErrorURL: true});
         return;
       }
 
-      if (this.state.lang === "") {
+      if (this.state.lang === null || this.state.lang.label !== this.state.langText) {
+        // if the language is not there or the language selected is different
+        // from the choices in the suggestions, error
         // Show warning
+        this.setState({isErrorSuggestion: true});
         return;
       }
 
@@ -48,8 +68,12 @@ export class Search extends React.Component<SearchProps, SearchState> {
     render() {
         return (
             <div>
-              <UrlInputView onChange={this.handleChange} />
-              <LanguageAutocomplete />
+              <UrlInputView isErrorURL={this.state.isErrorURL} onChange={this.handleChangeURL} />
+              <LanguageAutocomplete
+                isErrorSuggestion={this.state.isErrorSuggestion}
+                onSuggestionSelected={this.handleSuggestionSelected}
+                onChangeValue={this.handleChangeValueSuggestion}
+              />
               <IconButton onClick={this.handleButtonClick}><SearchIcon /></IconButton>
             </div>
 

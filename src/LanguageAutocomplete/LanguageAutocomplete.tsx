@@ -8,8 +8,9 @@ import Paper from "@material-ui/core/Paper";
 import MenuItem from "@material-ui/core/MenuItem";
 import "src/commonCSS.css";
 import { withStyles, WithStyles, createStyles } from "@material-ui/core/styles";
+import { LanguageSuggestion } from "src/utils/interfaces";
 
-const suggestions = [
+const suggestions: LanguageSuggestion[] = [
   { label: "Afrikaans", value: "af-ZA" },
   { label: "Amharic", value: "am-ET" },
   { label: "Armenian", value: "hy-AM" },
@@ -97,7 +98,7 @@ function getSuggestions(value) {
       });
 }
 
-function getSuggestionValue(suggestion) {
+function getSuggestionValue(suggestion: LanguageSuggestion) {
   return suggestion.label;
 }
 
@@ -122,16 +123,18 @@ const styles = theme => createStyles({
   },
 });
 
-interface Suggestion {
-  label: string;
+interface LanguageAutocompleteProps extends WithStyles<typeof styles> {
+  onSuggestionSelected(value): void;
+  onChangeValue(value: string): void;
+  isErrorSuggestion: boolean;
 }
 
 interface LanguageAutocompleteState {
   single: string;
-  suggestions: Suggestion[];
+  suggestions: LanguageSuggestion[];
 }
 
-class LanguageAutocompleteComponent extends React.Component<WithStyles<typeof styles>, LanguageAutocompleteState> {
+class LanguageAutocompleteComponent extends React.Component<LanguageAutocompleteProps, LanguageAutocompleteState> {
   constructor(props) {
     super(props);
     this.state = {
@@ -160,6 +163,7 @@ class LanguageAutocompleteComponent extends React.Component<WithStyles<typeof st
     this.setState({
       single: newValue
     });
+    this.props.onChangeValue(newValue);
   };
 
   render() {
@@ -194,6 +198,7 @@ class LanguageAutocompleteComponent extends React.Component<WithStyles<typeof st
               {options.children}
             </Paper>
           )}
+          onSuggestionSelected={this.props.onSuggestionSelected}
         />
     );
   }

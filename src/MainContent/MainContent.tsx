@@ -4,6 +4,7 @@ import "src/commonCSS.css";
 import CircularProgress from '@material-ui/core/CircularProgress';
 // import { ProcessResponse, InitialStreamPostArguments } from "src/utils/interfaces";
 import { Search } from "src/Search/Search";
+import { LanguageSuggestion } from "src/utils/interfaces";
 
 // const SERVER_URL = "https://vast-plains-75205.herokuapp.com";
 
@@ -20,7 +21,7 @@ export class MainContent extends React.Component<{}, MainContentState> {
         this.handleSearch = this.handleSearch.bind(this);
     }
 
-    private async handleSearch(search: string, lang: string): Promise<void> {
+    private async handleSearch(search: string, lang: LanguageSuggestion): Promise<void> {
       console.log(search);
       console.log(lang);
       this.setState({ loading: true });
