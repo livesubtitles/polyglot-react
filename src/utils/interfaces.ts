@@ -19,3 +19,8 @@ export enum PolyglotErrorType {
   StreamlinkUnavailable = "StreamlinkUnavailable",
   UninitialisedStreamer = "UninitialisedStreamer"
 }
+
+export interface URLParams {
+  link?: string;
+  lang?: string;
+}
