@@ -4,7 +4,7 @@ import CircularProgress from '@material-ui/core/CircularProgress';
 import { ProcessResponse, InitialStreamPostArguments, LanguageSuggestion, PolyglotErrorType } from "src/utils/interfaces";
 import { Search } from "src/Search/Search";
 import { PolyglotError } from "src/PolyglotError/PolyglotError";
-import { withStyles, createStyles } from "@material-ui/core/styles";
+import { withStyles, createStyles, WithStyles } from "@material-ui/core/styles";
 
 
 const SERVER_URL = "https://polyglot-livesubtitles.herokuapp.com/";
@@ -22,7 +22,7 @@ const styles = theme => createStyles({
     }
 });
 
-export class MainContentComponent extends React.Component<{}, MainContentState> {
+class MainContentComponent extends React.Component<WithStyles<typeof styles>, MainContentState> {
     constructor(props) {
         super(props);
         this.state = {
@@ -55,6 +55,8 @@ export class MainContentComponent extends React.Component<{}, MainContentState> 
     }
 
     render() {
+      const { classes } = this.props;
+
       if (this.state.loading) {
         return (<CircularProgress/>);
       }
@@ -64,7 +66,7 @@ export class MainContentComponent extends React.Component<{}, MainContentState> 
       }
 
       return (
-        <div className="flexListRoot">
+        <div className={classes.flexListRoot}>
           <Search onSearch={this.handleSearch} />
         </div>);
     }
