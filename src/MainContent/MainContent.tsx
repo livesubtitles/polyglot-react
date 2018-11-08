@@ -1,7 +1,12 @@
 import * as React from 'react';
 import { postJSON } from 'src/utils/web';
 import CircularProgress from '@material-ui/core/CircularProgress';
-import { ProcessResponse, InitialStreamPostArguments, LanguageSuggestion, PolyglotErrorType } from "src/utils/interfaces";
+import {
+  ProcessResponse,
+  InitialStreamPostArguments,
+  LanguageSuggestion,
+  PolyglotErrorType,
+  URLParams } from "src/utils/interfaces";
 import { Search } from "src/Search/Search";
 import { PolyglotError } from "src/PolyglotError/PolyglotError";
 import { withStyles, createStyles, WithStyles } from "@material-ui/core/styles";
@@ -22,7 +27,8 @@ const styles = theme => createStyles({
     }
 });
 
-class MainContentComponent extends React.Component<WithStyles<typeof styles>, MainContentState> {
+class MainContentComponent extends React.Component<WithStyles<typeof styles> & URLParams, MainContentState> {
+
     constructor(props) {
         super(props);
         this.state = {
@@ -63,6 +69,16 @@ class MainContentComponent extends React.Component<WithStyles<typeof styles>, Ma
 
       if (this.state.error) {
         return (<PolyglotError error={this.state.error} restoredError={this.restoredError}/>);
+      }
+
+      if (this.props.lang) {
+        // We have link and language, go to video directly
+        return (<div>Link AND Language case</div>);
+      }
+
+      if (this.props.link) {
+        // We only have the url
+        return (<div>Link case</div>);
       }
 
       return (
