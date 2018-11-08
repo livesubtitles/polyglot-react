@@ -1,5 +1,4 @@
 import * as React from 'react';
-import "src/commonCSS.css";
 import { postJSON } from 'src/utils/web';
 import CircularProgress from '@material-ui/core/CircularProgress';
 import {
@@ -10,6 +9,8 @@ import {
   URLParams } from "src/utils/interfaces";
 import { Search } from "src/Search/Search";
 import { PolyglotError } from "src/PolyglotError/PolyglotError";
+import { withStyles, createStyles, WithStyles } from "@material-ui/core/styles";
+
 
 const SERVER_URL = "https://polyglot-livesubtitles.herokuapp.com/";
 
@@ -18,7 +19,16 @@ interface MainContentState {
     error: PolyglotErrorType;
 }
 
-export class MainContent extends React.Component<URLParams, MainContentState> {
+const styles = theme => createStyles({
+    flexListRoot: {
+        display: "flex",
+        justifyContent: "center",
+        alignItems: "center",
+    }
+});
+
+class MainContentComponent extends React.Component<WithStyles<typeof styles> & URLParams, MainContentState> {
+
     constructor(props) {
         super(props);
         this.state = {
@@ -51,6 +61,8 @@ export class MainContent extends React.Component<URLParams, MainContentState> {
     }
 
     render() {
+      const { classes } = this.props;
+
       if (this.state.loading) {
         return (<CircularProgress/>);
       }
@@ -70,9 +82,11 @@ export class MainContent extends React.Component<URLParams, MainContentState> {
       }
 
       return (
-        <div className="flexListRoot">
+        <div className={classes.flexListRoot}>
           <Search onSearch={this.handleSearch} />
         </div>);
     }
 
 }
+
+export const MainContent = withStyles(styles)(MainContentComponent);

@@ -6,7 +6,6 @@ import parse from "autosuggest-highlight/parse";
 import TextField from "@material-ui/core/TextField";
 import Paper from "@material-ui/core/Paper";
 import MenuItem from "@material-ui/core/MenuItem";
-import "src/commonCSS.css";
 import { withStyles, WithStyles, createStyles } from "@material-ui/core/styles";
 import { LanguageSuggestion } from "src/utils/interfaces";
 
@@ -204,5 +203,4 @@ class LanguageAutocompleteComponent extends React.Component<LanguageAutocomplete
     );
   }
 }
-const LanguageAutocomplete = withStyles(styles)(LanguageAutocompleteComponent);
-export { LanguageAutocomplete };
+export const LanguageAutocomplete = withStyles(styles)(LanguageAutocompleteComponent);
