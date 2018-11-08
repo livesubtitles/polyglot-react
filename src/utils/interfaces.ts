@@ -4,6 +4,8 @@ export interface InitialStreamPostArguments {
   lang: string;
 }
 
+export type StreamSubtitlePostArguments = InitialStreamPostArguments;
+
 export interface ProcessResponse {
   subtitle: string;
   lang: string;
