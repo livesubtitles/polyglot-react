@@ -15,11 +15,11 @@ interface MainContentState {
 }
 
 const styles = theme => createStyles({
-  flexListRoot: {
-    display: "flex",
-    justifyContent: "center",
-    alignItems: "center",
-  }
+    flexListRoot: {
+        display: "flex",
+        justifyContent: "center",
+        alignItems: "center",
+    }
 });
 
 export class MainContentComponent extends React.Component<{}, MainContentState> {
