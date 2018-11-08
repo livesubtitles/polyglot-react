@@ -6,7 +6,7 @@ import { ProcessResponse, InitialStreamPostArguments, LanguageSuggestion, Polygl
 import { Search } from "src/Search/Search";
 import { PolyglotError } from "src/PolyglotError/PolyglotError";
 
-const SERVER_URL = "https://vast-plains-75205.herokuapp.com";
+const SERVER_URL = "https://polyglot-livesubtitles.herokuapp.com/";
 
 interface MainContentState {
     loading: boolean;
