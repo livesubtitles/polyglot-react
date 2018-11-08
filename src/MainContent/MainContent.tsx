@@ -6,6 +6,8 @@ import { ProcessResponse, InitialStreamPostArguments, LanguageSuggestion, Polygl
 import { Search } from "src/Search/Search";
 import { PolyglotError } from "src/PolyglotError/PolyglotError";
 
+import { Video } from "src/Video/Video";
+
 const SERVER_URL = "https://vast-plains-75205.herokuapp.com";
 
 interface MainContentState {
@@ -56,7 +58,8 @@ export class MainContent extends React.Component<{}, MainContentState> {
 
       return (
         <div className="flexListRoot">
-          <Search onSearch={this.handleSearch} />
+          {false && <Search onSearch={this.handleSearch} />}
+          <Video vid="http://techslides.com/demos/sample-videos/small.mp4" />
         </div>);
     }
 
