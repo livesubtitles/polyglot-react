@@ -204,5 +204,4 @@ class LanguageAutocompleteComponent extends React.Component<LanguageAutocomplete
     );
   }
 }
-const LanguageAutocomplete = withStyles(styles)(LanguageAutocompleteComponent);
-export { LanguageAutocomplete };
+export const LanguageAutocomplete = withStyles(styles)(LanguageAutocompleteComponent);

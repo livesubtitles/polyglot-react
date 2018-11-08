@@ -1,10 +1,11 @@
 import * as React from 'react';
-import "src/commonCSS.css";
 import { postJSON } from 'src/utils/web';
 import CircularProgress from '@material-ui/core/CircularProgress';
 import { ProcessResponse, InitialStreamPostArguments, LanguageSuggestion, PolyglotErrorType } from "src/utils/interfaces";
 import { Search } from "src/Search/Search";
 import { PolyglotError } from "src/PolyglotError/PolyglotError";
+import { withStyles, createStyles } from "@material-ui/core/styles";
+
 
 const SERVER_URL = "https://polyglot-livesubtitles.herokuapp.com/";
 
@@ -13,7 +14,15 @@ interface MainContentState {
     error: PolyglotErrorType;
 }
 
-export class MainContent extends React.Component<{}, MainContentState> {
+const styles = theme => createStyles({
+  flexListRoot: {
+    display: "flex",
+    justifyContent: "center",
+    alignItems: "center",
+  }
+});
+
+export class MainContentComponent extends React.Component<{}, MainContentState> {
     constructor(props) {
         super(props);
         this.state = {
@@ -61,3 +70,5 @@ export class MainContent extends React.Component<{}, MainContentState> {
     }
 
 }
+
+export const MainContent = withStyles(styles)(MainContentComponent);
