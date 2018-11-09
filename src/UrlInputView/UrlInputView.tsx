@@ -9,11 +9,11 @@ export interface UrlInputViewProps {
 export const UrlInputView: React.SFC<UrlInputViewProps> = (props: UrlInputViewProps) => {
     if (props.isErrorURL) {
       return (
-              <TextField error label="Invalid link to video" onChange={props.onChange}/>
+        <TextField error label="Invalid link to video" onChange={props.onChange}/>
       );
     };
 
     return (
-            <TextField label="Link to video" onChange={props.onChange}/>
+      <TextField label="Link to video" onChange={props.onChange}/>
     );
 }
