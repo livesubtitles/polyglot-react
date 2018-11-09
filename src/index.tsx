@@ -9,6 +9,7 @@ ReactDOM.render(
   <HashRouter>
     <Switch>
       <Route path="/link=:link&lang=:lang" render={props => <App link={props.match.params.link} lang={props.match.params.lang}/>}/>
+      <Route path="/lang=:lang&link=:link" render={props => <App link={props.match.params.link} lang={props.match.params.lang}/>}/>
       <Route path="/link=:link" render={props => <App link={props.match.params.link}/>}/>
       <Route render={props => <App/>}/>
     </Switch>
