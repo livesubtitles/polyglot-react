@@ -20,7 +20,10 @@ interface SearchState {
 
 const styles = createStyles({
   inputStyle: {
-    paddingTop: "5px",
+    paddingTop: "10px",
+  },
+  iconStyle: {
+    padding: "5px",
   }
 });
 
@@ -86,7 +89,9 @@ class SearchComponent extends React.Component<SearchProps, SearchState> {
           onChangeValue={this.handleChangeValueSuggestion}
           />
         </div>
-        <IconButton onClick={this.handleButtonClick}><SearchIcon /></IconButton>
+        <div className={classes.iconStyle}>
+          <IconButton onClick={this.handleButtonClick}><SearchIcon /></IconButton>
+        </div>
       </div>);
     }
 
