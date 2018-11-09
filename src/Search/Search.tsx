@@ -20,7 +20,7 @@ interface SearchState {
 
 const styles = createStyles({
   inputStyle: {
-    paddingTop: "10px",
+    paddingTop: "20px",
   },
   iconStyle: {
     padding: "5px",
