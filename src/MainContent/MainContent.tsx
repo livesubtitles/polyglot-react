@@ -23,17 +23,15 @@ const styles = theme => createStyles({
   root: {
     height: "100%",
     display: "flex",
+    textAlign: "center"
   },
-  information: {
-    height: "100%",
-    flex: "1"
+  side: {
+    backgroundColor: "#555555",
+    flex: "0 0 17em",
   },
-  flexListRoot: {
+  centre: {
     height: "100%",
-    flex: "5",
-    display: "flex",
-    justifyContent: "center",
-    alignItems: "center",
+    flex: "1",
   }
 });
 
@@ -92,9 +90,21 @@ class MainContentComponent extends React.Component<WithStyles<typeof styles> & U
       }
 
       return (
-          <div className={classes.flexListRoot}>
+        <div className={classes.root}>
+          <div className={classes.side}>
+          {/*
+             LEFT SIDE 
+          */}
+          </div>
+          <div className={classes.centre}>
             <Search onSearch={this.handleSearch} />
           </div>
+          <div className={classes.side}>
+          {/*
+             LEFT SIDE 
+          */}
+          </div>
+        </div>
       );
     }
 
