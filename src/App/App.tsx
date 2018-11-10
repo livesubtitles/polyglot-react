@@ -8,7 +8,6 @@ import { createStyles, withStyles, WithStyles } from '@material-ui/core';
 const styles = createStyles({
   root: {
     textAlign: "center",
-    display: "flex"
   }
 });
 
