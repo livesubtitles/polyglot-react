@@ -42,7 +42,6 @@ class MainContentComponent extends React.Component<WithStyles<typeof styles> & U
         this.state = {
           loading: false,
           error: null,
-          mediaUrl: null,
         };
         this.handleSearch = this.handleSearch.bind(this);
         this.restoredError = this.restoredError.bind(this);
@@ -78,6 +77,42 @@ class MainContentComponent extends React.Component<WithStyles<typeof styles> & U
     //   }
     // }
 
+    private getVideoMode(classes) {
+      return (<div className={classes.root}>
+        <div className={classes.side}>
+        {/*
+           LEFT SIDE
+        */}
+        </div>
+        <div className={classes.centre}>
+          // VIDEO HERE
+        </div>
+        <div className={classes.side}>
+        {/*
+           LEFT SIDE
+        */}
+        </div>
+      </div>);
+    }
+
+    private getDefaultMode(classes) {
+      return (<div className={classes.root}>
+        <div className={classes.side}>
+        {/*
+           LEFT SIDE
+        */}
+        </div>
+        <div className={classes.centre}>
+          <Search onSearch={this.handleSearch} />
+        </div>
+        <div className={classes.side}>
+        {/*
+           LEFT SIDE
+        */}
+        </div>
+      </div>);
+    }
+
     render() {
       const { classes } = this.props;
 
@@ -94,25 +129,10 @@ class MainContentComponent extends React.Component<WithStyles<typeof styles> & U
         // We have the url, we might/might not have the language, but backend
         // takes care of that
         //return (<VideContent link={this.props.link} lang={this.props.lang ? this.props.lang : ""}/>);
+        return (this.getVideoMode(classes));
       }
 
-      return (
-        <div className={classes.root}>
-          <div className={classes.side}>
-          {/*
-             LEFT SIDE 
-          */}
-          </div>
-          <div className={classes.centre}>
-            <Search onSearch={this.handleSearch} />
-          </div>
-          <div className={classes.side}>
-          {/*
-             LEFT SIDE 
-          */}
-          </div>
-        </div>
-      );
+      return (this.getDefaultMode(classes));
     }
 
 }
