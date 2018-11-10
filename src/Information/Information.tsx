@@ -1,5 +1,5 @@
 import * as React from 'react'
-import Logo from 'src/media/icon_square.jpg';
+import Logo from 'src/media/icon_square.png';
 
 export interface InformationProps {
 }
