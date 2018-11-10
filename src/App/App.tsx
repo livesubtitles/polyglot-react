@@ -5,13 +5,8 @@ import { MainContent } from "src/MainContent/MainContent";
 import { URLParams } from "src/utils/interfaces";
 import { createStyles, withStyles, WithStyles } from '@material-ui/core';
 
-
 const styles = createStyles({
   root: {
-    textAlign: "center", // See if this attribute can be removed
-    minHeight: "100vh",
-    display: "flex",
-    flexDirection: "column",
   }
 });
 
