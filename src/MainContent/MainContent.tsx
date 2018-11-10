@@ -10,6 +10,7 @@ import {
 import { Search } from "src/Search/Search";
 import { PolyglotError } from "src/PolyglotError/PolyglotError";
 import { withStyles, createStyles, WithStyles } from "@material-ui/core/styles";
+import { Information } from 'src/Information/Information';
 
 
 const SERVER_URL = "https://polyglot-livesubtitles.herokuapp.com/";
@@ -20,11 +21,21 @@ interface MainContentState {
 }
 
 const styles = theme => createStyles({
-    flexListRoot: {
-        display: "flex",
-        justifyContent: "center",
-        alignItems: "center",
-    }
+  root: {
+    height: "100%",
+    display: "flex",
+  },
+  information: {
+    height: "100%",
+    flex: "1"
+  },
+  flexListRoot: {
+    height: "100%",
+    flex: "5",
+    display: "flex",
+    justifyContent: "center",
+    alignItems: "center",
+  }
 });
 
 class MainContentComponent extends React.Component<WithStyles<typeof styles> & URLParams, MainContentState> {
@@ -82,9 +93,15 @@ class MainContentComponent extends React.Component<WithStyles<typeof styles> & U
       }
 
       return (
-        <div className={classes.flexListRoot}>
-          <Search onSearch={this.handleSearch} />
-        </div>);
+        <div className={classes.root}>
+          <div className={classes.information}>
+            <Information/>
+          </div>
+          <div className={classes.flexListRoot}>
+            <Search onSearch={this.handleSearch} />
+          </div>
+        </div>
+      );
     }
 
 }

@@ -7,7 +7,7 @@ import { LanguageSuggestion } from "src/utils/interfaces";
 import { withStyles, createStyles, WithStyles } from '@material-ui/core';
 
 export interface SearchProps extends WithStyles<typeof styles> {
-    onSearch(search: string, lang: LanguageSuggestion): void;
+  onSearch(search: string, lang: LanguageSuggestion): void;
 }
 
 interface SearchState {
