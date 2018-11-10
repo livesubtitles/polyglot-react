@@ -13,7 +13,6 @@ const styles = createStyles({
     minHeight: "100vh",
     display: "flex",
     flexDirection: "column",
-<<<<<<< HEAD
   },
   nonHeader: {
     display: "flex",
@@ -25,9 +24,6 @@ const styles = createStyles({
   content: {
     flex: "1"
   },
-=======
-  }
->>>>>>> 4885ba43dcd36809c90d5029bf5a5a003237798c
 });
 
 class AppComponent extends React.Component<URLParams & WithStyles<typeof styles>, {}> {
