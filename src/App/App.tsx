@@ -18,7 +18,7 @@ const styles = createStyles({
     flex: "1"
   },
   sidebar: {
-    flex: "0 0 15em"
+    flex: "0 0 15em",
   },
   content: {
     flex: "1"
@@ -48,6 +48,8 @@ class AppComponent extends React.Component<URLParams & WithStyles<typeof styles>
         </div>
         <div className={classes.content}>
           <MainContent {...this.props} />
+        </div>
+        <div className={classes.sidebar}>
         </div>
         </div>
       </div>

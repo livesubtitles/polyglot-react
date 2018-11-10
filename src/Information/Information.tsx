@@ -1,13 +1,20 @@
 import * as React from 'react'
 import Logo from 'src/media/icon_square.png';
+import { createStyles, WithStyles, withStyles } from '@material-ui/core';
 
-export interface InformationProps {
+export interface InformationProps extends WithStyles<typeof styles> {
 }
 
-export const Information = (props: InformationProps) => {
+const styles = createStyles({
+    root: {
+        padding: "1em"
+    }
+});
+export const InformationComponent = (props: InformationProps) => {
+    const {classes} = props;
     return (
-        <div>
-            <img src={Logo} width="80%"/>
+        <div className={classes.root}>
+        <img src={Logo} width="80%"/>
         <p>
             Sed ut perspiciatis unde omnis iste natus error sit 
             voluptatem accusantium doloremque laudantium, totam rem
@@ -21,7 +28,9 @@ export const Information = (props: InformationProps) => {
             ut labore et dolore magnam aliquam quaerat voluptatem. Ut enim ad 
             minima veniam, quis nostrum exercitationem ullam corporis suscipit
             laboriosam, nisi ut aliquid ex ea commodi consequatur? 
-            </p>
+            </p>        
         </div>
     );
 }
+
+export const Information = withStyles(styles)(InformationComponent);
