@@ -8,6 +8,9 @@ import Paper from "@material-ui/core/Paper";
 import MenuItem from "@material-ui/core/MenuItem";
 import { withStyles, WithStyles, createStyles } from "@material-ui/core/styles";
 import { LanguageSuggestion } from "src/utils/interfaces";
+import Language from "@material-ui/icons/Language";
+import InputAdornment from '@material-ui/core/InputAdornment';
+
 
 const suggestions: LanguageSuggestion[] = [
   { label: "Afrikaans", value: "af-ZA" },
@@ -47,7 +50,12 @@ function renderInputComponent(inputProps) {
         },
         classes: {
           input: classes.input
-        }
+        },
+        startAdornment: (
+          <InputAdornment position="start">
+            <Language/>
+          </InputAdornment>
+        ),
       }}
       {...other}
     />
