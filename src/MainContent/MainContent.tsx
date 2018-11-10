@@ -44,6 +44,7 @@ class MainContentComponent extends React.Component<WithStyles<typeof styles> & U
         this.state = {
           loading: false,
           error: null,
+          mediaUrl: null,
         };
         this.handleSearch = this.handleSearch.bind(this);
         this.restoredError = this.restoredError.bind(this);
@@ -70,9 +71,19 @@ class MainContentComponent extends React.Component<WithStyles<typeof styles> & U
       this.setState({ loading: false });
     }
 
+    // public componentDidMount() {
+    //   if (this.props.link) {
+    //     //TODO: Emit socket event in order to obtain media url
+    //     this.setState({ loading: true});
+    //     const res =
+    //     this.setState({ loading: false});
+    //   }
+    // }
+
     render() {
       const { classes } = this.props;
 
+      // TODO: Style this to appear in the center
       if (this.state.loading) {
         return (<CircularProgress/>);
       }
@@ -81,14 +92,10 @@ class MainContentComponent extends React.Component<WithStyles<typeof styles> & U
         return (<PolyglotError error={this.state.error} restoredError={this.restoredError}/>);
       }
 
-      if (this.props.lang) {
-        // We have link and language, go to video directly
-        return (<div>Link AND Language case</div>);
-      }
-
       if (this.props.link) {
-        // We only have the url
-        return (<div>Link case</div>);
+        // We have the url, we might/might not have the language, but backend
+        // takes care of that
+        //return (<VideContent link={this.props.link} lang={this.props.lang ? this.props.lang : ""}/>);
       }
 
       return (
