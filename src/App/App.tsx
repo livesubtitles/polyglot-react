@@ -4,7 +4,7 @@ import { AppHeader } from "src/AppHeader/AppHeader";
 import { MainContent } from "src/MainContent/MainContent";
 import { URLParams } from "src/utils/interfaces";
 import { createStyles, withStyles, WithStyles } from '@material-ui/core';
-import { Information } from 'src/Information/Information';
+
 
 const styles = createStyles({
   root: {
@@ -12,17 +12,7 @@ const styles = createStyles({
     minHeight: "100vh",
     display: "flex",
     flexDirection: "column",
-  },
-  nonHeader: {
-    display: "flex",
-    flex: "1"
-  },
-  sidebar: {
-    flex: "0 0 15em"
-  },
-  content: {
-    flex: "1"
-  },
+  }
 });
 
 class AppComponent extends React.Component<URLParams & WithStyles<typeof styles>, {}> {
@@ -42,14 +32,7 @@ class AppComponent extends React.Component<URLParams & WithStyles<typeof styles>
     return (
       <div className={classes.root}>
         <AppHeader />
-        <div className={classes.nonHeader}>
-        <div className={classes.sidebar}>
-          <Information/>
-        </div>
-        <div className={classes.content}>
-          <MainContent {...this.props} />
-        </div>
-        </div>
+        <MainContent {...this.props} />
       </div>
     );
   }
