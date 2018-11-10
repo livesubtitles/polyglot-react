@@ -1,9 +1,9 @@
 import * as React from 'react';
-import { postJSON } from 'src/utils/web';
+// import { postJSON } from 'src/utils/web';
 import CircularProgress from '@material-ui/core/CircularProgress';
 import {
-  ProcessResponse,
-  InitialStreamPostArguments,
+  // ProcessResponse,
+  // InitialStreamPostArguments,
   LanguageSuggestion,
   PolyglotErrorType,
   URLParams } from "src/utils/interfaces";
@@ -12,11 +12,12 @@ import { PolyglotError } from "src/PolyglotError/PolyglotError";
 import { withStyles, createStyles, WithStyles } from "@material-ui/core/styles";
 
 
-const SERVER_URL = "https://polyglot-livesubtitles.herokuapp.com/";
+// const SERVER_URL = "https://polyglot-livesubtitles.herokuapp.com/";
 
 interface MainContentState {
     loading: boolean;
     error: PolyglotErrorType;
+    mediaURL: string;
 }
 
 const styles = theme => createStyles({
@@ -27,11 +28,18 @@ const styles = theme => createStyles({
   },
   side: {
     backgroundColor: "#555555",
-    flex: "0 0 17em",
+    flex: "0 0 22.5em",
   },
   centre: {
     height: "100%",
     flex: "1",
+  },
+  video: {
+    paddingTop: "1.5em"
+  },
+  videoSide: {
+    backgroundColor: "#555555",
+    flex: "0 0 17em",
   }
 });
 
@@ -42,6 +50,7 @@ class MainContentComponent extends React.Component<WithStyles<typeof styles> & U
         this.state = {
           loading: false,
           error: null,
+          mediaURL: null
         };
         this.handleSearch = this.handleSearch.bind(this);
         this.restoredError = this.restoredError.bind(this);
@@ -56,38 +65,35 @@ class MainContentComponent extends React.Component<WithStyles<typeof styles> & U
     }
 
     private async handleSearch(search: string, lang: LanguageSuggestion): Promise<void> {
-      console.log(search);
-      console.log(lang);
       this.setState({ loading: true });
-      const postPayload: InitialStreamPostArguments = { url: search, lang: lang.value };
-      const res: ProcessResponse = await postJSON<ProcessResponse, InitialStreamPostArguments>(SERVER_URL, "stream", postPayload);
-      if (res.error) {
-        this.displayError(res.error);
-      }
-      console.log(res);
+      // const postPayload: InitialStreamPostArguments = { url: search, lang: lang.value };
+      // const res: ProcessResponse = await postJSON<ProcessResponse, InitialStreamPostArguments>(SERVER_URL, "stream", postPayload);
+
+      // if (res.error) {
+      //   this.displayError(res.error);
+      // }
+      // console.log(res);
       this.setState({ loading: false });
     }
 
-    // public componentDidMount() {
-    //   if (this.props.link) {
-    //     //TODO: Emit socket event in order to obtain media url
-    //     this.setState({ loading: true});
-    //     const res =
-    //     this.setState({ loading: false});
-    //   }
-    // }
-
-    private getVideoMode(classes) {
+    private getVideoMode(classes, mediaURL: string) {
+      const videoCSS: React.CSSProperties = {
+        width: "640px",
+        height: "360px",
+        border: "solid 1px"
+      };
       return (<div className={classes.root}>
-        <div className={classes.side}>
+        <div className={classes.videoSide}>
         {/*
            LEFT SIDE
         */}
         </div>
         <div className={classes.centre}>
-          // VIDEO HERE
+          <div className={classes.video}>
+          <video id="video" style={videoCSS}></video>
+          </div>
         </div>
-        <div className={classes.side}>
+        <div className={classes.videoSide}>
         {/*
            LEFT SIDE
         */}
@@ -113,6 +119,30 @@ class MainContentComponent extends React.Component<WithStyles<typeof styles> & U
       </div>);
     }
 
+    private emitSocketEventForMediaUrl(url: string, lang: string): void {
+      console.log("Emit socket event with url and lang: " + url + ", " + lang);
+    }
+
+    private setUpSocketStreamListener(): void {
+      // Probably within an on connect?
+      console.log("Set up socket stream listener");
+    }
+
+    public componentDidMount() {
+
+      // set up socket event listener
+      this.setUpSocketStreamListener();
+      // TODO: Grab link and language if we have them, emit socket event and set up socket event listener which will update mediaURLs
+      if (this.props.link) {
+        // We came from a link url
+        const url: string = this.props.link;
+        const lang: string = this.props.lang ? this.props.lang : "";
+        // emit socket event
+        this.emitSocketEventForMediaUrl(url, lang);
+      }
+
+    }
+
     render() {
       const { classes } = this.props;
 
@@ -125,11 +155,11 @@ class MainContentComponent extends React.Component<WithStyles<typeof styles> & U
         return (<PolyglotError error={this.state.error} restoredError={this.restoredError}/>);
       }
 
-      if (this.props.link) {
+      if (this.state.mediaURL) {
         // We have the url, we might/might not have the language, but backend
         // takes care of that
         //return (<VideContent link={this.props.link} lang={this.props.lang ? this.props.lang : ""}/>);
-        return (this.getVideoMode(classes));
+        return (this.getVideoMode(classes, this.state.mediaURL));
       }
 
       return (this.getDefaultMode(classes));
