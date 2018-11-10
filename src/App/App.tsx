@@ -5,6 +5,7 @@ import { MainContent } from "src/MainContent/MainContent";
 import { URLParams } from "src/utils/interfaces";
 import { createStyles, withStyles, WithStyles } from '@material-ui/core';
 import { Information } from 'src/Information/Information';
+import { ToggleButtons } from 'src/Dim/Dim';
 
 
 const styles = createStyles({
@@ -45,6 +46,7 @@ class AppComponent extends React.Component<URLParams & WithStyles<typeof styles>
         <AppHeader />
         <div className={classes.nonHeader}>
           <div className={classes.sidebar}>
+            <ToggleButtons/>
             <Information/>
           </div>
           <div className={classes.content}>
