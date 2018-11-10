@@ -6,12 +6,14 @@ import { URLParams } from "src/utils/interfaces";
 import { createStyles, withStyles, WithStyles } from '@material-ui/core';
 import { Information } from 'src/Information/Information';
 
+
 const styles = createStyles({
   root: {
     textAlign: "center", // See if this attribute can be removed
     minHeight: "100vh",
     display: "flex",
     flexDirection: "column",
+<<<<<<< HEAD
   },
   nonHeader: {
     display: "flex",
@@ -23,6 +25,9 @@ const styles = createStyles({
   content: {
     flex: "1"
   },
+=======
+  }
+>>>>>>> 4885ba43dcd36809c90d5029bf5a5a003237798c
 });
 
 class AppComponent extends React.Component<URLParams & WithStyles<typeof styles>, {}> {
@@ -43,14 +48,16 @@ class AppComponent extends React.Component<URLParams & WithStyles<typeof styles>
       <div className={classes.root}>
         <AppHeader />
         <div className={classes.nonHeader}>
-        <div className={classes.sidebar}>
-          <Information/>
-        </div>
-        <div className={classes.content}>
+          <div className={classes.sidebar}>
+            <Information/>
+          </div>
+          <div className={classes.content}>
           <MainContent {...this.props} />
-        </div>
-        <div className={classes.sidebar}>
-        </div>
+          </div>
+          <div className={classes.sidebar}>
+          {//RIGHT SIDE
+          }
+          </div>
         </div>
       </div>
     );

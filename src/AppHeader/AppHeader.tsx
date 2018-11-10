@@ -3,13 +3,19 @@ import AppBar from '@material-ui/core/AppBar';
 import Toolbar from '@material-ui/core/Toolbar';
 import Typography from '@material-ui/core/Typography';
 import { WithStyles, createStyles, withStyles } from '@material-ui/core';
+import Logo from 'src/media/icon_square.png';
+
 
 const styles = createStyles({
   root: {
-    flexGrow: 1,
+
   },
   appBar: {
     backgroundColor: "#2196F3",
+  },
+  imgStyles: {
+    width: "2em",
+    padding: "0.25em"
   }
 });
 
@@ -24,6 +30,7 @@ const AppHeaderSFC: React.SFC<AppHeaderProps>= (props: AppHeaderProps) => {
     <div className={classes.root}>
       <AppBar className={classes.appBar} position="static" color="primary">
         <Toolbar>
+          <img src={Logo} className={classes.imgStyles}/>
           <Typography variant="h6" color="inherit">
             Polyglot - Live Subtitling
           </Typography>
