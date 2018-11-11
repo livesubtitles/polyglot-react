@@ -43,6 +43,7 @@ function renderInputComponent(inputProps) {
 
   return (
     <TextField
+      fullWidth
       InputProps={{
         inputRef: node => {
           ref(node);

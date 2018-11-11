@@ -10,6 +10,7 @@ import {
 import { Search } from "src/Search/Search";
 import { PolyglotError } from "src/PolyglotError/PolyglotError";
 import { withStyles, createStyles, WithStyles } from "@material-ui/core/styles";
+import { Information } from 'src/Information/Information';
 
 
 const SERVER_URL = "https://polyglot-livesubtitles.herokuapp.com/";
@@ -27,9 +28,11 @@ const styles = theme => createStyles({
   },
   side: {
     backgroundColor: "#555555",
-    flex: "0 0 17em",
+    flex: "0 0 22.5em",
   },
   centre: {
+    display: "flex",
+    justifyContent: "center",
     height: "100%",
     flex: "1",
   }
@@ -98,9 +101,9 @@ class MainContentComponent extends React.Component<WithStyles<typeof styles> & U
     private getDefaultMode(classes) {
       return (<div className={classes.root}>
         <div className={classes.side}>
-        {/*
-           LEFT SIDE
-        */}
+          <Information
+            imageWidthEm={200}
+          />
         </div>
         <div className={classes.centre}>
           <Search onSearch={this.handleSearch} />

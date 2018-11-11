@@ -19,6 +19,9 @@ interface SearchState {
 }
 
 const styles = createStyles({
+  root: {
+    width: "75%"
+  },
   inputStyle: {
     paddingTop: "20px",
   },
@@ -78,15 +81,17 @@ class SearchComponent extends React.Component<SearchProps, SearchState> {
   render() {
     const {classes} = this.props;
     return (
-      <div>
+      <div className={classes.root}>
         <div className={classes.inputStyle}>
-          <UrlInputView isErrorURL={this.state.isErrorURL} onChange={this.handleChangeURL} />
+          <UrlInputView 
+            isErrorURL={this.state.isErrorURL}
+            onChange={this.handleChangeURL} />
         </div>
         <div className={classes.inputStyle}>
-        <LanguageAutocomplete
-          isErrorSuggestion={this.state.isErrorSuggestion}
-          onSuggestionSelected={this.handleSuggestionSelected}
-          onChangeValue={this.handleChangeValueSuggestion}
+          <LanguageAutocomplete
+            isErrorSuggestion={this.state.isErrorSuggestion}
+            onSuggestionSelected={this.handleSuggestionSelected}
+            onChangeValue={this.handleChangeValueSuggestion}
           />
         </div>
         <div className={classes.iconStyle}>
