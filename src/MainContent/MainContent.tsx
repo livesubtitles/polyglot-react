@@ -42,6 +42,14 @@ const styles = theme => createStyles({
   videoSide: {
     backgroundColor: "#555555",
     flex: "0 0 17em",
+  },
+  searchWrapper: {
+    padding: "1em",
+    width: "100%",
+    display: "flex",
+    flexDirection: "column",
+    justifyContent: "center",
+    alignItems: "center"
   }
 });
 
@@ -58,9 +66,11 @@ class MainContentComponent extends React.Component<WithStyles<typeof styles> & U
         this.restoredError = this.restoredError.bind(this);
     }
 
+    /*
     private displayError(error: PolyglotErrorType) {
       this.setState({error: error});
     }
+    */
 
     private restoredError() {
       this.setState({error: null});
@@ -111,7 +121,10 @@ class MainContentComponent extends React.Component<WithStyles<typeof styles> & U
           />
         </div>
         <div className={classes.centre}>
-          <Search onSearch={this.handleSearch} />
+          <div className={classes.searchWrapper}>
+            <p>Try it out!</p>
+            <Search onSearch={this.handleSearch} />
+          </div>
         </div>
         <div className={classes.side}>
         {/*
