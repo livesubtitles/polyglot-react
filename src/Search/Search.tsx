@@ -20,12 +20,14 @@ interface SearchState {
 
 const styles = createStyles({
   root: {
-    width: "75%"
+    width: "75%",
   },
   inputStyle: {
     paddingTop: "20px",
   },
   iconStyle: {
+    display: "flex",
+    justifyContent: "center",
     padding: "5px",
   }
 });

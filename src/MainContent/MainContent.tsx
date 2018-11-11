@@ -24,7 +24,6 @@ const styles = theme => createStyles({
   root: {
     height: "100%",
     display: "flex",
-    textAlign: "center"
   },
   side: {
     backgroundColor: "#555555",
