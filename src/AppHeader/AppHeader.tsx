@@ -10,9 +10,6 @@ const styles = createStyles({
   root: {
 
   },
-  appBar: {
-    backgroundColor: "#2196F3",
-  },
   imgStyles: {
     width: "2em",
     padding: "0.25em"
@@ -28,9 +25,8 @@ const AppHeaderSFC: React.SFC<AppHeaderProps>= (props: AppHeaderProps) => {
 
   return (
     <div className={classes.root}>
-      <AppBar className={classes.appBar} position="static" color="primary">
+      <AppBar position="static" color="primary">
         <Toolbar>
-          <img src={Logo} className={classes.imgStyles}/>
           <Typography variant="h6" color="inherit">
             Polyglot - Live Subtitling
           </Typography>

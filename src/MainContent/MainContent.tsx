@@ -27,10 +27,11 @@ const styles = (theme : Theme) => createStyles({
     display: "flex",
   },
   side: {
-    backgroundColor: "#555555",
+    backgroundColor: theme.palette.secondary.main,
     flex: "0 0 22.5em",
   },
   centre: {
+    backgroundColor: theme.palette.background.default, // remove this and the app bar shadow shows up???
     display: "flex",
     justifyContent: "center",
     height: "100%",
