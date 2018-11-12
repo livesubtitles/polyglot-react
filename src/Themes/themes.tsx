@@ -13,3 +13,15 @@ export const lightTheme = createMuiTheme({
     },
   },
 });
+
+export const darkTheme = createMuiTheme({
+  palette: {
+    type: "dark",
+    primary: {
+      main: '#1a237e',
+    },
+    secondary: {
+      main: '#3949ab',
+    },
+  },
+});
