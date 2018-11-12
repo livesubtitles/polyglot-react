@@ -9,7 +9,7 @@ import {
   URLParams } from "src/utils/interfaces";
 import { Search } from "src/Search/Search";
 import { PolyglotError } from "src/PolyglotError/PolyglotError";
-import { withStyles, createStyles, WithStyles } from "@material-ui/core/styles";
+import { withStyles, createStyles, WithStyles, Theme } from "@material-ui/core/styles";
 import { Information } from 'src/Information/Information';
 
 
@@ -21,7 +21,7 @@ interface MainContentState {
     mediaURL: string;
 }
 
-const styles = theme => createStyles({
+const styles = (theme : Theme) => createStyles({
   root: {
     height: "100%",
     display: "flex",

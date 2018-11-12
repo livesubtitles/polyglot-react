@@ -1,9 +1,9 @@
 import * as React from 'react';
-import 'src/App/App.css';
 import { AppHeader } from "src/AppHeader/AppHeader";
 import { MainContent } from "src/MainContent/MainContent";
 import { URLParams } from "src/utils/interfaces";
-import { createStyles, withStyles, WithStyles } from '@material-ui/core';
+import { createStyles, withStyles, WithStyles, MuiThemeProvider, CssBaseline } from '@material-ui/core';
+import { lightTheme } from 'src/Themes/themes';
 
 const styles = createStyles({
   root: {
@@ -25,10 +25,16 @@ class AppComponent extends React.Component<URLParams & WithStyles<typeof styles>
   public render() {
     const { classes } = this.props;
     return (
-      <div className={classes.root}>
-        <AppHeader />
-        <MainContent {...this.props} />
-      </div>
+      <React.Fragment>
+        <CssBaseline/>
+        <MuiThemeProvider
+          theme={lightTheme}>
+          <div className={classes.root}>
+          <AppHeader />
+          <MainContent {...this.props} />
+          </div>
+      </MuiThemeProvider>
+      </React.Fragment>
     );
   }
 }
