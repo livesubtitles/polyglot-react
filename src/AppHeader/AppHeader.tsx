@@ -3,7 +3,6 @@ import AppBar from '@material-ui/core/AppBar';
 import Toolbar from '@material-ui/core/Toolbar';
 import Typography from '@material-ui/core/Typography';
 import { WithStyles, createStyles, withStyles } from '@material-ui/core';
-import Logo from 'src/media/icon_square.png';
 
 
 const styles = createStyles({

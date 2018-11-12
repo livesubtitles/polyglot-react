@@ -11,6 +11,7 @@ import { Search } from "src/Search/Search";
 import { PolyglotError } from "src/PolyglotError/PolyglotError";
 import { withStyles, createStyles, WithStyles, Theme } from "@material-ui/core/styles";
 import { Information } from 'src/Information/Information';
+import { Typography } from '@material-ui/core';
 
 
 // const SERVER_URL = "https://polyglot-livesubtitles.herokuapp.com/";
@@ -123,7 +124,7 @@ class MainContentComponent extends React.Component<WithStyles<typeof styles> & U
         </div>
         <div className={classes.centre}>
           <div className={classes.searchWrapper}>
-            <p>Try it out!</p>
+            <Typography variant="h2" gutterBottom>Try it out!</Typography>
             <Search onSearch={this.handleSearch} />
           </div>
         </div>

@@ -3,7 +3,7 @@ import { AppHeader } from "src/AppHeader/AppHeader";
 import { MainContent } from "src/MainContent/MainContent";
 import { URLParams } from "src/utils/interfaces";
 import { createStyles, withStyles, WithStyles, MuiThemeProvider, CssBaseline, Button } from '@material-ui/core';
-import { lightTheme } from 'src/Themes/themes';
+import { lightTheme, darkTheme } from 'src/Themes/themes';
 
 const styles = createStyles({
   root: {
