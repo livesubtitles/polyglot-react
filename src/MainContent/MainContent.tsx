@@ -21,7 +21,6 @@ interface MainContentState {
     error: PolyglotErrorType;
     mediaURL: string;
     socket: SocketIOClient.Socket;
-    video: any; // sorry
 }
 
 const styles = (theme : Theme) => createStyles({
@@ -71,8 +70,7 @@ class MainContentComponent extends React.Component<WithStyles<typeof styles> & U
           loading: false,
           error: null,
           mediaURL: null,
-          socket: io('http://polyglot-livesubtitles.herokuapp.com/streams'),
-          video:  <video id="video" style={videoCSS}></video>
+          socket: io('http://polyglot-livesubtitles.herokuapp.com/streams')
         };
         this.handleSearch = this.handleSearch.bind(this);
         this.restoredError = this.restoredError.bind(this);
@@ -110,7 +108,7 @@ class MainContentComponent extends React.Component<WithStyles<typeof styles> & U
         </div>
         <div className={classes.centre}>
           <div className={classes.video}>
-          {this.state.video}
+          <video id="video" style={videoCSS}></video>
           </div>
         </div>
         <div className={classes.videoSide}>
@@ -155,7 +153,7 @@ class MainContentComponent extends React.Component<WithStyles<typeof styles> & U
           console.log("Loading manifest url...");
           hls.loadSource(manifest_url);
           console.log("Attatching Media...")
-          hls.attachMedia(this.state.video);
+          hls.attachMedia(document.getElementById("video") as HTMLVideoElement);
 
           hls.on(Hls.Events.MANIFEST_PARSED, function (event, data) {
               console.log("Manifest Loaded");
@@ -182,6 +180,7 @@ class MainContentComponent extends React.Component<WithStyles<typeof styles> & U
           var json = JSON.parse(data);
 
           if (json.media == "") {
+            console.log("Empty media");
               return;
           }
 
