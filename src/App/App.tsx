@@ -34,6 +34,7 @@ class AppComponent extends React.Component<URLParams & WithStyles<typeof styles>
             <MainContent/>
           </MuiThemeProvider> 
         </div>
+        
       </React.Fragment>
     );
   }
