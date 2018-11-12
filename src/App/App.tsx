@@ -27,11 +27,13 @@ class AppComponent extends React.Component<URLParams & WithStyles<typeof styles>
     return (
       <React.Fragment>
         <CssBaseline/>
+        <div className={classes.root}>
         <MuiThemeProvider
-          theme={lightTheme}>
-          <AppHeader />
-          <MainContent {...this.props} />
-      </MuiThemeProvider>
+            theme={lightTheme}>
+            <AppHeader/>
+            <MainContent/>
+          </MuiThemeProvider> 
+        </div>
       </React.Fragment>
     );
   }

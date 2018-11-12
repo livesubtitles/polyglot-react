@@ -8,7 +8,6 @@ import Logo from 'src/media/icon_square.png';
 
 const styles = createStyles({
   root: {
-
   },
   imgStyles: {
     width: "2em",
