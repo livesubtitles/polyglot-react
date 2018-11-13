@@ -14,7 +14,7 @@ class AppComponent extends React.Component<URLParams & WithStyles<typeof styles>
   constructor(props) {
     super(props);
     if (props.link) {
-      console.log("LINK: " + props.link);
+      console.log("LINK: " + decodeURIComponent(props.link));
     }
 
     if (props.lang) {
@@ -31,10 +31,10 @@ class AppComponent extends React.Component<URLParams & WithStyles<typeof styles>
         <MuiThemeProvider
             theme={lightTheme}>
             <AppHeader/>
-            <MainContent/>
-          </MuiThemeProvider> 
+            <MainContent {...this.props}/>
+          </MuiThemeProvider>
         </div>
-        
+
       </React.Fragment>
     );
   }

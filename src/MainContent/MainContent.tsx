@@ -91,6 +91,7 @@ class MainContentComponent extends React.Component<WithStyles<typeof styles> & U
 
     private async handleSearch(search: string, lang: LanguageSuggestion): Promise<void> {
       this.setState({ loading: true });
+      this.setUpSocketStreamListener(search, lang.value);
       // const postPayload: InitialStreamPostArguments = { url: search, lang: lang.value };
       // const res: ProcessResponse = await postJSON<ProcessResponse, InitialStreamPostArguments>(SERVER_URL, "stream", postPayload);
 
@@ -143,11 +144,6 @@ class MainContentComponent extends React.Component<WithStyles<typeof styles> & U
       </div>);
     }
 
-    private emitSocketEventForMediaUrl(url: string, lang: string): void {
-      console.log("Emit socket event with url and lang: " + url + ", " + lang);
-      this.state.socket.emit('stream', {url: url, lang: lang});
-    }
-
     private setLoadingStateUntilVideoIsLoaded(hls) {
       const self = this;
       hls.on(Hls.Events.BUFFER_APPENDED, function() {
@@ -176,17 +172,18 @@ class MainContentComponent extends React.Component<WithStyles<typeof styles> & U
       }
     }
 
-    private setUpSocketStreamListener(): void {
+    private setUpSocketStreamListener(url: string, lang: string): void {
 
       const self = this;
-
+      console.log("HERE");
+      console.log(url);
       this.state.socket.on('connect', () => {
           console.log("Socket connected");
       });
 
 
       this.state.socket.on('server-ready', () => {
-          self.state.socket.emit('stream', {url: "https://www.youtube.com/watch?v=XOacA3RYrXk", lang: "es-ES"});
+          self.state.socket.emit('stream', {url: url, lang: lang});
       });
 
 
@@ -209,16 +206,17 @@ class MainContentComponent extends React.Component<WithStyles<typeof styles> & U
     }
 
     public componentDidMount() {
+      console.log(this.props.link);
 
       // set up socket event listener
-      this.setUpSocketStreamListener();
       // TODO: Grab link and language if we have them, emit socket event and set up socket event listener which will update mediaURLs
       if (this.props.link) {
+        console.log("componentDidMount");
         // We came from a link url
-        const url: string = this.props.link;
+        const url: string = decodeURIComponent(this.props.link);
         const lang: string = this.props.lang ? this.props.lang : "";
         // emit socket event
-        this.emitSocketEventForMediaUrl(url, lang);
+        this.setUpSocketStreamListener(url, lang);
       }
 
     }
