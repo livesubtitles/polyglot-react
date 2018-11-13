@@ -12,7 +12,8 @@ import { PolyglotError } from "src/PolyglotError/PolyglotError";
 import { withStyles, createStyles, WithStyles, Theme } from "@material-ui/core/styles";
 import { Information } from 'src/Information/Information';
 import { Typography } from '@material-ui/core';
-
+import * as io from 'socket.io-client';
+import * as Hls from "hls.js";
 
 // const SERVER_URL = "https://polyglot-livesubtitles.herokuapp.com/";
 
@@ -20,6 +21,7 @@ interface MainContentState {
     loading: boolean;
     error: PolyglotErrorType;
     mediaURL: string;
+    socket: SocketIOClient.Socket;
 }
 
 const styles = (theme : Theme) => createStyles({
@@ -55,24 +57,33 @@ const styles = (theme : Theme) => createStyles({
   }
 });
 
+
+
 class MainContentComponent extends React.Component<WithStyles<typeof styles> & URLParams, MainContentState> {
+
+ videoCSS: any = {
+    width: "640px",
+    height: "360px",
+    border: "solid 1px",
+  };
 
     constructor(props) {
         super(props);
         this.state = {
           loading: false,
           error: null,
-          mediaURL: null
+          mediaURL: null,
+          socket: io('http://polyglot-livesubtitles.herokuapp.com/streams'),
         };
         this.handleSearch = this.handleSearch.bind(this);
         this.restoredError = this.restoredError.bind(this);
+        this.loadVideo = this.loadVideo.bind(this);
     }
 
-    /*
+
     private displayError(error: PolyglotErrorType) {
       this.setState({error: error});
     }
-    */
 
     private restoredError() {
       this.setState({error: null});
@@ -91,12 +102,8 @@ class MainContentComponent extends React.Component<WithStyles<typeof styles> & U
     }
 
     private getVideoMode(classes, mediaURL: string) {
-      const videoCSS: React.CSSProperties = {
-        width: "640px",
-        height: "360px",
-        border: "solid 1px"
-      };
-      return (<div className={classes.root}>
+
+      return (<div><div id="loadingdiv">Loading...</div><div id="videodiv" className={classes.root}>
         <div className={classes.videoSide}>
         {/*
            LEFT SIDE
@@ -104,7 +111,7 @@ class MainContentComponent extends React.Component<WithStyles<typeof styles> & U
         </div>
         <div className={classes.centre}>
           <div className={classes.video}>
-          <video id="video" style={videoCSS}></video>
+         <video id="video" style={this.videoCSS} controls></video>
           </div>
         </div>
         <div className={classes.videoSide}>
@@ -112,7 +119,7 @@ class MainContentComponent extends React.Component<WithStyles<typeof styles> & U
            LEFT SIDE
         */}
         </div>
-      </div>);
+      </div></div>);
     }
 
     private getDefaultMode(classes) {
@@ -138,9 +145,65 @@ class MainContentComponent extends React.Component<WithStyles<typeof styles> & U
 
     private emitSocketEventForMediaUrl(url: string, lang: string): void {
       console.log("Emit socket event with url and lang: " + url + ", " + lang);
+      this.state.socket.emit('stream', {url: url, lang: lang});
+    }
+
+    private setLoadingStateUntilVideoIsLoaded(hls) {
+      const self = this;
+      hls.on(Hls.Events.BUFFER_APPENDED, function() {
+        console.log("Buffer appended");
+        document.getElementById("loadingdiv").style.display = "none";
+        document.getElementById("videodiv").style.display = "block";
+      });
+    }
+
+    private loadVideo(manifest_url: string): void {
+      if (Hls.isSupported()) {
+          console.log("Hls Supported. Got manifest url: " + manifest_url);
+
+
+          var hls = new Hls();
+          console.log("Loading manifest url...");
+          hls.loadSource(manifest_url);
+          console.log("Attatching Media...")
+          document.getElementById("videodiv").style.display = "none";
+          document.getElementById("loadingdiv").style.display = "block";
+          hls.attachMedia(document.getElementById("video") as HTMLVideoElement);
+          this.setLoadingStateUntilVideoIsLoaded(hls);
+          hls.on(Hls.Events.MANIFEST_PARSED, function (event, data) {
+              console.log("Manifest Loaded");
+          });
+      }
     }
 
     private setUpSocketStreamListener(): void {
+
+      const self = this;
+
+      this.state.socket.on('connect', () => {
+          console.log("Socket connected");
+      });
+
+
+      this.state.socket.on('server-ready', () => {
+          self.state.socket.emit('stream', {url: "https://www.youtube.com/watch?v=XOacA3RYrXk", lang: "es-ES"});
+      });
+
+
+      this.state.socket.on('stream-response', function(data) {
+          console.log("Recieved stream-response");
+          var json = JSON.parse(data);
+
+          if (json.media == "") {
+            console.log("Empty media");
+              return;
+          }
+
+          let manifest_url = json.media;
+          self.setState({ mediaURL: manifest_url }, () => self.loadVideo(manifest_url));
+      });
+
+
       // Probably within an on connect?
       console.log("Set up socket stream listener");
     }
