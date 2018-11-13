@@ -56,13 +56,15 @@ const styles = (theme : Theme) => createStyles({
   }
 });
 
-const videoCSS: React.CSSProperties = {
-  width: "640px",
-  height: "360px",
-  border: "solid 1px"
-};
+
 
 class MainContentComponent extends React.Component<WithStyles<typeof styles> & URLParams, MainContentState> {
+
+ videoCSS: any = {
+    width: "640px",
+    height: "360px",
+    border: "solid 1px",
+  };
 
     constructor(props) {
         super(props);
@@ -70,7 +72,7 @@ class MainContentComponent extends React.Component<WithStyles<typeof styles> & U
           loading: false,
           error: null,
           mediaURL: null,
-          socket: io('http://polyglot-livesubtitles.herokuapp.com/streams')
+          socket: io('http://polyglot-livesubtitles.herokuapp.com/streams'),
         };
         this.handleSearch = this.handleSearch.bind(this);
         this.restoredError = this.restoredError.bind(this);
@@ -100,7 +102,7 @@ class MainContentComponent extends React.Component<WithStyles<typeof styles> & U
 
     private getVideoMode(classes, mediaURL: string) {
 
-      return (<div className={classes.root}>
+      return (<div><div id="loadingdiv">Loading...</div><div id="videodiv" className={classes.root}>
         <div className={classes.videoSide}>
         {/*
            LEFT SIDE
@@ -108,7 +110,7 @@ class MainContentComponent extends React.Component<WithStyles<typeof styles> & U
         </div>
         <div className={classes.centre}>
           <div className={classes.video}>
-          <video id="video" style={videoCSS}></video>
+         <video id="video" style={this.videoCSS}></video>
           </div>
         </div>
         <div className={classes.videoSide}>
@@ -116,7 +118,7 @@ class MainContentComponent extends React.Component<WithStyles<typeof styles> & U
            LEFT SIDE
         */}
         </div>
-      </div>);
+      </div></div>);
     }
 
     private getDefaultMode(classes) {
@@ -145,16 +147,28 @@ class MainContentComponent extends React.Component<WithStyles<typeof styles> & U
       this.state.socket.emit('stream', {url: url, lang: lang});
     }
 
+    private setLoadingStateUntilVideoIsLoaded(hls) {
+      const self = this;
+      hls.on(Hls.Events.BUFFER_APPENDED, function() {
+        console.log("Buffer appended");
+        document.getElementById("loadingdiv").style.display = "none";
+        document.getElementById("videodiv").style.display = "block";
+      });
+    }
+
     private loadVideo(manifest_url: string): void {
       if (Hls.isSupported()) {
           console.log("Hls Supported. Got manifest url: " + manifest_url);
+
 
           var hls = new Hls();
           console.log("Loading manifest url...");
           hls.loadSource(manifest_url);
           console.log("Attatching Media...")
+          document.getElementById("videodiv").style.display = "none";
+          document.getElementById("loadingdiv").style.display = "block";
           hls.attachMedia(document.getElementById("video") as HTMLVideoElement);
-
+          this.setLoadingStateUntilVideoIsLoaded(hls);
           hls.on(Hls.Events.MANIFEST_PARSED, function (event, data) {
               console.log("Manifest Loaded");
           });
@@ -213,7 +227,7 @@ class MainContentComponent extends React.Component<WithStyles<typeof styles> & U
 
       // TODO: Style this to appear in the center
       if (this.state.loading) {
-        return (<CircularProgress/>);
+        return (<div><CircularProgress/><video id="video" style={this.videoCSS}></video></div>);
       }
 
       if (this.state.error) {
