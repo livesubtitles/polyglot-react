@@ -54,6 +54,12 @@ const styles = (theme : Theme) => createStyles({
     flexDirection: "column",
     justifyContent: "center",
     alignItems: "center"
+  },
+  ////////////// TEMPORARY STYLING FOR ITERATION REVIEW ////////////////
+  tempDivFix: {
+    width: "100%",
+    height: "100%",
+    paddingTop: "100px"
   }
 });
 
@@ -73,7 +79,7 @@ class MainContentComponent extends React.Component<WithStyles<typeof styles> & U
           loading: false,
           error: null,
           mediaURL: null,
-          socket: io('http://polyglot-livesubtitles.herokuapp.com/streams'),
+          socket: io('http://localhost:8000/streams'),
         };
         this.handleSearch = this.handleSearch.bind(this);
         this.restoredError = this.restoredError.bind(this);
@@ -103,7 +109,8 @@ class MainContentComponent extends React.Component<WithStyles<typeof styles> & U
 
     private getVideoMode(classes, mediaURL: string) {
 
-      return (<div><div id="loadingdiv">Loading...</div><div id="videodiv" className={classes.root}>
+      return (<div className={classes.tempDivFix}>
+        <div id="loadingdiv">Loading...</div><div id="videodiv" className={classes.root}>
         <div className={classes.videoSide}>
         {/*
            LEFT SIDE
@@ -119,7 +126,8 @@ class MainContentComponent extends React.Component<WithStyles<typeof styles> & U
            LEFT SIDE
         */}
         </div>
-      </div></div>);
+      </div>
+      </div>);
     }
 
     private getDefaultMode(classes) {
@@ -186,7 +194,7 @@ class MainContentComponent extends React.Component<WithStyles<typeof styles> & U
 
 
       this.state.socket.on('server-ready', () => {
-          self.state.socket.emit('stream', {url: "https://www.youtube.com/watch?v=XOacA3RYrXk", lang: "es-ES"});
+          self.state.socket.emit('stream', {url: "https://www.youtube.com/watch?v=mV8jp1N2fSw", lang: "es-ES"});
       });
 
 
