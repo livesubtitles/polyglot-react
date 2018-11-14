@@ -15,6 +15,7 @@ import { Typography } from '@material-ui/core';
 import * as io from 'socket.io-client';
 import * as Hls from "hls.js";
 
+
 // const SERVER_URL = "https://polyglot-livesubtitles.herokuapp.com/";
 
 interface MainContentState {
@@ -24,17 +25,12 @@ interface MainContentState {
     socket: SocketIOClient.Socket;
 }
 
-const styles = (theme : Theme) => createStyles({
+const styles =  createStyles({
   root: {
     height: "100vh",
     display: "flex",
   },
-  side: {
-    backgroundColor: theme.palette.secondary.main,
-    flex: "0 0 22.5em",
-  },
   centre: {
-    backgroundColor: theme.palette.background.default, // remove this and the app bar shadow shows up???
     display: "flex",
     justifyContent: "center",
     height: "100%",
@@ -125,21 +121,11 @@ class MainContentComponent extends React.Component<WithStyles<typeof styles> & U
 
     private getDefaultMode(classes) {
       return (<div className={classes.root}>
-        <div className={classes.side}>
-          <Information
-            imageWidthEm={200}
-          />
-        </div>
         <div className={classes.centre}>
           <div className={classes.searchWrapper}>
             <Typography variant="h2" gutterBottom>Try it out!</Typography>
             <Search onSearch={this.handleSearch} />
           </div>
-        </div>
-        <div className={classes.side}>
-        {/*
-           LEFT SIDE
-        */}
         </div>
       </div>);
     }
@@ -245,4 +231,4 @@ class MainContentComponent extends React.Component<WithStyles<typeof styles> & U
 
 }
 
-export const MainContent = withStyles(styles)(MainContentComponent);
+export const MainContent = withStyles(styles, {withTheme: true})(MainContentComponent);
