@@ -16,6 +16,7 @@ import * as io from 'socket.io-client';
 import * as Hls from "hls.js";
 import { FontSizeSlider } from "src/FontSizeSlider/FontSizeSlider";
 import { FontFamilySelector } from "src/FontFamilySelector/FontFamilySelector";
+import * as ColorPicker from "material-ui-color-picker";
 
 
 // const SERVER_URL = "https://polyglot-livesubtitles.herokuapp.com/";
@@ -76,6 +77,8 @@ class MainContentComponent extends React.Component<WithStyles<typeof styles> & U
         this.loadVideo = this.loadVideo.bind(this);
         this.handleFontSizeChange = this.handleFontSizeChange.bind(this);
         this.handleFontSelection = this.handleFontSelection.bind(this);
+        this.handleBackgroundColorChange = this.handleBackgroundColorChange.bind(this);
+        this.handleSubtitleColorChange = this.handleSubtitleColorChange.bind(this);
     }
 
 
@@ -116,6 +119,14 @@ class MainContentComponent extends React.Component<WithStyles<typeof styles> & U
       this.changeCueCSS("font-family", newFontFamily);
     }
 
+    private handleBackgroundColorChange(color: string) {
+      this.changeCueCSS("background-color", color);
+    }
+
+    private handleSubtitleColorChange(color: string) {
+      this.changeCueCSS("color", color);
+    }
+
     private getVideoMode(classes, mediaURL: string) {
 
       return (<div><div id="loadingdiv">Loading...</div><div id="videodiv" className={classes.root}>
@@ -129,6 +140,9 @@ class MainContentComponent extends React.Component<WithStyles<typeof styles> & U
          <video id="video" style={this.videoCSS} controls></video>
          <FontSizeSlider onFontSizeChange={this.handleFontSizeChange} />
          <FontFamilySelector onFontSelection={this.handleFontSelection} />
+         <ColorPicker label="Background color" defaultValue="#000000" onChange={this.handleBackgroundColorChange} />
+         <ColorPicker label="Subtitle color" defaultValue="#ffffff" onChange={this.handleSubtitleColorChange} />
+
           </div>
         </div>
         <div className={classes.videoSide}>

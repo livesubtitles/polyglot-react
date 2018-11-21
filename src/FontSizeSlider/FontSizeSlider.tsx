@@ -19,7 +19,9 @@ const styles = createStyles({
   },
 });
 
-const DEFAULT_SIZE: number = 12;
+const DEFAULT_SIZE: number = 18;
+const MIN_SIZE: number = 8;
+const MAX_SIZE: number = 40;
 
 class FontSizeSliderComponent extends React.Component<FontSizeSliderProps, FontSizeSliderState> {
     constructor(props: FontSizeSliderProps) {
@@ -43,9 +45,9 @@ class FontSizeSliderComponent extends React.Component<FontSizeSliderProps, FontS
             <Slider
               classes={{ container: classes.slider }}
               value={this.state.size}
-              min={8}
-              max={28}
-              step={1}
+              min={MIN_SIZE}
+              max={MAX_SIZE}
+              step={2}
               onChange={this.handleChange}
             />
           </div>
