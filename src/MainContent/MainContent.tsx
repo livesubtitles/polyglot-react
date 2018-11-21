@@ -22,7 +22,6 @@ interface MainContentState {
     loading: boolean;
     error: PolyglotErrorType;
     mediaURL: string;
-    socket: SocketIOClient.Socket;
 }
 
 const styles =  createStyles({
@@ -69,7 +68,6 @@ class MainContentComponent extends React.Component<WithStyles<typeof styles> & U
           loading: false,
           error: null,
           mediaURL: null,
-          socket: io('http://polyglot-livesubtitles.herokuapp.com/streams'),
         };
         this.handleSearch = this.handleSearch.bind(this);
         this.restoredError = this.restoredError.bind(this);
@@ -163,17 +161,20 @@ class MainContentComponent extends React.Component<WithStyles<typeof styles> & U
       const self = this;
       console.log("HERE");
       console.log(url);
-      this.state.socket.on('connect', () => {
+
+      const socket = io('http://polyglot-livesubtitles.herokuapp.com/streams')
+
+      socket.on('connect', () => {
           console.log("Socket connected");
       });
 
 
-      this.state.socket.on('server-ready', () => {
-          self.state.socket.emit('stream', {url: url, lang: lang});
+      socket.on('server-ready', () => {
+          socket.emit('stream', {url: url, lang: lang});
       });
 
 
-      this.state.socket.on('stream-response', function(data) {
+      socket.on('stream-response', function(data) {
           console.log("Recieved stream-response");
           var json = JSON.parse(data);
 
