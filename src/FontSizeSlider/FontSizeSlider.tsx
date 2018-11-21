@@ -19,7 +19,7 @@ const styles = createStyles({
   },
 });
 
-const DEFAULT_SIZE: number = 18;
+const DEFAULT_SIZE: number = 16;
 const MIN_SIZE: number = 8;
 const MAX_SIZE: number = 40;
 

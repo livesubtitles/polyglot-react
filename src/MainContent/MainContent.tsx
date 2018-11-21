@@ -17,6 +17,7 @@ import * as Hls from "hls.js";
 import { FontSizeSlider } from "src/FontSizeSlider/FontSizeSlider";
 import { FontFamilySelector } from "src/FontFamilySelector/FontFamilySelector";
 import * as ColorPicker from "material-ui-color-picker";
+import "src/MainContent/MainContent.css";
 
 
 // const SERVER_URL = "https://polyglot-livesubtitles.herokuapp.com/";
@@ -129,7 +130,7 @@ class MainContentComponent extends React.Component<WithStyles<typeof styles> & U
 
     private getVideoMode(classes, mediaURL: string) {
 
-      return (<div><div id="loadingdiv">Loading...</div><div id="videodiv" className={classes.root}>
+      return (<div><div id="loadingdiv" className="loadingcss"><CircularProgress/></div><div id="videodiv" className={classes.root}>
         <div className={classes.videoSide}>
         {/*
            LEFT SIDE
@@ -165,9 +166,9 @@ class MainContentComponent extends React.Component<WithStyles<typeof styles> & U
     }
 
     private setLoadingStateUntilVideoIsLoaded(hls) {
-      const self = this;
       hls.on(Hls.Events.BUFFER_APPENDED, function() {
         console.log("Buffer appended");
+        console.log("LOADING DIV STATE: " + document.getElementById("loadingdiv").style.display);
         document.getElementById("loadingdiv").style.display = "none";
         document.getElementById("videodiv").style.display = "block";
       });
@@ -183,7 +184,8 @@ class MainContentComponent extends React.Component<WithStyles<typeof styles> & U
           hls.loadSource(manifest_url);
           console.log("Attatching Media...")
           document.getElementById("videodiv").style.display = "none";
-          document.getElementById("loadingdiv").style.display = "block";
+          console.log("LOADING DIV STATE first: " + document.getElementById("loadingdiv").style.display);
+          document.getElementById("loadingdiv").style.display = "flex";
           hls.attachMedia(document.getElementById("video") as HTMLVideoElement);
           this.setLoadingStateUntilVideoIsLoaded(hls);
           hls.on(Hls.Events.MANIFEST_PARSED, function (event, data) {
