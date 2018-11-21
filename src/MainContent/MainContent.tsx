@@ -14,6 +14,8 @@ import { Information } from 'src/Information/Information';
 import { Typography } from '@material-ui/core';
 import * as io from 'socket.io-client';
 import * as Hls from "hls.js";
+import { FontSizeSlider } from "src/FontSizeSlider/FontSizeSlider";
+import { FontFamilySelector } from "src/FontFamilySelector/FontFamilySelector";
 
 
 // const SERVER_URL = "https://polyglot-livesubtitles.herokuapp.com/";
@@ -72,6 +74,8 @@ class MainContentComponent extends React.Component<WithStyles<typeof styles> & U
         this.handleSearch = this.handleSearch.bind(this);
         this.restoredError = this.restoredError.bind(this);
         this.loadVideo = this.loadVideo.bind(this);
+        this.handleFontSizeChange = this.handleFontSizeChange.bind(this);
+        this.handleFontSelection = this.handleFontSelection.bind(this);
     }
 
 
@@ -96,6 +100,22 @@ class MainContentComponent extends React.Component<WithStyles<typeof styles> & U
       this.setState({ loading: false });
     }
 
+    private changeCueCSS(property: string, value: string) {
+      console.log(`Change Cue CSS to: ${property} with value: ${value}`);
+      const stylesheet = document.styleSheets[0] as any;
+      // Complains because of compatibility issues with Firefox;
+      stylesheet.addRule("::cue", `${property}: ${value}`);
+    }
+
+    private handleFontSizeChange(newSize: number): void {
+      this.changeCueCSS("font-size", `${newSize}px`);
+      //document.styleSheets[0].addRule("::cue", "font: italic 45px sans-serif");
+    }
+
+    private handleFontSelection(newFontFamily: string): void {
+      this.changeCueCSS("font-family", newFontFamily);
+    }
+
     private getVideoMode(classes, mediaURL: string) {
 
       return (<div><div id="loadingdiv">Loading...</div><div id="videodiv" className={classes.root}>
@@ -107,6 +127,8 @@ class MainContentComponent extends React.Component<WithStyles<typeof styles> & U
         <div className={classes.centre}>
           <div className={classes.video}>
          <video id="video" style={this.videoCSS} controls></video>
+         <FontSizeSlider onFontSizeChange={this.handleFontSizeChange} />
+         <FontFamilySelector onFontSelection={this.handleFontSelection} />
           </div>
         </div>
         <div className={classes.videoSide}>
