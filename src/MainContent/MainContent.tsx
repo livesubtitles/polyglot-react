@@ -32,6 +32,7 @@ const styles =  createStyles({
   root: {
     height: "100vh",
     display: "flex",
+    width: "60%"
   },
   centre: {
     display: "flex",

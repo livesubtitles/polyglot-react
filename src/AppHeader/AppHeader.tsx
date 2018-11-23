@@ -7,6 +7,7 @@ import { WithStyles, createStyles, withStyles } from '@material-ui/core';
 
 const styles = createStyles({
   root: {
+    zIndex: 8
   },
   imgStyles: {
     width: "2em",
