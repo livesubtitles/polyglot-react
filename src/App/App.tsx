@@ -22,6 +22,7 @@ import HomeIcon from "@material-ui/icons/Home";
 import InfoIcon from "@material-ui/icons/Info";
 import SettingsIcon from "@material-ui/icons/Settings";
 import HelpIcon from "@material-ui/icons/Help";
+import { Information } from 'src/Information/Information';
 
 const drawerWidth = 240;
 
@@ -88,8 +89,14 @@ const styles = theme => createStyles({
     }
 });
 
+enum APP_MODE {
+  HOME,
+  INFO,
+}
+
 interface AppState {
   open: boolean;
+  appMode: APP_MODE;
 }
 
 class AppComponent extends React.Component<URLParams & WithStyles<typeof styles>
@@ -105,7 +112,8 @@ class AppComponent extends React.Component<URLParams & WithStyles<typeof styles>
     }
 
     this.state = {
-      open: false
+      open: false,
+      appMode: APP_MODE.HOME,
     };
   }
 
@@ -117,8 +125,27 @@ class AppComponent extends React.Component<URLParams & WithStyles<typeof styles>
     this.setState({ open: false });
   };
 
+  private handleInfoClick = () => {
+    this.setState({ appMode: APP_MODE.INFO });
+  };
+
+  private handleHomeClick = () => {
+    this.setState({ appMode: APP_MODE.HOME })
+  }
+
   render() {
     const { classes, theme } = this.props;
+
+    let body = null;
+    
+    if (this.state.appMode == APP_MODE.HOME) {
+      body =  <MainContent  
+                link={this.props.link}
+                lang={this.props.lang}/>;
+    } else if (this.state.appMode == APP_MODE.INFO) {
+      body = <Information/>;
+    }
+
 
     return (
       <div className={classes.appRoot}>
@@ -170,7 +197,8 @@ class AppComponent extends React.Component<URLParams & WithStyles<typeof styles>
           </div>
           <Divider />
           <List>
-            <ListItem button>
+            <ListItem button
+                      onClick={this.handleHomeClick}>
               <ListItemIcon>
                 <HomeIcon />
               </ListItemIcon>
@@ -179,7 +207,8 @@ class AppComponent extends React.Component<URLParams & WithStyles<typeof styles>
           </List>
           <Divider />
           <List>
-            <ListItem button>
+            <ListItem button
+                      onClick={this.handleInfoClick}>
               <ListItemIcon>
                 <InfoIcon />
               </ListItemIcon>
@@ -199,9 +228,7 @@ class AppComponent extends React.Component<URLParams & WithStyles<typeof styles>
             </ListItem>
           </List>
         </Drawer>
-        <MainContent  
-          link={this.props.link}
-          lang={this.props.lang}/>
+        {body}
       </div>
     );
   }
