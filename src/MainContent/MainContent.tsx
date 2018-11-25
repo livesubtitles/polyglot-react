@@ -10,7 +10,6 @@ import {
 import { Search } from "src/Search/Search";
 import { PolyglotError } from "src/PolyglotError/PolyglotError";
 import { withStyles, createStyles, WithStyles, Theme } from "@material-ui/core/styles";
-import { Information } from 'src/Information/Information';
 import { Typography } from '@material-ui/core';
 import * as io from 'socket.io-client';
 import * as Hls from "hls.js";
@@ -32,7 +31,7 @@ const styles =  createStyles({
   root: {
     height: "100vh",
     display: "flex",
-    width: "60%"
+    width: "100%",
   },
   centre: {
     display: "flex",

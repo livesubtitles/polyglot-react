@@ -28,8 +28,7 @@ const drawerWidth = 240;
 
 const styles = theme => createStyles({
     appRoot: {
-      display: "flex",
-      justifyContent: "center"
+      display: "flex"
     },
     appBar: {
       zIndex: theme.zIndex.drawer + 1,
@@ -86,6 +85,10 @@ const styles = theme => createStyles({
     content: {
       flexGrow: 1,
       padding: theme.spacing.unit * 3
+    },
+    topPadding: {
+      paddingTop: "100px",
+      width: "100%"
     }
 });
 
@@ -228,7 +231,10 @@ class AppComponent extends React.Component<URLParams & WithStyles<typeof styles>
             </ListItem>
           </List>
         </Drawer>
-        {body}
+        <div className={classes.content}>
+          <div className={classes.toolbar}/>
+          {body}
+        </div>
       </div>
     );
   }
