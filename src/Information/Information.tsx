@@ -13,7 +13,8 @@ import CardActionArea from '@material-ui/core/CardActionArea';
 import CardActions from '@material-ui/core/CardActions';
 import CardContent from '@material-ui/core/CardContent'
 
-const AutoPlaySwipeableViews = autoPlay(SwipeableViews);
+const INTERVAL_TIME = 10000;
+const AutoPlaySwipeableViews = autoPlay(SwipeableViews, 'incremental', INTERVAL_TIME);
 
 export interface InformationProps extends WithStyles<typeof styles>{
   imageWidth?: number
@@ -59,8 +60,11 @@ const styles = createStyles({
     alignItems: "center"
   },
   stepper: {
+    padding: "10px"
+  },
+  stepperCard: {
     maxWidth: "550px",
-    flexGrow: 1
+    flexGrow: 1,
   },
   title: {
     display: "flex",
@@ -102,9 +106,10 @@ class InformationComponent extends React.Component<InformationProps & WithTheme,
     return (
       <div className={classes.root}>
         <img src={Logo} width={this.props.imageWidth ? this.props.imageWidth.toString() + "px" : "250px"}/>
-        <Card className={classes.stepper}>
+        <div className={classes.stepper}>
+        <Card className={classes.stepperCard}>
         <CardContent>
-        <Typography>{informationSegments[slideIndex].title}</Typography>
+        <Typography variant="h5">{informationSegments[slideIndex].title}</Typography>
         <AutoPlaySwipeableViews
           axis={theme.direction === 'rtl' ? 'x-reverse' : 'x'}
           index={slideIndex}
@@ -114,7 +119,7 @@ class InformationComponent extends React.Component<InformationProps & WithTheme,
           {informationSegments.map((step, index) => (
             <div key={step.title}>
               {Math.abs(slideIndex - index) <= 2 ? (
-                <Typography>{step.body}</Typography>
+                <Typography variant="h6">{step.body}</Typography>
               ) : null}
             </div>
           ))}
@@ -138,6 +143,7 @@ class InformationComponent extends React.Component<InformationProps & WithTheme,
           }
         />
       </Card>    
+        </div>  
       </div>
       );
   }
