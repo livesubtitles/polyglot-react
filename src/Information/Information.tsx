@@ -8,6 +8,11 @@ import KeyboardArrowLeft from '@material-ui/icons/KeyboardArrowLeft';
 import KeyboardArrowRight from '@material-ui/icons/KeyboardArrowRight';
 import SwipeableViews from 'react-swipeable-views';
 import { autoPlay } from 'react-swipeable-views-utils';
+import Card from '@material-ui/core/Card';
+import CardActionArea from '@material-ui/core/CardActionArea';
+import CardActions from '@material-ui/core/CardActions';
+import CardContent from '@material-ui/core/CardContent'
+
 const AutoPlaySwipeableViews = autoPlay(SwipeableViews);
 
 export interface InformationProps extends WithStyles<typeof styles>{
@@ -52,6 +57,15 @@ const styles = createStyles({
     flexDirection: "column",
     justifyContent: "center",
     alignItems: "center"
+  },
+  stepper: {
+    maxWidth: "550px",
+    flexGrow: 1
+  },
+  title: {
+    display: "flex",
+    alignItems: "center",
+    height: "50px"
   }
 });
 
@@ -88,10 +102,9 @@ class InformationComponent extends React.Component<InformationProps & WithTheme,
     return (
       <div className={classes.root}>
         <img src={Logo} width={this.props.imageWidth ? this.props.imageWidth.toString() + "px" : "250px"}/>
-        <div>
-        <Paper square elevation={0}>
-          <Typography>{informationSegments[slideIndex].title}</Typography>
-        </Paper>
+        <Card className={classes.stepper}>
+        <CardContent>
+        <Typography>{informationSegments[slideIndex].title}</Typography>
         <AutoPlaySwipeableViews
           axis={theme.direction === 'rtl' ? 'x-reverse' : 'x'}
           index={slideIndex}
@@ -101,11 +114,12 @@ class InformationComponent extends React.Component<InformationProps & WithTheme,
           {informationSegments.map((step, index) => (
             <div key={step.title}>
               {Math.abs(slideIndex - index) <= 2 ? (
-                <p>{step.body}</p>
+                <Typography>{step.body}</Typography>
               ) : null}
             </div>
           ))}
         </AutoPlaySwipeableViews>
+        </CardContent>
         <MobileStepper
           steps={maxIndex}
           position="static"
@@ -123,7 +137,7 @@ class InformationComponent extends React.Component<InformationProps & WithTheme,
             </Button>
           }
         />
-      </div>    
+      </Card>    
       </div>
       );
   }
