@@ -23,6 +23,7 @@ import InfoIcon from "@material-ui/icons/Info";
 import SettingsIcon from "@material-ui/icons/Settings";
 import HelpIcon from "@material-ui/icons/Help";
 import { Information } from 'src/Information/Information';
+import { QualityDropdown } from "src/QualityDropdown/QualityDropdown";
 
 const drawerWidth = 240;
 
@@ -140,9 +141,9 @@ class AppComponent extends React.Component<URLParams & WithStyles<typeof styles>
     const { classes, theme } = this.props;
 
     let body = null;
-    
+
     if (this.state.appMode == APP_MODE.HOME) {
-      body =  <MainContent  
+      body =  <MainContent
                 link={this.props.link}
                 lang={this.props.lang}/>;
     } else if (this.state.appMode == APP_MODE.INFO) {
