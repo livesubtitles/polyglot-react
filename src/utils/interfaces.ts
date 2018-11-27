@@ -19,7 +19,8 @@ export type Quality = string;
 
 export enum PolyglotErrorType {
   StreamlinkUnavailable = "StreamlinkUnavailable",
-  UninitialisedStreamer = "UninitialisedStreamer"
+  UninitialisedStreamer = "UninitialisedStreamer",
+  SocketConnection = "SocketConnection"
 }
 
 export interface URLParams {

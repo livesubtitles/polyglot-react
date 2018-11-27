@@ -25,6 +25,7 @@ export class PolyglotError extends React.Component<PolyglotErrorProps, PolyglotE
   private static errorMap: ErrorMap = {
     [PolyglotErrorType.UninitialisedStreamer]: "Server error. Please try again. Error: UninitialisedStreamer.",
     [PolyglotErrorType.StreamlinkUnavailable]: "Cannot subtitle video. For the list of supported websites, please see X. Error: StreamlinkUnavailable.",
+    [PolyglotErrorType.SocketConnection]: "Error connecting to the socket on the server"
   };
 
   constructor(props) {
