@@ -17,7 +17,8 @@ export interface LanguageSuggestion {
 
 export enum PolyglotErrorType {
   StreamlinkUnavailable = "StreamlinkUnavailable",
-  UninitialisedStreamer = "UninitialisedStreamer"
+  UninitialisedStreamer = "UninitialisedStreamer",
+  SocketConnection = "SocketConnection"
 }
 
 export interface URLParams {

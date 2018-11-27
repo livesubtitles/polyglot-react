@@ -88,7 +88,7 @@ class MainContentComponent extends React.Component<WithStyles<typeof styles> & U
     }
 
     private restoredError() {
-      this.setState({error: null});
+      location.reload();
     }
 
     private async handleSearch(search: string, lang: LanguageSuggestion): Promise<void> {
@@ -200,7 +200,12 @@ class MainContentComponent extends React.Component<WithStyles<typeof styles> & U
       console.log("HERE");
       console.log(url);
 
-      const socket = io('https://polyglot-livesubtitles.herokuapp.com/streams')
+      const socket:SocketIOClient.Socket = io('https://polyglot-livesubttitles.herokuapp.com/streams');
+
+      socket.on('connect_error', () => {
+        console.error("Sorry, there seems to be an issue with the connection");
+        this.setState({ error: PolyglotErrorType.SocketConnection });
+      });
 
       socket.on('connect', () => {
           console.log("Socket connected");
