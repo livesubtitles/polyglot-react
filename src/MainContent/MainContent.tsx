@@ -200,7 +200,7 @@ class MainContentComponent extends React.Component<WithStyles<typeof styles> & U
       console.log("HERE");
       console.log(url);
 
-      const socket = io('http://polyglot-livesubtitles.herokuapp.com/streams')
+      const socket = io('https://polyglot-livesubtitles.herokuapp.com/streams')
 
       socket.on('connect', () => {
           console.log("Socket connected");
