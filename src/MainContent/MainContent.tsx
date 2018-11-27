@@ -6,7 +6,8 @@ import {
   // InitialStreamPostArguments,
   LanguageSuggestion,
   PolyglotErrorType,
-  URLParams } from "src/utils/interfaces";
+  URLParams,
+  Quality } from "src/utils/interfaces";
 import { Search } from "src/Search/Search";
 import { PolyglotError } from "src/PolyglotError/PolyglotError";
 import { withStyles, createStyles, WithStyles, Theme } from "@material-ui/core/styles";
@@ -17,6 +18,7 @@ import { FontSizeSlider } from "src/FontSizeSlider/FontSizeSlider";
 import { FontFamilySelector } from "src/FontFamilySelector/FontFamilySelector";
 import * as ColorPicker from "material-ui-color-picker";
 import "src/MainContent/MainContent.css";
+import { QualityDropdown } from "src/QualityDropdown/QualityDropdown";
 
 
 // const SERVER_URL = "https://polyglot-livesubtitles.herokuapp.com/";
@@ -25,6 +27,9 @@ interface MainContentState {
     loading: boolean;
     error: PolyglotErrorType;
     mediaURL: string;
+    qualities: Quality[];
+    socket: SocketIOClient.Socket;
+    hls: Hls;
 }
 
 const styles =  createStyles({
@@ -72,6 +77,9 @@ class MainContentComponent extends React.Component<WithStyles<typeof styles> & U
           loading: false,
           error: null,
           mediaURL: null,
+          qualities: [],
+          socket: null,
+          hls: null
         };
         this.handleSearch = this.handleSearch.bind(this);
         this.restoredError = this.restoredError.bind(this);
@@ -80,6 +88,7 @@ class MainContentComponent extends React.Component<WithStyles<typeof styles> & U
         this.handleFontSelection = this.handleFontSelection.bind(this);
         this.handleBackgroundColorChange = this.handleBackgroundColorChange.bind(this);
         this.handleSubtitleColorChange = this.handleSubtitleColorChange.bind(this);
+        this.handleQualitySelection = this.handleQualitySelection.bind(this);
     }
 
 
@@ -89,6 +98,11 @@ class MainContentComponent extends React.Component<WithStyles<typeof styles> & U
 
     private restoredError() {
       location.reload();
+    }
+
+    private handleQualitySelection(quality: string) {
+      this.state.socket.emit("quality", { quality: quality });
+      this.state.hls.destroy();
     }
 
     private async handleSearch(search: string, lang: LanguageSuggestion): Promise<void> {
@@ -128,7 +142,7 @@ class MainContentComponent extends React.Component<WithStyles<typeof styles> & U
       this.changeCueCSS("color", color);
     }
 
-    private getVideoMode(classes, mediaURL: string) {
+    private getVideoMode(classes, mediaURL: string, qualities: Quality[]) {
 
       return (<div><div id="loadingdiv" className="loadingcss"><CircularProgress/></div><div id="videodiv" className={classes.root}>
         <div className={classes.videoSide}>
@@ -139,10 +153,11 @@ class MainContentComponent extends React.Component<WithStyles<typeof styles> & U
         <div className={classes.centre}>
           <div className={classes.video}>
          <video id="video" style={this.videoCSS} controls></video>
+         <QualityDropdown onQualitySelection={this.handleQualitySelection} qualities={qualities}/>
          <FontSizeSlider onFontSizeChange={this.handleFontSizeChange} />
          <FontFamilySelector onFontSelection={this.handleFontSelection} />
          <ColorPicker label="Background color" defaultValue="#000000" onChange={this.handleBackgroundColorChange} />
-         <ColorPicker label="Subtitle color" defaultValue="#ffffff" onChange={this.handleSubtitleColorChange} />
+         <ColorPicker label="Subtitle color" defaultValue="#000000" onChange={this.handleSubtitleColorChange} />
 
           </div>
         </div>
@@ -180,6 +195,7 @@ class MainContentComponent extends React.Component<WithStyles<typeof styles> & U
 
 
           var hls = new Hls();
+          this.setState({ hls });
           console.log("Loading manifest url...");
           hls.loadSource(manifest_url);
           console.log("Attatching Media...")
@@ -200,7 +216,8 @@ class MainContentComponent extends React.Component<WithStyles<typeof styles> & U
       console.log("HERE");
       console.log(url);
 
-      const socket:SocketIOClient.Socket = io('https://polyglot-livesubtitles.herokuapp.com/streams');
+      const socket: SocketIOClient.Socket = io('https://polyglot-livesubtitles.herokuapp.com/streams');
+      this.setState({ socket });
 
       socket.on('connect_error', () => {
         console.error("Sorry, there seems to be an issue with the connection");
@@ -218,7 +235,6 @@ class MainContentComponent extends React.Component<WithStyles<typeof styles> & U
           console.log("Socket connected");
       });
 
-
       socket.on('server-ready', () => {
           socket.emit('stream', {url: url, lang: lang});
       });
@@ -234,7 +250,13 @@ class MainContentComponent extends React.Component<WithStyles<typeof styles> & U
           }
 
           let manifest_url = json.media;
-          self.setState({ mediaURL: manifest_url }, () => self.loadVideo(manifest_url));
+          const qualities: Quality[] = json.qualities;
+          const loadFunc = () => self.loadVideo(manifest_url);
+          if (!qualities) {
+            self.setState({ mediaURL: manifest_url }, loadFunc);
+          } else {
+            self.setState({ mediaURL: manifest_url, qualities: qualities }, loadFunc);
+          }
       });
 
 
@@ -274,7 +296,7 @@ class MainContentComponent extends React.Component<WithStyles<typeof styles> & U
         // We have the url, we might/might not have the language, but backend
         // takes care of that
         //return (<VideContent link={this.props.link} lang={this.props.lang ? this.props.lang : ""}/>);
-        return (this.getVideoMode(classes, this.state.mediaURL));
+        return (this.getVideoMode(classes, this.state.mediaURL, this.state.qualities));
       }
 
       return (this.getDefaultMode(classes));

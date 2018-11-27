@@ -15,6 +15,8 @@ export interface LanguageSuggestion {
   value: string;
 }
 
+export type Quality = string;
+
 export enum PolyglotErrorType {
   StreamlinkUnavailable = "StreamlinkUnavailable",
   UninitialisedStreamer = "UninitialisedStreamer",
