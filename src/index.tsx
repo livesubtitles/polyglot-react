@@ -4,6 +4,7 @@ import { App } from 'src/App/App';
 import { HashRouter, Route, Switch } from "react-router-dom";
 import 'src/index.css';
 import registerServiceWorker from './registerServiceWorker';
+import { ErrorPage } from 'src/ErrorPage/ErrorPage';
 
 ReactDOM.render(
   <HashRouter>
@@ -11,6 +12,7 @@ ReactDOM.render(
       <Route path="/link=:link&lang=:lang" render={props => <App link={props.match.params.link} lang={props.match.params.lang}/>}/>
       <Route path="/lang=:lang&link=:link" render={props => <App link={props.match.params.link} lang={props.match.params.lang}/>}/>
       <Route path="/link=:link" render={props => <App link={props.match.params.link}/>}/>
+      <Route path="/error" render={props => <ErrorPage/>} />
       <Route render={props => <App/>}/>
     </Switch>
   </HashRouter>,
