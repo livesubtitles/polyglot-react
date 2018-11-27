@@ -207,6 +207,13 @@ class MainContentComponent extends React.Component<WithStyles<typeof styles> & U
         this.setState({ error: PolyglotErrorType.SocketConnection });
       });
 
+      socket.on('streamlink-error', () => {
+        console.error("Streamlink error");
+        this.setState({ error: PolyglotErrorType.StreamlinkUnavailable });
+      });
+
+
+
       socket.on('connect', () => {
           console.log("Socket connected");
       });
