@@ -3,17 +3,19 @@ import FormControl from '@material-ui/core/FormControl';
 import InputLabel from '@material-ui/core/InputLabel';
 import Select from '@material-ui/core/Select';
 import MenuItem from '@material-ui/core/MenuItem';
+import { Quality } from "src/utils/interfaces";
 import { withStyles, WithStyles, createStyles } from "@material-ui/core/styles";
 
 export interface QualityDropdownProps extends WithStyles<typeof styles> {
   onQualitySelection(quality: string): void;
+  qualities: Quality[];
 }
 
 interface QualityDropdownState {
     quality: string;
 }
 
-const DEFAULT_QUALITY = "360";
+const DEFAULT_QUALITY = "360p";
 
 const styles = theme => createStyles({
   formControl: {
@@ -22,11 +24,7 @@ const styles = theme => createStyles({
   }
 });
 
-type Quality = string;
-
 export class QualityDropdownComponent extends React.Component<QualityDropdownProps, QualityDropdownState> {
-
-    private static qualities: Quality[] = ["144", "240", "360", "480", "720", "1080"];
 
     constructor(props) {
         super(props);
@@ -45,8 +43,7 @@ export class QualityDropdownComponent extends React.Component<QualityDropdownPro
     private generateQualityOptions() {
       const items = [];
       let count = 0;
-      for (const key of Object.keys(QualityDropdownComponent.qualities)) {
-        const q: Quality = QualityDropdownComponent.qualities[key];
+      for (const q of this.props.qualities) {
         items.push(<MenuItem key={count} value={q}>{q}</MenuItem>);
         count += 1;
       }
