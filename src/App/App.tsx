@@ -145,7 +145,7 @@ class AppComponent extends React.Component<URLParams & WithStyles<typeof styles>
     fetch('https://polyglot-livesubtitles.herokuapp.com/storeauthcode', {method: 'post',
         headers: {
           'X-Requested-With': 'XMLHttpRequest',
-          'Content-Type: application/octet-stream; charset=utf-8'
+          'Content-Type': 'application/octet-stream; charset=utf-8'
         },
       body: authResult['code']})
   .then();
