@@ -108,6 +108,7 @@ enum APP_MODE {
 interface AppState {
   open: boolean;
   appMode: APP_MODE;
+  loginShowing: boolean;
 }
 
 class AppComponent extends React.Component<URLParams & WithStyles<typeof styles>
@@ -125,12 +126,14 @@ class AppComponent extends React.Component<URLParams & WithStyles<typeof styles>
     this.state = {
       open: false,
       appMode: APP_MODE.HOME,
+      loginShowing: true,
     };
   }
 
   private signInCallback = (authResult) => {
-    console.log("Got back: ");
-    console.log(authResult);
+    // console.log("Got back: ");
+    // console.log(authResult);
+    this.hideLoginButton();
     // if (authResult['code']) {
     //
     // // Hide the sign-in button now that the user is authorized, for example:
@@ -139,7 +142,7 @@ class AppComponent extends React.Component<URLParams & WithStyles<typeof styles>
     // // Send the code to the server
     // $.ajax({
     //   type: 'POST',
-    //   url: 'https://polyglot-punctuator.herokuapp.com/storeauthcode',
+    //   url: 'https://polyglot-livesubtitles.herokuapp.com/storeauthcode',
     //   // Always include an `X-Requested-With` header in every AJAX request,
     //   // to protect against CSRF attacks.
     //   headers: {
@@ -171,6 +174,10 @@ class AppComponent extends React.Component<URLParams & WithStyles<typeof styles>
 
   private handleHomeClick = () => {
     this.setState({ appMode: APP_MODE.HOME })
+  }
+
+  private hideLoginButton = () => {
+    this.setState({ loginShowing: false })
   }
 
   render() {
@@ -213,6 +220,7 @@ class AppComponent extends React.Component<URLParams & WithStyles<typeof styles>
             <GoogleLogin
                clientId="1070969009500-4674ntngjh3dvlbcvoer0r4c7hao04dh.apps.googleusercontent.com"
                buttonText="Login"
+               style={{display:this.state.loginShowing ? "inline" : "none"}}
                className={classes.googleButton}
                onSuccess={this.signInCallback}
                onFailure={this.signInCallback}
