@@ -24,6 +24,7 @@ import SettingsIcon from "@material-ui/icons/Settings";
 import HelpIcon from "@material-ui/icons/Help";
 import { Information } from 'src/Information/Information';
 import { QualityDropdown } from "src/QualityDropdown/QualityDropdown";
+import GoogleLogin from 'react-google-login';
 
 const drawerWidth = 240;
 
@@ -45,6 +46,9 @@ const styles = theme => createStyles({
         easing: theme.transitions.easing.sharp,
         duration: theme.transitions.duration.enteringScreen
       })
+    },
+    button: {
+      marginLeft: 900
     },
     menuButton: {
       marginLeft: 12,
@@ -75,6 +79,9 @@ const styles = theme => createStyles({
       [theme.breakpoints.up("sm")]: {
         width: theme.spacing.unit * 9 + 1
       }
+    },
+    googleButton: {
+      marginLeft: 900
     },
     toolbar: {
       display: "flex",
@@ -120,6 +127,35 @@ class AppComponent extends React.Component<URLParams & WithStyles<typeof styles>
       appMode: APP_MODE.HOME,
     };
   }
+
+  private signInCallback = (authResult) => {
+    console.log("Got back: ");
+    console.log(authResult);
+    // if (authResult['code']) {
+    //
+    // // Hide the sign-in button now that the user is authorized, for example:
+    // $('#signinButton').attr('style', 'display: none');
+    //
+    // // Send the code to the server
+    // $.ajax({
+    //   type: 'POST',
+    //   url: 'https://polyglot-punctuator.herokuapp.com/storeauthcode',
+    //   // Always include an `X-Requested-With` header in every AJAX request,
+    //   // to protect against CSRF attacks.
+    //   headers: {
+    //     'X-Requested-With': 'XMLHttpRequest'
+    //   },
+    //   contentType: 'application/octet-stream; charset=utf-8',
+    //   success: function(result) {
+    //     // Handle or verify the server response.
+    //   },
+    //   processData: false,
+    //   data: authResult['code']
+    // });
+    // } else {
+    //   console.log("Error");
+    // }
+  };
 
   private handleDrawerOpen = () => {
     this.setState({ open: true });
@@ -174,6 +210,16 @@ class AppComponent extends React.Component<URLParams & WithStyles<typeof styles>
             <Typography variant="h6" color="inherit" noWrap>
             Polyglot
             </Typography>
+            <GoogleLogin
+               clientId="1070969009500-4674ntngjh3dvlbcvoer0r4c7hao04dh.apps.googleusercontent.com"
+               buttonText="Login"
+               className={classes.googleButton}
+               onSuccess={this.signInCallback}
+               onFailure={this.signInCallback}
+            />
+            {/* <Button variant="outlined" color="secondary" className={classes.button} onClick={this.signInCallback}>
+                Sign In
+            </Button> */}
           </Toolbar>
         </AppBar>
         <Drawer
