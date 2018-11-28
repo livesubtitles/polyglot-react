@@ -106,7 +106,6 @@ class MainContentComponent extends React.Component<WithStyles<typeof styles> & U
     }
 
     private async handleSearch(search: string, lang: LanguageSuggestion): Promise<void> {
-      this.setState({ loading: true });
       this.setUpSocketStreamListener(search, lang.value);
       // const postPayload: InitialStreamPostArguments = { url: search, lang: lang.value };
       // const res: ProcessResponse = await postJSON<ProcessResponse, InitialStreamPostArguments>(SERVER_URL, "stream", postPayload);
@@ -115,7 +114,6 @@ class MainContentComponent extends React.Component<WithStyles<typeof styles> & U
       //   this.displayError(res.error);
       // }
       // console.log(res);
-      this.setState({ loading: false });
     }
 
     private changeCueCSS(property: string, value: string) {
@@ -245,7 +243,8 @@ class MainContentComponent extends React.Component<WithStyles<typeof styles> & U
           var json = JSON.parse(data);
 
           if (json.media == "") {
-            console.log("Empty media");
+              console.log("Empty media");
+              self.displayError(PolyglotErrorType.StreamlinkUnavailable);
               return;
           }
 
