@@ -214,6 +214,7 @@ class AppComponent extends React.Component<URLParams & WithStyles<typeof styles>
             <GoogleLogin
                clientId="1070969009500-4674ntngjh3dvlbcvoer0r4c7hao04dh.apps.googleusercontent.com"
                buttonText="Login"
+               responseType="code"
                style={{display:this.state.loginShowing ? "inline" : "none"}}
                className={classes.googleButton}
                onSuccess={this.signInCallback}
