@@ -106,6 +106,7 @@ class MainContentComponent extends React.Component<WithStyles<typeof styles> & U
     }
 
     private async handleSearch(search: string, lang: LanguageSuggestion): Promise<void> {
+      this.showLoading("loadingdiv", "searchdiv");
       this.setUpSocketStreamListener(search, lang.value);
       // const postPayload: InitialStreamPostArguments = { url: search, lang: lang.value };
       // const res: ProcessResponse = await postJSON<ProcessResponse, InitialStreamPostArguments>(SERVER_URL, "stream", postPayload);
@@ -170,7 +171,8 @@ class MainContentComponent extends React.Component<WithStyles<typeof styles> & U
     private getDefaultMode(classes) {
       return (<div className={classes.root}>
         <div className={classes.centre}>
-          <div className={classes.searchWrapper}>
+          <div id="loadingdiv" style={{display: "none"}} className="loadingcss"><CircularProgress/></div>
+          <div id="searchdiv" className={classes.searchWrapper}>
             <Typography variant="h2" gutterBottom>Try it out!</Typography>
             <Search onSearch={this.handleSearch} />
           </div>
@@ -178,12 +180,22 @@ class MainContentComponent extends React.Component<WithStyles<typeof styles> & U
       </div>);
     }
 
+    private hideLoading(loadingDiv: string, showableDiv: string) {
+      document.getElementById(loadingDiv).style.display = "none";
+      document.getElementById(showableDiv).style.display = "block";
+    }
+
+    private showLoading(loadingDiv: string, showableDiv: string) {
+      document.getElementById(showableDiv).style.display = "none";
+      document.getElementById(loadingDiv).style.display = "flex";
+    }
+
     private setLoadingStateUntilVideoIsLoaded(hls) {
+      let self = this;
       hls.on(Hls.Events.BUFFER_APPENDED, function() {
         console.log("Buffer appended");
         console.log("LOADING DIV STATE: " + document.getElementById("loadingdiv").style.display);
-        document.getElementById("loadingdiv").style.display = "none";
-        document.getElementById("videodiv").style.display = "block";
+        self.hideLoading("loadingdiv", "videodiv");
       });
     }
 
@@ -196,10 +208,8 @@ class MainContentComponent extends React.Component<WithStyles<typeof styles> & U
           this.setState({ hls });
           console.log("Loading manifest url...");
           hls.loadSource(manifest_url);
-          console.log("Attatching Media...")
-          document.getElementById("videodiv").style.display = "none";
-          console.log("LOADING DIV STATE first: " + document.getElementById("loadingdiv").style.display);
-          document.getElementById("loadingdiv").style.display = "flex";
+          console.log("Attaching Media...")
+          this.showLoading("loadingdiv", "videodiv");
           hls.attachMedia(document.getElementById("video") as HTMLVideoElement);
           this.setLoadingStateUntilVideoIsLoaded(hls);
           hls.on(Hls.Events.MANIFEST_PARSED, function (event, data) {
@@ -211,7 +221,6 @@ class MainContentComponent extends React.Component<WithStyles<typeof styles> & U
     private setUpSocketStreamListener(url: string, lang: string): void {
 
       const self = this;
-      console.log("HERE");
       console.log(url);
 
       const socket: SocketIOClient.Socket = io('https://polyglot-livesubtitles.herokuapp.com/streams');
@@ -227,8 +236,6 @@ class MainContentComponent extends React.Component<WithStyles<typeof styles> & U
         this.setState({ error: PolyglotErrorType.StreamlinkUnavailable });
       });
 
-
-
       socket.on('connect', () => {
           console.log("Socket connected");
       });
@@ -237,9 +244,8 @@ class MainContentComponent extends React.Component<WithStyles<typeof styles> & U
           socket.emit('stream', {url: url, lang: lang});
       });
 
-
       socket.on('stream-response', function(data) {
-          console.log("Recieved stream-response");
+          console.log("Received stream-response");
           var json = JSON.parse(data);
 
           if (json.media == "") {
@@ -247,10 +253,13 @@ class MainContentComponent extends React.Component<WithStyles<typeof styles> & U
               self.displayError(PolyglotErrorType.StreamlinkUnavailable);
               return;
           }
-
           let manifest_url = json.media;
           const qualities: Quality[] = json.qualities;
           const loadFunc = () => self.loadVideo(manifest_url);
+
+          // Stop loading of search, loadFunc will start the loading for the video
+          self.hideLoading("loadingdiv", "searchdiv");
+
           if (!qualities) {
             self.setState({ mediaURL: manifest_url }, loadFunc);
           } else {
