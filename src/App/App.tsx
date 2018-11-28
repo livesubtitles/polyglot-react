@@ -132,8 +132,8 @@ class AppComponent extends React.Component<URLParams & WithStyles<typeof styles>
   }
 
   private signInCallback = (authResult) => {
-    // console.log("Got back: ");
-    // console.log(authResult);
+    console.log("Got back: ");
+    console.log(authResult);
     this.hideLoginButton();
     if (authResult['code']) {
     //
@@ -141,21 +141,14 @@ class AppComponent extends React.Component<URLParams & WithStyles<typeof styles>
     // $('#signinButton').attr('style', 'display: none');
     //
     // // Send the code to the server
-      $.ajax({
-        type: 'POST',
-        url: 'https://polyglot-livesubtitles.herokuapp.com/storeauthcode',
-        // Always include an `X-Requested-With` header in every AJAX request,
-        // to protect against CSRF attacks.
+    console.log("About to send request");
+    fetch('https://polyglot-livesubtitles.herokuapp.com/storeauthcode', {method: 'post',
         headers: {
-          'X-Requested-With': 'XMLHttpRequest'
+          'X-Requested-With': 'XMLHttpRequest',
+          'Content-Type: application/octet-stream; charset=utf-8'
         },
-        contentType: 'application/octet-stream; charset=utf-8',
-        success: function(result) {
-          // Handle or verify the server response.
-        },
-        processData: false,
-        data: authResult['code']
-      });
+      body: authResult['code']})
+  .then();
     } else {
       console.log("Error");
     }
