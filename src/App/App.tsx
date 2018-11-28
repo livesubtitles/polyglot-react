@@ -25,6 +25,7 @@ import HelpIcon from "@material-ui/icons/Help";
 import { Information } from 'src/Information/Information';
 import { QualityDropdown } from "src/QualityDropdown/QualityDropdown";
 import GoogleLogin from 'react-google-login';
+import $ from 'jquery';
 
 const drawerWidth = 240;
 
@@ -134,30 +135,30 @@ class AppComponent extends React.Component<URLParams & WithStyles<typeof styles>
     // console.log("Got back: ");
     // console.log(authResult);
     this.hideLoginButton();
-    // if (authResult['code']) {
+    if (authResult['code']) {
     //
     // // Hide the sign-in button now that the user is authorized, for example:
     // $('#signinButton').attr('style', 'display: none');
     //
     // // Send the code to the server
-    // $.ajax({
-    //   type: 'POST',
-    //   url: 'https://polyglot-livesubtitles.herokuapp.com/storeauthcode',
-    //   // Always include an `X-Requested-With` header in every AJAX request,
-    //   // to protect against CSRF attacks.
-    //   headers: {
-    //     'X-Requested-With': 'XMLHttpRequest'
-    //   },
-    //   contentType: 'application/octet-stream; charset=utf-8',
-    //   success: function(result) {
-    //     // Handle or verify the server response.
-    //   },
-    //   processData: false,
-    //   data: authResult['code']
-    // });
-    // } else {
-    //   console.log("Error");
-    // }
+      $.ajax({
+        type: 'POST',
+        url: 'https://polyglot-livesubtitles.herokuapp.com/storeauthcode',
+        // Always include an `X-Requested-With` header in every AJAX request,
+        // to protect against CSRF attacks.
+        headers: {
+          'X-Requested-With': 'XMLHttpRequest'
+        },
+        contentType: 'application/octet-stream; charset=utf-8',
+        success: function(result) {
+          // Handle or verify the server response.
+        },
+        processData: false,
+        data: authResult['code']
+      });
+    } else {
+      console.log("Error");
+    }
   };
 
   private handleDrawerOpen = () => {
