@@ -230,7 +230,14 @@ class MainContentComponent extends React.Component<WithStyles<typeof styles> & U
           hls.loadSource(manifest_url);
           console.log("Attaching Media...")
           this.showLoading("loadingdiv", "videodiv");
-          hls.attachMedia(document.getElementById("video") as HTMLVideoElement);
+          const v = document.getElementById("video") as HTMLVideoElement;
+          hls.attachMedia(v);
+
+          v.onplay = function() {
+                const textTrack = v.textTracks[0];
+                textTrack.mode = "showing";
+          }
+
           this.setLoadingStateUntilVideoIsLoaded(hls);
           hls.on(Hls.Events.MANIFEST_PARSED, function (event, data) {
               console.log("Manifest Loaded");
@@ -244,7 +251,7 @@ class MainContentComponent extends React.Component<WithStyles<typeof styles> & U
       console.log(url);
 
       const socket: SocketIOClient.Socket = io('https://polyglot-livesubtitles.herokuapp.com/streams');
-      //const socket: SocketIOClient.Socket = io('http://localhost:8000/streams');
+      // const socket: SocketIOClient.Socket = io('http://localhost:8000/streams');
 
       this.setState({ socket });
 
