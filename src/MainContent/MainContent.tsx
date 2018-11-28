@@ -181,13 +181,27 @@ class MainContentComponent extends React.Component<WithStyles<typeof styles> & U
     }
 
     private hideLoading(loadingDiv: string, showableDiv: string) {
-      document.getElementById(loadingDiv).style.display = "none";
-      document.getElementById(showableDiv).style.display = "block";
+      const lDiv = document.getElementById(loadingDiv);
+      if (lDiv) {
+        lDiv.style.display = "none";
+      }
+
+      const sDiv = document.getElementById(showableDiv);
+      if (sDiv) {
+        sDiv.style.display = "block";
+      }
     }
 
     private showLoading(loadingDiv: string, showableDiv: string) {
-      document.getElementById(showableDiv).style.display = "none";
-      document.getElementById(loadingDiv).style.display = "flex";
+      const sDiv = document.getElementById(showableDiv);
+      if (sDiv) {
+        sDiv.style.display = "none";
+      }
+
+      const lDiv = document.getElementById(loadingDiv);
+      if (lDiv) {
+        lDiv.style.display = "flex";
+      }
     }
 
     private setLoadingStateUntilVideoIsLoaded(hls) {
@@ -224,6 +238,8 @@ class MainContentComponent extends React.Component<WithStyles<typeof styles> & U
       console.log(url);
 
       const socket: SocketIOClient.Socket = io('https://polyglot-livesubtitles.herokuapp.com/streams');
+      //const socket: SocketIOClient.Socket = io('http://localhost:8000/streams');
+
       this.setState({ socket });
 
       socket.on('connect_error', () => {
@@ -238,6 +254,10 @@ class MainContentComponent extends React.Component<WithStyles<typeof styles> & U
 
       socket.on('connect', () => {
           console.log("Socket connected");
+      });
+
+      socket.on("progress", () => {
+          console.log("Progress from server");
       });
 
       socket.on('server-ready', () => {
