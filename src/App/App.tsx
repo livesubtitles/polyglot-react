@@ -26,6 +26,8 @@ import { Information } from 'src/Information/Information';
 import { QualityDropdown } from "src/QualityDropdown/QualityDropdown";
 import GoogleLogin from 'react-google-login';
 import $ from 'jquery';
+import {google} from 'googleapis';
+declare const gapi;
 
 const drawerWidth = 240;
 
@@ -131,6 +133,67 @@ class AppComponent extends React.Component<URLParams & WithStyles<typeof styles>
     };
   }
 
+  // private loadScript = () => {
+  //   const script = document.createElement("script");
+  //   script.src = "https://apis.google.com/js/client:platform.js";
+  //   document.body.appendChild(script);
+  //   // script.addEventListener('load', this.start);
+  //   this.start(script);
+  // }
+
+ componentDidMount() {
+  //  $script('https://apis.google.com/js/client:platform.js', function () {
+  // //Put your google api functions here as callback
+  // gapi.load('auth2', function() {
+  //     auth2 = gapi.auth2.init({
+  //         client_id: '1070969009500-4674ntngjh3dvlbcvoer0r4c7hao04dh.apps.googleusercontent.com',
+  //         // Scopes to request in addition to 'profile' and 'email'
+  //         scope: 'https://www.googleapis.com/auth/cloud-translation https://www.googleapis.com/auth/cloud-platform'
+  //       });
+  //     });
+  //  });
+
+   // this.loadScript();
+   // this.start();
+ }
+
+ // private start = (script) => {
+ //   if(script.getAttribute('gapi_processed')){
+ //     gapi.load('auth2', function() {
+ //     auth2 = gapi.auth2.init({
+ //         client_id: '1070969009500-4674ntngjh3dvlbcvoer0r4c7hao04dh.apps.googleusercontent.com',
+ //         // Scopes to request in addition to 'profile' and 'email'
+ //         scope: 'https://www.googleapis.com/auth/cloud-translation https://www.googleapis.com/auth/cloud-platform'
+ //       });
+ //     });
+ //   } else {
+ //     console.log('Client wasn\'t ready, trying again in 100ms');
+ //     setTimeout(() => {this.start()}, 6000);
+ //   }
+ // }
+
+  private signInRequest = () => {
+ //    // auth2.grantOfflineAccess().then(this.signInCallback);
+ //    const oauth2Client = new google.auth.OAuth2(
+ //   '1070969009500-4674ntngjh3dvlbcvoer0r4c7hao04dh.apps.googleusercontent.com'
+ // );
+ //
+ // // generate a url that asks permissions for Google+ and Google Calendar scopes
+ // const scopes = [
+ //   'https://www.googleapis.com/auth/cloud-translation',
+ //   'https://www.googleapis.com/auth/cloud-platform'
+ // ];
+ //
+ // const url = oauth2Client.generateAuthUrl({
+ //   // 'online' (default) or 'offline' (gets refresh_token)
+ //   access_type: 'offline',
+ //
+ //   // If you only need one scope you can pass it as a string
+ //   scope: scopes
+ // });
+     var ga = gapi.auth2.getAuthInstance();
+     ga.grantOfflineAccess().then(this.signInCallback);
+  }
   private signInCallback = (authResult) => {
     console.log("Got back: ");
     console.log(authResult);
@@ -142,13 +205,28 @@ class AppComponent extends React.Component<URLParams & WithStyles<typeof styles>
     //
     // // Send the code to the server
     console.log("About to send request");
-    fetch('https://polyglot-livesubtitles.herokuapp.com/storeauthcode', {method: 'post',
-        headers: {
-          'X-Requested-With': 'XMLHttpRequest',
-          'Content-Type': 'application/octet-stream; charset=utf-8'
-        },
-      body: authResult['code']})
-  .then();
+    $.ajax({
+      type: 'POST',
+      url: 'https://polyglot-punctuator.herokuapp.com/storeauthcode',
+      // Always include an `X-Requested-With` header in every AJAX request,
+      // to protect against CSRF attacks.
+      headers: {
+        'X-Requested-With': 'XMLHttpRequest'
+      },
+      contentType: 'application/octet-stream; charset=utf-8',
+      success: function(result) {
+        // Handle or verify the server response.
+      },
+      processData: false,
+      data: authResult['code']
+    });
+  //   fetch('https://polyglot-livesubtitles.herokuapp.com/storeauthcode', {method: 'post',
+  //       headers: {
+  //         'X-Requested-With': 'XMLHttpRequest',
+  //         'Content-Type': 'application/octet-stream; charset=utf-8'
+  //       },
+  //     body: authResult['code']})
+  // .then();
     } else {
       console.log("Error");
     }
@@ -211,17 +289,9 @@ class AppComponent extends React.Component<URLParams & WithStyles<typeof styles>
             <Typography variant="h6" color="inherit" noWrap>
             Polyglot
             </Typography>
-            <GoogleLogin
-               clientId="1070969009500-4674ntngjh3dvlbcvoer0r4c7hao04dh.apps.googleusercontent.com"
-               buttonText="Login"
-               accessType='offline'
-               responseType='code'
-               autoLoad={true}
-               style={{display:this.state.loginShowing ? "inline" : "none"}}
-               className={classes.googleButton}
-               onSuccess={this.signInCallback}
-               onFailure={this.signInCallback}
-            />
+            <Button variant="outlined" className={classes.button} onClick={this.signInRequest}>
+             Sign In
+            </Button>
             {/* <Button variant="outlined" color="secondary" className={classes.button} onClick={this.signInCallback}>
                 Sign In
             </Button> */}

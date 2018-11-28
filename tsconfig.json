@@ -27,5 +27,9 @@
     "webpack",
     "jest",
     "src/setupTests.ts"
+  ],
+  "types": [
+    "gapi",
+    "gapi.auth2"
   ]
 }

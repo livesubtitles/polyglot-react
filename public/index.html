@@ -1,5 +1,5 @@
 <!DOCTYPE html>
-<html lang="en">
+<html lang="en" itemscope itemtype="http://schema.org/Article">
   <head>
     <meta charset="utf-8">
     <meta name="viewport" content="width=device-width, initial-scale=1, shrink-to-fit=no">
@@ -20,6 +20,19 @@
       Learn how to configure a non-root public URL by running `npm run build`.
     -->
     <title>React App</title>
+    <script src="https://apis.google.com/js/client:platform.js?onload=start" async defer>
+    </script>
+    <script>
+      function start() {
+        gapi.load('auth2', function() {
+          auth2 = gapi.auth2.init({
+            client_id: '1070969009500-4674ntngjh3dvlbcvoer0r4c7hao04dh.apps.googleusercontent.com',
+            // Scopes to request in addition to 'profile' and 'email'
+            scope: 'https://www.googleapis.com/auth/cloud-translation https://www.googleapis.com/auth/cloud-platform'
+          });
+        });
+      }
+    </script>
   </head>
   <body>
     <noscript>
