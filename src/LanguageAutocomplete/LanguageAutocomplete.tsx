@@ -11,7 +11,6 @@ import { LanguageSuggestion } from "src/utils/interfaces";
 import Language from "@material-ui/icons/Language";
 import InputAdornment from '@material-ui/core/InputAdornment';
 
-
 const suggestions: LanguageSuggestion[] = [
   { label: "Afrikaans", value: "af-ZA" },
   { label: "Amharic", value: "am-ET" },

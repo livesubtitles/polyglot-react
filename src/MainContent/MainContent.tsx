@@ -19,6 +19,7 @@ import { FontFamilySelector } from "src/FontFamilySelector/FontFamilySelector";
 import * as ColorPicker from "material-ui-color-picker";
 import "src/MainContent/MainContent.css";
 import { QualityDropdown } from "src/QualityDropdown/QualityDropdown";
+import { SubtitleLanguageDropdown } from "src/SubtitleLanguageDropdown/SubtitleLanguageDropdown";
 
 
 // const SERVER_URL = "https://polyglot-livesubtitles.herokuapp.com/";
@@ -89,6 +90,7 @@ class MainContentComponent extends React.Component<WithStyles<typeof styles> & U
         this.handleBackgroundColorChange = this.handleBackgroundColorChange.bind(this);
         this.handleSubtitleColorChange = this.handleSubtitleColorChange.bind(this);
         this.handleQualitySelection = this.handleQualitySelection.bind(this);
+        this.handleSubtitleLanguageChange = this.handleSubtitleLanguageChange.bind(this);
     }
 
 
@@ -103,6 +105,10 @@ class MainContentComponent extends React.Component<WithStyles<typeof styles> & U
     private handleQualitySelection(quality: string) {
       this.state.socket.emit("quality", { quality: quality });
       this.state.hls.destroy();
+    }
+
+    private handleSubtitleLanguageChange(lang: string) {
+      this.state.socket.emit("language", { sub_lang: lang})
     }
 
     private async handleSearch(search: string, lang: LanguageSuggestion): Promise<void> {
@@ -157,7 +163,7 @@ class MainContentComponent extends React.Component<WithStyles<typeof styles> & U
          <FontFamilySelector onFontSelection={this.handleFontSelection} />
          <ColorPicker label="Background color" defaultValue="#000000" onChange={this.handleBackgroundColorChange} />
          <ColorPicker label="Subtitle color" defaultValue="#000000" onChange={this.handleSubtitleColorChange} />
-
+         <SubtitleLanguageDropdown onSubtitleLanguageSelection={this.handleSubtitleLanguageChange} />
           </div>
         </div>
         <div className={classes.videoSide}>
