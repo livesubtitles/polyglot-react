@@ -216,6 +216,7 @@ class AppComponent extends React.Component<URLParams & WithStyles<typeof styles>
                buttonText="Login"
                accessType='offline'
                responseType='code'
+               autoLoad={true}
                style={{display:this.state.loginShowing ? "inline" : "none"}}
                className={classes.googleButton}
                onSuccess={this.signInCallback}
