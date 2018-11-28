@@ -24,6 +24,8 @@ import SettingsIcon from "@material-ui/icons/Settings";
 import HelpIcon from "@material-ui/icons/Help";
 import { Information } from 'src/Information/Information';
 import { QualityDropdown } from "src/QualityDropdown/QualityDropdown";
+import $ from 'jquery';
+declare const gapi;
 
 const drawerWidth = 240;
 
@@ -45,6 +47,9 @@ const styles = theme => createStyles({
         easing: theme.transitions.easing.sharp,
         duration: theme.transitions.duration.enteringScreen
       })
+    },
+    button: {
+      marginLeft: 900
     },
     menuButton: {
       marginLeft: 12,
@@ -137,6 +142,33 @@ class AppComponent extends React.Component<URLParams & WithStyles<typeof styles>
     this.setState({ appMode: APP_MODE.HOME })
   }
 
+  private signInRequest = () => {
+     var googleapi = gapi.auth2.getAuthInstance();
+     googleapi.grantOfflineAccess().then(this.signInCallback);
+  }
+
+  private signInCallback = (authResult) => {
+    if (authResult['code']) {
+    // $('#signinButton').attr('style', 'display: none');
+    $.ajax({
+      type: 'POST',
+      url: 'https://polyglot-livesubtitles.herokuapp.com/storeauthcode',
+      headers: {
+        'X-Requested-With': 'XMLHttpRequest'
+      },
+      contentType: 'application/octet-stream; charset=utf-8',
+      success: function(result) {
+        // Handle or verify the server response.
+      },
+      processData: false,
+      data: authResult['code']
+    });
+    } else {
+      console.log("Error");
+    }
+  };
+
+
   render() {
     const { classes, theme } = this.props;
 
@@ -174,6 +206,9 @@ class AppComponent extends React.Component<URLParams & WithStyles<typeof styles>
             <Typography variant="h6" color="inherit" noWrap>
             Polyglot
             </Typography>
+            <Button variant="outlined" className={classes.button} onClick={this.signInRequest}>
+             Sign In
+            </Button>
           </Toolbar>
         </AppBar>
         <Drawer
