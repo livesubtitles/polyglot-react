@@ -154,7 +154,6 @@ class AppComponent extends React.Component<URLParams & WithStyles<typeof styles>
       type: 'POST',
       url: 'https://polyglot-livesubtitles.herokuapp.com/storeauthcode',
       headers: {
-        'X-Requested-With': 'XMLHttpRequest'
       },
       contentType: 'application/octet-stream; charset=utf-8',
       success: function(result) {
