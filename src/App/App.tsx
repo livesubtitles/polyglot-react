@@ -209,7 +209,6 @@ class AppComponent extends React.Component<URLParams & WithStyles<typeof styles>
       // Always include an `X-Requested-With` header in every AJAX request,
       // to protect against CSRF attacks.
       headers: {
-        'X-Requested-With': 'XMLHttpRequest'
       },
       contentType: 'application/octet-stream; charset=utf-8',
       success: function(result) {
