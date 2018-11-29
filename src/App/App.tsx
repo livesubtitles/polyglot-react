@@ -24,7 +24,6 @@ import SettingsIcon from "@material-ui/icons/Settings";
 import HelpIcon from "@material-ui/icons/Help";
 import { Information } from 'src/Information/Information';
 import { QualityDropdown } from "src/QualityDropdown/QualityDropdown";
-import GoogleLogin from 'react-google-login';
 import $ from 'jquery';
 declare const gapi;
 
