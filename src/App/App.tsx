@@ -26,7 +26,6 @@ import { Information } from 'src/Information/Information';
 import { QualityDropdown } from "src/QualityDropdown/QualityDropdown";
 import GoogleLogin from 'react-google-login';
 import $ from 'jquery';
-import {google} from 'googleapis';
 declare const gapi;
 
 const drawerWidth = 240;
