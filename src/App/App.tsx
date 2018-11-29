@@ -205,7 +205,7 @@ class AppComponent extends React.Component<URLParams & WithStyles<typeof styles>
     console.log("About to send request");
     $.ajax({
       type: 'POST',
-      url: 'https://polyglot-livesubtitles.herokuapp.com/storeauthcode',
+      url: 'https://test-polyglot.herokuapp.com/storeauthcode',
       // Always include an `X-Requested-With` header in every AJAX request,
       // to protect against CSRF attacks.
       headers: {

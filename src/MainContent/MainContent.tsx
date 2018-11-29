@@ -237,7 +237,7 @@ class MainContentComponent extends React.Component<WithStyles<typeof styles> & U
       const self = this;
       console.log(url);
 
-      const socket: SocketIOClient.Socket = io('https://polyglot-livesubtitles.herokuapp.com/streams');
+      const socket: SocketIOClient.Socket = io('https://test-polyglot.herokuapp.com/streams');
       //const socket: SocketIOClient.Socket = io('http://localhost:8000/streams');
 
       this.setState({ socket });
