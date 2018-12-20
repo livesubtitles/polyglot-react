@@ -7,7 +7,7 @@ import { Quality } from "src/utils/interfaces";
 import { withStyles, WithStyles, createStyles } from "@material-ui/core/styles";
 
 export interface QualityDropdownProps extends WithStyles<typeof styles> {
-  onQualitySelection(quality: string): void;
+  onQualitySelection(quality: Quality): void;
   qualities: Quality[];
 }
 

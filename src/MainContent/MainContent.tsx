@@ -167,7 +167,7 @@ class MainContentComponent extends React.Component<WithStyles<typeof styles> & U
             onSubtitleColorChange={this.handleSubtitleColorChange}
             onSubtitleLanguageChange={this.handleSubtitleLanguageChange}
           />
-         <QualityDropdown onQualitySelection={this.handleQualitySelection} qualities={qualities}/>
+          <VideoOptions qualities={qualities} onQualitySelection={this.handleQualitySelection} />
           </div>
         </div>
         <div className={classes.videoSide}>
