@@ -25,15 +25,15 @@ const styles = theme => createStyles({
 export class FontFamilySelectorComponent extends React.Component<FontFamilySelectorProps, FontFamilySelectorState> {
 
     private static fontFamilies = {
-      "Lato": <link href="https://fonts.googleapis.com/css?family=Lato" rel="stylesheet"/>,
-      "Spicy Rice": <link href="https://fonts.googleapis.com/css?family=Spicy+Rice" rel="stylesheet"/>,
-      "Roboto": <link rel="stylesheet" href="https://fonts.googleapis.com/css?family=Roboto:300,400,500"/>,
-      "Roboto Mono": <link href="https://fonts.googleapis.com/css?family=Roboto+Mono" rel="stylesheet"/>,
-      "Lobster": <link href="https://fonts.googleapis.com/css?family=Lobster" rel="stylesheet"/>,
-      "Pacifico": <link href="https://fonts.googleapis.com/css?family=Pacifico" rel="stylesheet"/>,
-      "Mali": <link href="https://fonts.googleapis.com/css?family=Mali" rel="stylesheet"/>,
-      "Kanit": <link href="https://fonts.googleapis.com/css?family=Kanit" rel="stylesheet"/>,
-      "Cairo": <link href="https://fonts.googleapis.com/css?family=Cairo" rel="stylesheet"/>
+      "Lato": <link key={0} href="https://fonts.googleapis.com/css?family=Lato" rel="stylesheet"/>,
+      "Spicy Rice": <link key={1} href="https://fonts.googleapis.com/css?family=Spicy+Rice" rel="stylesheet"/>,
+      "Roboto": <link key={2} rel="stylesheet" href="https://fonts.googleapis.com/css?family=Roboto:300,400,500"/>,
+      "Roboto Mono": <link key={3} href="https://fonts.googleapis.com/css?family=Roboto+Mono" rel="stylesheet"/>,
+      "Lobster": <link key={4} href="https://fonts.googleapis.com/css?family=Lobster" rel="stylesheet"/>,
+      "Pacifico": <link key={5} href="https://fonts.googleapis.com/css?family=Pacifico" rel="stylesheet"/>,
+      "Mali": <link key={6} href="https://fonts.googleapis.com/css?family=Mali" rel="stylesheet"/>,
+      "Kanit": <link key={7} href="https://fonts.googleapis.com/css?family=Kanit" rel="stylesheet"/>,
+      "Cairo": <link key={8} href="https://fonts.googleapis.com/css?family=Cairo" rel="stylesheet"/>
     }
 
     constructor(props: FontFamilySelectorProps) {

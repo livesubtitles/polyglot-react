@@ -311,7 +311,6 @@ class MainContentComponent extends React.Component<WithStyles<typeof styles> & U
     }
 
     public componentDidMount() {
-      console.log(this.props.link);
 
       // set up socket event listener
       // TODO: Grab link and language if we have them, emit socket event and set up socket event listener which will update mediaURLs

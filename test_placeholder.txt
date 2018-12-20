@@ -1,0 +1,9 @@
+import * as React from 'react';
+import * as ReactDOM from 'react-dom';
+import { PLACEHOLDER } from 'src/PLACEHOLDER/PLACEHOLDER';
+
+it('renders without crashing', () => {
+  const div = document.createElement('div');
+  ReactDOM.render(<PLACEHOLDER />, div);
+  ReactDOM.unmountComponentAtNode(div);
+});

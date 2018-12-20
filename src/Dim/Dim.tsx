@@ -5,7 +5,7 @@ import Grid from '@material-ui/core/Grid';
 import Typography from '@material-ui/core/Typography';
 import ToggleButtonGroup from '@material-ui/lab/ToggleButtonGroup';
 
-interface ToggleButtonsComponentState {
+interface DimComponentState {
   dim: boolean;
 }
 
@@ -21,7 +21,7 @@ const styles = theme => createStyles({
   },
 });
 
-class ToggleButtonsComponent extends React.Component<WithStyles<typeof styles>, ToggleButtonsComponentState> {
+class DimComponent extends React.Component<WithStyles<typeof styles>, DimComponentState> {
   constructor(props) {
     super(props);
     this.state = {
@@ -59,4 +59,4 @@ class ToggleButtonsComponent extends React.Component<WithStyles<typeof styles>, 
 }
 
 
-export const ToggleButtons = withStyles(styles)(ToggleButtonsComponent);
+export const Dim = withStyles(styles)(DimComponent);

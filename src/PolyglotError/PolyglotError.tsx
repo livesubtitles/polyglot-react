@@ -5,6 +5,7 @@ import DialogActions from '@material-ui/core/DialogActions';
 import DialogContent from '@material-ui/core/DialogContent';
 import DialogContentText from '@material-ui/core/DialogContentText';
 import DialogTitle from '@material-ui/core/DialogTitle';
+import Typography from '@material-ui/core/Typography';
 import { PolyglotErrorType } from "src/utils/interfaces";
 
 export interface PolyglotErrorProps {
@@ -50,7 +51,7 @@ export class PolyglotError extends React.Component<PolyglotErrorProps, PolyglotE
          aria-labelledby="alert-dialog-title"
          aria-describedby="alert-dialog-description"
        >
-         <DialogTitle id="alert-dialog-title">{"Error"}</DialogTitle>
+         <DialogTitle id="alert-dialog-title"><Typography>Error</Typography></DialogTitle>
          <DialogContent>
            <DialogContentText id="alert-dialog-description">
              {PolyglotError.errorMap[this.props.error]}
@@ -58,7 +59,7 @@ export class PolyglotError extends React.Component<PolyglotErrorProps, PolyglotE
          </DialogContent>
          <DialogActions>
            <Button onClick={this.handleClose} color="primary">
-             Retry
+             <Typography> Retry </Typography>
            </Button>
          </DialogActions>
       </Dialog>
