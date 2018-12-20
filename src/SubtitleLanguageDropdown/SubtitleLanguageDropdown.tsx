@@ -14,7 +14,7 @@ interface SubtitleLanguageDropdownState {
     subtitleLang: string;
 }
 
-const DEFAULT_LANGUAGE = "English";
+const DEFAULT_LANGUAGE = "en-US";
 
 const styles = theme => createStyles({
   formControl: {
@@ -79,11 +79,10 @@ export class SubtitleLanguageDropdownComponent extends React.Component<SubtitleL
     render() {
 
         const { classes } = this.props;
-
         return (
           <React.Fragment>
           <FormControl className={classes.formControl}>
-            <InputLabel htmlFor="subtitle-dropdown-id">Subtitle Language</InputLabel>
+            <InputLabel htmlFor="subtitle-dropdown-id">Subtitle Lang.</InputLabel>
             <Select
               value={this.state.subtitleLang}
               onChange={this.handleChange}
