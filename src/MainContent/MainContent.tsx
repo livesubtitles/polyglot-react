@@ -14,6 +14,7 @@ import { withStyles, createStyles, WithStyles, Theme } from "@material-ui/core/s
 import { Typography } from '@material-ui/core';
 import * as io from 'socket.io-client';
 import * as Hls from "hls.js";
+import Grid from '@material-ui/core/Grid';
 import { FontSizeSlider } from "src/FontSizeSlider/FontSizeSlider";
 import { FontFamilySelector } from "src/FontFamilySelector/FontFamilySelector";
 import * as ColorPicker from "material-ui-color-picker";
@@ -159,16 +160,25 @@ class MainContentComponent extends React.Component<WithStyles<typeof styles> & U
         </div>
         <div className={classes.centre}>
           <div className={classes.video}>
-         <video id="video" style={this.videoCSS} controls></video>
-         <SubtitleOptions
-            onFontSizeChange={this.handleFontSizeChange}
-            onFontSelection={this.handleFontSelection}
-            onBackgroundColorChange={this.handleBackgroundColorChange}
-            onSubtitleColorChange={this.handleSubtitleColorChange}
-            onSubtitleLanguageChange={this.handleSubtitleLanguageChange}
-          />
-          <VideoOptions qualities={qualities} onQualitySelection={this.handleQualitySelection} />
-          </div>
+          <Grid
+              container
+              direction="row"
+              justify="space-evenly"
+              alignItems="center"
+              spacing={24}
+           >
+            <video id="video" style={this.videoCSS} controls></video>
+           </Grid>
+           <br/><br/>
+           <SubtitleOptions
+              onFontSizeChange={this.handleFontSizeChange}
+              onFontSelection={this.handleFontSelection}
+              onBackgroundColorChange={this.handleBackgroundColorChange}
+              onSubtitleColorChange={this.handleSubtitleColorChange}
+              onSubtitleLanguageChange={this.handleSubtitleLanguageChange}
+            />
+            <VideoOptions qualities={qualities} onQualitySelection={this.handleQualitySelection} />
+            </div>
         </div>
         <div className={classes.videoSide}>
         {/*
