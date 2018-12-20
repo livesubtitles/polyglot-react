@@ -20,6 +20,8 @@ import * as ColorPicker from "material-ui-color-picker";
 import "src/MainContent/MainContent.css";
 import { QualityDropdown } from "src/QualityDropdown/QualityDropdown";
 import { SubtitleLanguageDropdown } from "src/SubtitleLanguageDropdown/SubtitleLanguageDropdown";
+import { SubtitleOptions } from "src/SubtitleOptions/SubtitleOptions";
+import { VideoOptions } from "src/VideoOptions/VideoOptions";
 
 
 // const SERVER_URL = "https://polyglot-livesubtitles.herokuapp.com/";
@@ -158,12 +160,14 @@ class MainContentComponent extends React.Component<WithStyles<typeof styles> & U
         <div className={classes.centre}>
           <div className={classes.video}>
          <video id="video" style={this.videoCSS} controls></video>
+         <SubtitleOptions
+            onFontSizeChange={this.handleFontSizeChange}
+            onFontSelection={this.handleFontSelection}
+            onBackgroundColorChange={this.handleBackgroundColorChange}
+            onSubtitleColorChange={this.handleSubtitleColorChange}
+            onSubtitleLanguageChange={this.handleSubtitleLanguageChange}
+          />
          <QualityDropdown onQualitySelection={this.handleQualitySelection} qualities={qualities}/>
-         <FontSizeSlider onFontSizeChange={this.handleFontSizeChange} />
-         <FontFamilySelector onFontSelection={this.handleFontSelection} />
-         <ColorPicker label="Background color" defaultValue="#000000" onChange={this.handleBackgroundColorChange} />
-         <ColorPicker label="Subtitle color" defaultValue="#000000" onChange={this.handleSubtitleColorChange} />
-         <SubtitleLanguageDropdown onSubtitleLanguageSelection={this.handleSubtitleLanguageChange} />
           </div>
         </div>
         <div className={classes.videoSide}>
@@ -233,8 +237,9 @@ class MainContentComponent extends React.Component<WithStyles<typeof styles> & U
           const v = document.getElementById("video") as HTMLVideoElement;
           hls.attachMedia(v);
 
-          v.onplay = function() {
-                const textTrack = v.textTracks[0];
+          document.getElementById("video").onplay = function() {
+                const vid = document.getElementById("video") as HTMLVideoElement;
+                const textTrack = vid.textTracks[0];
                 textTrack.mode = "showing";
           }
 
