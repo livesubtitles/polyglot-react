@@ -4,6 +4,6 @@ import { VideoOptions } from 'src/VideoOptions/VideoOptions';
 
 it('renders without crashing', () => {
   const div = document.createElement('div');
-  ReactDOM.render(<VideoOptions qualities={["144, 360"]}/>, div);
+  ReactDOM.render(<VideoOptions qualities={["144, 360"]} onQualitySelection={(q) => {}}/>, div);
   ReactDOM.unmountComponentAtNode(div);
 });

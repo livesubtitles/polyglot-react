@@ -4,6 +4,11 @@ import { LanguageAutocomplete } from 'src/LanguageAutocomplete/LanguageAutocompl
 
 it('renders without crashing', () => {
   const div = document.createElement('div');
-  ReactDOM.render(<LanguageAutocomplete />, div);
+  ReactDOM.render(
+    <LanguageAutocomplete
+    onSuggestionSelected={(v) => {}}
+    onChangeValue={(v) => {}}
+    isErrorSuggestion={false}
+    />, div);
   ReactDOM.unmountComponentAtNode(div);
 });
