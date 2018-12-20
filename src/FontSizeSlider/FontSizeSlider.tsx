@@ -1,5 +1,6 @@
 import * as React from 'react';
 import Slider from '@material-ui/lab/Slider';
+import Typography from '@material-ui/core/Typography';
 import { withStyles, WithStyles, createStyles } from "@material-ui/core/styles";
 
 export interface FontSizeSliderProps extends WithStyles<typeof styles> {
@@ -41,7 +42,7 @@ class FontSizeSliderComponent extends React.Component<FontSizeSliderProps, FontS
 
         return (
           <div className={classes.root}>
-            Font size: {this.state.size}
+            <Typography> Font size: {this.state.size} </Typography>
             <Slider
               classes={{ container: classes.slider }}
               value={this.state.size}
