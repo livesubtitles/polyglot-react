@@ -10,11 +10,17 @@ it('renders without crashing', () => {
   ReactDOM.unmountComponentAtNode(div);
 });
 
+let mockfn;
+let instance;
+
+beforeEach(() => {
+  mockfn = jest.fn();
+  instance = TestRenderer.create(
+    <FontFamilySelector onFontSelection={mockfn}/>
+ ).root;
+});
+
 it("changing the font", () => {
-  const mockfn = jest.fn();
-  const instance = TestRenderer.create(
-                      <FontFamilySelector onFontSelection={mockfn}/>
-                   ).root;
   const dummyFont = "DUMMY_FONT"
   const event = {target: {value: dummyFont}};
 
@@ -22,4 +28,10 @@ it("changing the font", () => {
   select.props.onChange(event);
 
   expect(mockfn.mock.calls).toEqual([[dummyFont]]);
+});
+
+it("default font is defined", () => {
+  const DEFAULT_FONT = "Roboto";
+  const select = instance.findByType(Select);
+  expect(select.props.value).toBe(DEFAULT_FONT);
 });
