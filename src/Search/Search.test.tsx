@@ -1,6 +1,5 @@
 import * as React from 'react';
 import * as ReactDOM from 'react-dom';
-import * as ReactTestUtils from 'react-dom/test-utils';
 import * as TestRenderer from 'react-test-renderer';
 import { Search } from 'src/Search/Search';
 import { UrlInputView } from "src/UrlInputView/UrlInputView";
@@ -37,7 +36,6 @@ function simulateSearch(url: string, valueLabel: string, suggestion: LanguageSug
 }
 
 it("calls search when input is valid", (done) => {
-
   simulateSearch(URL, LANG_SUGGESTION.label, LANG_SUGGESTION, 1, (mockfn) => {
     expect(mockfn.mock.calls[0]).toEqual([URL, LANG_SUGGESTION]);
   });
