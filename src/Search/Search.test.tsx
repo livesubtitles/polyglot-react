@@ -19,15 +19,19 @@ it("calls search when input is valid", (done) => {
                       <Search onSearch={mockfn}/>
                    ).root;
 
+  const URL = "www.youtube.com";
+  const LANG_SUGGESTION = { label: "Spanish", value: "es-ES" }
+
   const urlview = instance.findByType(UrlInputView);
   urlview.props.onChange({ target: { value: "www.youtube.com"}})
 
   const langAutocomplete = instance.findByType(LanguageAutocomplete);
   langAutocomplete.props.onChangeValue("Spanish");
-  langAutocomplete.props.onSuggestionSelected(null, { suggestion: { label: "Spanish", value: "es-ES" }});
+  langAutocomplete.props.onSuggestionSelected(null, { suggestion: LANG_SUGGESTION });
 
   const searchButton = instance.findByType(IconButton);
-  searchButton.props.onClick()
+  searchButton.props.onClick();
   expect(mockfn.mock.calls.length).toEqual(1);
+  expect(mockfn.mock.calls[0]).toEqual([URL, LANG_SUGGESTION]);
   done();
 });
