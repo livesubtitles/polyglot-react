@@ -85,7 +85,7 @@ class SearchComponent extends React.Component<SearchProps, SearchState> {
     return (
       <div className={classes.root}>
         <div className={classes.inputStyle}>
-          <UrlInputView 
+          <UrlInputView
             isErrorURL={this.state.isErrorURL}
             onChange={this.handleChangeURL} />
         </div>
