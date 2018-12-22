@@ -30,7 +30,7 @@ let mockOnChangeValue;
 beforeEach(() => {
   mockOnSuggestionSelected = jest.fn();
   mockOnChangeValue = jest.fn();
-}
+});
 
 it("calls onChangeValue when there is a change in the input", (done) => {
   const instance = getLanguageAutocomplete(false);
