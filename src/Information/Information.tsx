@@ -2,15 +2,12 @@ import * as React from 'react'
 import Logo from 'src/media/icon_square.png';
 import { createStyles, WithStyles, withStyles, Typography, Slide, withTheme, WithTheme } from '@material-ui/core';
 import MobileStepper from '@material-ui/core/MobileStepper';
-import Paper from '@material-ui/core/Paper';
 import Button from '@material-ui/core/Button';
 import KeyboardArrowLeft from '@material-ui/icons/KeyboardArrowLeft';
 import KeyboardArrowRight from '@material-ui/icons/KeyboardArrowRight';
 import SwipeableViews from 'react-swipeable-views';
 import { autoPlay } from 'react-swipeable-views-utils';
 import Card from '@material-ui/core/Card';
-import CardActionArea from '@material-ui/core/CardActionArea';
-import CardActions from '@material-ui/core/CardActions';
 import CardContent from '@material-ui/core/CardContent'
 
 const INTERVAL_TIME = 10000;
@@ -82,7 +79,7 @@ class InformationComponent extends React.Component<InformationProps & WithTheme,
     };
   }
 
-  private handleNext = () => {
+  public handleNext = () => {
     this.setState(prevState => ({
       slideIndex: prevState.slideIndex + 1,
     }));
@@ -130,7 +127,9 @@ class InformationComponent extends React.Component<InformationProps & WithTheme,
           position="static"
           activeStep={slideIndex}
           nextButton={
-            <Button size="small" onClick={this.handleNext} disabled={slideIndex === maxIndex - 1}>
+            <Button size="small" onClick={this.handleNext} disabled={slideIndex === maxIndex - 1}
+            id="next-button"
+            >
               Next
               {theme.direction === 'rtl' ? <KeyboardArrowLeft /> : <KeyboardArrowRight />}
             </Button>
