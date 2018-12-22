@@ -1,9 +1,7 @@
 import * as React from 'react';
-import { AppHeader } from "src/AppHeader/AppHeader";
 import { MainContent } from "src/MainContent/MainContent";
 import { URLParams } from "src/utils/interfaces";
 import { createStyles, withStyles, WithStyles, MuiThemeProvider, CssBaseline, Button, createMuiTheme, WithTheme } from '@material-ui/core';
-import { lightTheme, darkTheme } from 'src/Themes/themes';
 import classNames from "classnames";
 import Drawer from "@material-ui/core/Drawer";
 import AppBar from "@material-ui/core/AppBar";
