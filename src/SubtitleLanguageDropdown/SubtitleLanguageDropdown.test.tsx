@@ -2,7 +2,6 @@ import * as React from 'react';
 import * as ReactDOM from 'react-dom';
 import { SubtitleLanguageDropdown } from 'src/SubtitleLanguageDropdown/SubtitleLanguageDropdown';
 import * as enzyme from 'enzyme';
-import { createShallow } from '@material-ui/core/test-utils';
 import Select from '@material-ui/core/Select';
 
 it('renders without crashing', () => {
