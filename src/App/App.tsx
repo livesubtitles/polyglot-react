@@ -110,14 +110,6 @@ class AppComponent extends React.Component<URLParams & WithStyles<typeof styles>
                                           & WithTheme, AppState> {
   constructor(props) {
     super(props);
-    if (props.link) {
-      console.log("LINK: " + decodeURIComponent(props.link));
-    }
-
-    if (props.lang) {
-      console.log("LANG: " + props.lang);
-    }
-
     this.state = {
       open: false,
       appMode: APP_MODE.HOME,
@@ -233,7 +225,7 @@ class AppComponent extends React.Component<URLParams & WithStyles<typeof styles>
           </div>
           <Divider />
           <List>
-            <ListItem button
+            <ListItem id="homeButtonApp" button
                       onClick={this.handleHomeClick}>
               <ListItemIcon>
                 <HomeIcon />
@@ -243,20 +235,20 @@ class AppComponent extends React.Component<URLParams & WithStyles<typeof styles>
           </List>
           <Divider />
           <List>
-            <ListItem button
+            <ListItem id="infoButtonApp" button
                       onClick={this.handleInfoClick}>
               <ListItemIcon>
                 <InfoIcon />
               </ListItemIcon>
               <ListItemText primary="Information" />
             </ListItem>
-            <ListItem button>
+            <ListItem id="helpButtonApp" button>
               <ListItemIcon>
                 <HelpIcon />
               </ListItemIcon>
               <ListItemText primary="Help" />
             </ListItem>
-            <ListItem button>
+            <ListItem id="settingsButtonApp" button>
               <ListItemIcon>
                 <SettingsIcon />
               </ListItemIcon>
