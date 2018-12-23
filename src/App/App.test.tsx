@@ -36,13 +36,16 @@ it("passes nothing to MainContent", () => {
   expect(mainContent.props().lang).toBeUndefined();
 });
 
-it("default mode and changing mode to information displays information", () => {
+it("default mode and changing mode", () => {
   const wrapper = enzyme.mount(<App />);
   // default is MainContent
-  expect(wrapper.find(MainContent).exists());
+  expect(wrapper.find(MainContent).exists()).toBe(true);
   const infoButton = wrapper.find("#infoButtonApp");
   infoButton.find(ButtonBase).simulate("click");
   expect(wrapper.find(MainContent).exists()).toBe(false);
   expect(wrapper.find(Information).exists()).toBe(true);
-
+  const homeButton = wrapper.find("#homeButtonApp");
+  homeButton.find(ButtonBase).simulate("click");
+  expect(wrapper.find(MainContent).exists()).toBe(true);
+  expect(wrapper.find(Information).exists()).toBe(false);
 });
