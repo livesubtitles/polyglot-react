@@ -4,6 +4,7 @@ import { App } from 'src/App/App';
 import { MainContent } from "src/MainContent/MainContent";
 import * as enzyme from 'enzyme';
 import ButtonBase from "@material-ui/core/ButtonBase";
+import ListItem from '@material-ui/core/ListItem';
 import { Information } from "src/Information/Information";
 
 it('renders without crashing', () => {
@@ -12,40 +13,45 @@ it('renders without crashing', () => {
   ReactDOM.unmountComponentAtNode(div);
 });
 
-it("passes link and language correctly to MainContent", () => {
-  const LINK = "www.youtube.com";
-  const LANG = "Spanish";
-  const wrapper = enzyme.shallow(<App link={LINK} lang={LANG} />).dive();
-  const mainContent = wrapper.find(MainContent);
-  expect(mainContent.props().link).toEqual(LINK);
-  expect(mainContent.props().lang).toEqual(LANG);
+describe("Main Content tests", () => {
+  it("passes link and language correctly to MainContent", () => {
+    const LINK = "www.youtube.com";
+    const LANG = "Spanish";
+    const wrapper = enzyme.shallow(<App link={LINK} lang={LANG} />).dive();
+    const mainContent = wrapper.find(MainContent);
+    expect(mainContent.props().link).toEqual(LINK);
+    expect(mainContent.props().lang).toEqual(LANG);
+  });
+  
+  it("passes link only to MainContent", () => {
+    const LINK = "www.youtube.com";
+    const wrapper = enzyme.shallow(<App link={LINK} />).dive();
+    const mainContent = wrapper.find(MainContent);
+    expect(mainContent.props().link).toEqual(LINK);
+    expect(mainContent.props().lang).toBeUndefined();
+  });
+  
+  it("passes nothing to MainContent", () => {
+    const wrapper = enzyme.shallow(<App />).dive();
+    const mainContent = wrapper.find(MainContent);
+    expect(mainContent.props().link).toBeUndefined();
+    expect(mainContent.props().lang).toBeUndefined();
+  });
 });
 
-it("passes link only to MainContent", () => {
-  const LINK = "www.youtube.com";
-  const wrapper = enzyme.shallow(<App link={LINK} />).dive();
-  const mainContent = wrapper.find(MainContent);
-  expect(mainContent.props().link).toEqual(LINK);
-  expect(mainContent.props().lang).toBeUndefined();
+describe("mode switching", () => {
+  it("default mode and changing mode", () => {
+    const wrapper = enzyme.shallow(<App />).dive();
+    // default is MainContent
+    expect(wrapper.find(MainContent).exists()).toBe(true);
+    const infoButton = wrapper.find('[id="infoButtonApp"]');
+    infoButton.find(ListItem).simulate("click");
+    expect(wrapper.find(MainContent).exists()).toBe(false);
+    expect(wrapper.find(Information).exists()).toBe(true);
+    const homeButton = wrapper.find('[id="homeButtonApp"]');
+    homeButton.find(ListItem).simulate("click");
+    expect(wrapper.find(MainContent).exists()).toBe(true);
+    expect(wrapper.find(Information).exists()).toBe(false);
+ });
 });
 
-it("passes nothing to MainContent", () => {
-  const wrapper = enzyme.shallow(<App />).dive();
-  const mainContent = wrapper.find(MainContent);
-  expect(mainContent.props().link).toBeUndefined();
-  expect(mainContent.props().lang).toBeUndefined();
-});
-//
-// it("default mode and changing mode", () => {
-//   const wrapper = enzyme.mount(<App />);
-//   // default is MainContent
-//   expect(wrapper.find(MainContent).exists()).toBe(true);
-//   const infoButton = wrapper.find("#infoButtonApp");
-//   infoButton.find(ButtonBase).simulate("click");
-//   expect(wrapper.find(MainContent).exists()).toBe(false);
-//   expect(wrapper.find(Information).exists()).toBe(true);
-//   const homeButton = wrapper.find("#homeButtonApp");
-//   homeButton.find(ButtonBase).simulate("click");
-//   expect(wrapper.find(MainContent).exists()).toBe(true);
-//   expect(wrapper.find(Information).exists()).toBe(false);
-// });
