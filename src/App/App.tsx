@@ -185,6 +185,7 @@ class AppComponent extends React.Component<URLParams & WithStyles<typeof styles>
             <IconButton
               color="inherit"
               aria-label="Open drawer"
+              id="openDrawerButton"
               onClick={this.handleDrawerOpen}
               className={classNames(classes.menuButton, {
                 [classes.hide]: this.state.open
@@ -215,7 +216,9 @@ class AppComponent extends React.Component<URLParams & WithStyles<typeof styles>
           open={this.state.open}
         >
           <div className={classes.toolbar}>
-            <IconButton onClick={this.handleDrawerClose}>
+            <IconButton 
+            id="closeDrawerButton"
+            onClick={this.handleDrawerClose}>
               {theme.direction === "rtl" ? (
                 <ChevronRightIcon />
               ) : (

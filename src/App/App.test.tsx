@@ -3,8 +3,8 @@ import * as ReactDOM from 'react-dom';
 import { App } from 'src/App/App';
 import { MainContent } from "src/MainContent/MainContent";
 import * as enzyme from 'enzyme';
-import ButtonBase from "@material-ui/core/ButtonBase";
 import ListItem from '@material-ui/core/ListItem';
+import IconButton from '@material-ui/core/IconButton';
 import { Information } from "src/Information/Information";
 
 it('renders without crashing', () => {
@@ -52,6 +52,19 @@ describe("mode switching", () => {
     homeButton.find(ListItem).simulate("click");
     expect(wrapper.find(MainContent).exists()).toBe(true);
     expect(wrapper.find(Information).exists()).toBe(false);
- });
+  });
+
+  it("opening and closing sidebar", () => {
+    const wrapper = enzyme.shallow(<App />).dive();
+    expect(wrapper.state('open')).toEqual(false);
+    const openButton = wrapper.find('[id="openDrawerButton"]')
+                            .find(IconButton);
+    openButton.simulate('click');
+    expect(wrapper.state('open')).toEqual(true);
+    const closeButton = wrapper.find('[id="closeDrawerButton"]')
+                               .find(IconButton);
+    closeButton.simulate('click');
+    expect(wrapper.state('open')).toEqual(false);
+  });
 });
 
