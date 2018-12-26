@@ -2,7 +2,6 @@ import * as React from 'react';
 import * as ReactDOM from 'react-dom';
 import { MainContent } from 'src/MainContent/MainContent';
 import * as enzyme from 'enzyme';
-import * as SocketMock from 'socket.io-mock';
 // @ts-ignore
 import { SocketIO, Server } from 'mock-socket';
 import { PolyglotErrorType } from "src/utils/interfaces";
@@ -22,9 +21,18 @@ it('renders without crashing', () => {
 
 describe("Socket tests", () => {
 
+  const FAKE_URL = 'https://localhost:12345/';
+  let mockServer;
+
+  beforeEach(() => {
+    mockServer = new Server(FAKE_URL);
+  });
+
+  afterEach(() => {
+    mockServer.stop();
+  });
+
   it("Connects and calls a function on connection", done => {
-    const fakeURL = 'https://localhost:12345/';
-    const mockServer = new Server(fakeURL);
     const mockfn = jest.fn();
 
     mockServer.on('connection', socket => {
@@ -32,14 +40,35 @@ describe("Socket tests", () => {
       socket.on("connect", mockfn);
     });
 
-    const wrapper = enzyme.mount(enzyme.shallow(<MainContent link="www.youtube.com" socket={SocketIO(fakeURL)} />).get(0));
+    const wrapper = enzyme.mount(enzyme.shallow(<MainContent link="www.youtube.com" socket={SocketIO(FAKE_URL)} />).get(0));
     setTimeout(() => {
-      expect(wrapper.state().error).toBeNull();
-      expect(wrapper.state().socket.url).toBe(fakeURL);
+      expect(wrapper.state("error")).toBeNull();
+      const s = wrapper.state("socket") as any;
+      expect(s.url).toBe(FAKE_URL);
       expect(mockfn).toHaveBeenCalledTimes(1);
       mockServer.stop(done);
-    }, 1000);
+    }, 500);
+  });
 
+  function checkPolyglotError(errorEvent: string, typeError: PolyglotErrorType, done) {
+    mockServer.on("connection", socket => {
+      // @ts-ignore
+      socket.emit(errorEvent, {});
+    });
+
+    const wrapper = enzyme.mount(enzyme.shallow(<MainContent link="www.youtube.com" socket={SocketIO(FAKE_URL)} />).get(0));
+    setTimeout(() => {
+      expect(wrapper.state("error")).toBe(typeError);
+      mockServer.stop(done);
+    }, 500);
+  }
+
+  it("Receives streamlink error - PolyglotErrorType.StreamlinkUnavailable", done => {
+    checkPolyglotError("streamlink-error", PolyglotErrorType.StreamlinkUnavailable, done);
+  });
+
+  it("Receives connection error - PolyglotErrorType.SocketConnection" done => {
+    checkPolyglotError("connect_error", PolyglotErrorType.SocketConnection, done);
   });
 
 });
