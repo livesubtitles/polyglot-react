@@ -33,12 +33,22 @@ describe("Socket tests", () => {
     mockServer.stop();
   });
 
+  // Because whoever wrote the library had no idea of typescript
+  function socketON(socket, event: string, func) {
+    // @ts-ignore
+    socket.on(event, func);
+  }
+
+  function socketEMIT(socket, event: string, func) {
+    // @ts-ignore
+    socket.emit(event, func);
+  }
+
   it("Connects and calls a function on connection", done => {
     const mockfn = jest.fn();
 
     mockServer.on('connection', socket => {
-      // @ts-ignore
-      socket.on("connect", mockfn);
+      socketON(socket, "connect", mockfn);
     });
 
     const wrapper = enzyme.mount(enzyme.shallow(<MainContent link="www.youtube.com" socket={SocketIO(FAKE_URL)} />).get(0));
@@ -53,8 +63,7 @@ describe("Socket tests", () => {
 
   function checkPolyglotError(errorEvent: string, typeError: PolyglotErrorType, done) {
     mockServer.on("connection", socket => {
-      // @ts-ignore
-      socket.emit(errorEvent, {});
+      socketEMIT(socket, errorEvent, {});
     });
 
     const wrapper = enzyme.mount(enzyme.shallow(<MainContent link="www.youtube.com" socket={SocketIO(FAKE_URL)} />).get(0));
@@ -73,6 +82,33 @@ describe("Socket tests", () => {
 
   it("Receives connection error - PolyglotErrorType.SocketConnection" done => {
     checkPolyglotError("connect_error", PolyglotErrorType.SocketConnection, done);
+  });
+
+  function checkStreamEventSent(url, lang, done) {
+    mockServer.on("connection", socket => {
+      socketON(socket, "stream", payload => {
+        expect(payload.url).toBe(url);
+        expect(payload.lang).toBe(lang);
+      });
+      socketEMIT(socket, "server-ready", {});
+    });
+    let wrapper;
+    if (lang !== "") {
+      wrapper = enzyme.mount(enzyme.shallow(<MainContent link={url} lang={lang} socket={SocketIO(FAKE_URL)} />).get(0));
+    } else {
+      wrapper = enzyme.mount(enzyme.shallow(<MainContent link={url} socket={SocketIO(FAKE_URL)} />).get(0));
+    }
+    setTimeout(() => {
+      mockServer.stop(done);
+    }, 500);
+  }
+
+  it("Emits stream event with url and lang on receipt of server ready", done => {
+    checkStreamEventSent("www.youtube.com", "Spanish", done);
+  });
+
+  it("Emits stream event with empty language if not given to MainContent", done => {
+    checkStreamEventSent("www.youtube.com", "", done);
   });
 
 });
