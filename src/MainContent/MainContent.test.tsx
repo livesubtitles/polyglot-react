@@ -5,6 +5,7 @@ import * as enzyme from 'enzyme';
 // @ts-ignore
 import { SocketIO, Server } from 'mock-socket';
 import { PolyglotErrorType } from "src/utils/interfaces";
+import { PolyglotError } from "src/PolyglotError/PolyglotError";
 import * as io from 'socket.io-client';
 
 /*
@@ -58,7 +59,10 @@ describe("Socket tests", () => {
 
     const wrapper = enzyme.mount(enzyme.shallow(<MainContent link="www.youtube.com" socket={SocketIO(FAKE_URL)} />).get(0));
     setTimeout(() => {
-      expect(wrapper.state("error")).toBe(typeError);
+      expect(wrapper.find(PolyglotError).exists()).toBe(false);
+      wrapper.update();
+      expect(wrapper.find(PolyglotError).exists()).toBe(true);
+      expect(wrapper.find(PolyglotError).props().error).toBe(typeError);
       mockServer.stop(done);
     }, 500);
   }
