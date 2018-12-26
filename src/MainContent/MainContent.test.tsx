@@ -4,10 +4,10 @@ import { MainContent } from 'src/MainContent/MainContent';
 import * as enzyme from 'enzyme';
 // @ts-ignore
 import { SocketIO, Server } from 'mock-socket';
-import { PolyglotErrorType } from "src/utils/interfaces";
+import { PolyglotErrorType, Quality } from "src/utils/interfaces";
 import { PolyglotError } from "src/PolyglotError/PolyglotError";
 import * as io from 'socket.io-client';
-
+import { HlsService } from "src/MainContent/HlsService";
 /*
   @ts-ignore has been added throughout this file, because the creator of the dependency
   we use to mock the socket-io socket is a bit useless and was not able to provide a consistent typings file.
@@ -111,7 +111,7 @@ describe("Socket tests", () => {
     checkStreamEventSent("www.youtube.com", "", done);
   });
 
-  it("Emits stream response with empty Media url and triggers StreamlinkUnavailable error", done => {
+  it("Emits stream response with empty media url and triggers StreamlinkUnavailable error", done => {
     mockServer.on("connection", socket => {
       socketEMIT(socket, "stream-response", JSON.stringify({ media: "" }));
     });
@@ -123,7 +123,79 @@ describe("Socket tests", () => {
       expect(wrapper.find(PolyglotError).props().error).toBe(PolyglotErrorType.StreamlinkUnavailable);
       mockServer.stop(done);
     }, TIMEOUT);
+  });
 
+  function createMockHlsService() {
+    return jest.fn<HlsService>(() => ({
+      isSupported: jest.fn(() => true),
+      loadSource: jest.fn(),
+      attachMedia: jest.fn(),
+      onManifestParsed: jest.fn(),
+      onBufferAppended: jest.fn(),
+      destroy: jest.fn(),
+      onPlay: jest.fn()
+    }));
+  }
+
+  function setUpMockDocument() {
+    document.body.innerHTML =
+    '<div>' +
+    '  <video id="video" />' +
+    '</div>';
+  }
+
+  function checkRightHlsServiceMethodsAreCalled(mediaURL: string, done, qualities?: Quality[]) {
+    const MockHlsService = createMockHlsService();
+    setUpMockDocument();
+    const m = new MockHlsService();
+    const wrapper = enzyme.mount(enzyme.shallow(
+                      <MainContent
+                        hls={m}
+                        link="www.youtube.com"
+                        socket={SocketIO(FAKE_URL)} />)
+                      .get(0));
+
+    setTimeout(() => {
+      wrapper.update();
+      expect(wrapper.state("mediaURL")).toBe(mediaURL);
+      if (qualities) {
+        expect(wrapper.state("qualities")).toEqual(qualities);
+      }
+      expect(m.isSupported).toHaveBeenCalledTimes(1);
+      expect(m.loadSource).toHaveBeenCalledTimes(1);
+      expect(m.loadSource.mock.calls[0]).toEqual([ mediaURL ]);
+      expect(m.attachMedia).toHaveBeenCalledTimes(1);
+      expect(m.onManifestParsed).toHaveBeenCalledTimes(1);
+      expect(m.onBufferAppended).toHaveBeenCalledTimes(1);
+      // check that the onPlay function has been called to show the subtitles onplay
+      expect(m.onPlay).toHaveBeenCalledTimes(0);
+      const video = document.getElementById("video") as HTMLVideoElement;
+      video.dispatchEvent(new window.Event("play"));
+      expect(m.onPlay).toHaveBeenCalledTimes(1);
+      mockServer.stop(done);
+    }, TIMEOUT);
+  }
+
+  it("Calls the right HlsJS methods when media is non empty with no qualities", done => {
+
+    const MEDIA_URL = "someMediaURL";
+
+    mockServer.on("connection", socket => {
+      socketEMIT(socket, "stream-response", JSON.stringify({ media: MEDIA_URL }));
+    });
+
+    checkRightHlsServiceMethodsAreCalled(MEDIA_URL, done);
+  });
+
+  it("Calls the right HlsJS methods when media is non empty with qualities", done => {
+    const MEDIA_URL = "someMediaURL";
+    const QUALITIES = ["onequality", "anotherquality", "morequalities"];
+
+    mockServer.on("connection", socket => {
+      socketEMIT(socket, "stream-response", JSON.stringify({ media: MEDIA_URL, qualities: QUALITIES }));
+    });
+
+    checkRightHlsServiceMethodsAreCalled(MEDIA_URL, done, QUALITIES);
   });
 
 });

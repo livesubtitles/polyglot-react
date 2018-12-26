@@ -1,11 +1,13 @@
 import * as Hls from "hls.js";
 
 export interface HlsService {
+  isSupported(): boolean;
   loadSource(manifest_url: string): void;
   attachMedia(v: HTMLVideoElement): void;
   onManifestParsed(func: (event, data) => void): void;
   onBufferAppended(func: () => void): void;
   destroy(): void;
+  onPlay(): void;
 }
 
 export class HlsJS implements HlsService {
@@ -16,7 +18,7 @@ export class HlsJS implements HlsService {
     this.hls = new Hls();
   }
 
-  public static isSupported(): boolean {
+  public isSupported(): boolean {
     return Hls.isSupported();
   }
 
@@ -37,6 +39,14 @@ export class HlsJS implements HlsService {
   }
 
   public destroy(): void {
+    // destroy and restore immediately
     this.hls.destroy();
+    this.hls = new Hls();
+  }
+
+  public onPlay(): void {
+      const vid = document.getElementById("video") as HTMLVideoElement;
+      const textTrack = vid.textTracks[0];
+      textTrack.mode = "showing";
   }
 }

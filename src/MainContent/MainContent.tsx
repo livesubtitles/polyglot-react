@@ -66,6 +66,7 @@ type StylesAndURLParams = WithStyles<typeof styles> & URLParams;
 
 interface MainContentProps extends StylesAndURLParams {
   socket?: any;
+  hls?: HlsService;
 }
 
 class MainContentComponent extends React.Component<MainContentProps, MainContentState> {
@@ -83,7 +84,7 @@ class MainContentComponent extends React.Component<MainContentProps, MainContent
           mediaURL: null,
           qualities: [],
           socket: null,
-          hls: null
+          hls: props.hls ? props.hls : new HlsJS(), // default implementation
         };
         this.handleSearch = this.handleSearch.bind(this);
         this.restoredError = this.restoredError.bind(this);
@@ -227,11 +228,10 @@ class MainContentComponent extends React.Component<MainContentProps, MainContent
     }
 
     private loadVideo(manifest_url: string): void {
-      if (HlsJS.isSupported()) {
+      if (this.state.hls.isSupported()) {
           console.log("Hls Supported. Got manifest url: " + manifest_url);
 
-
-          var hls: HlsService = new HlsJS();
+          var hls: HlsService = this.state.hls;
           this.setState({ hls });
           console.log("Loading manifest url...");
           hls.loadSource(manifest_url);
@@ -240,11 +240,7 @@ class MainContentComponent extends React.Component<MainContentProps, MainContent
           const v = document.getElementById("video") as HTMLVideoElement;
           hls.attachMedia(v);
 
-          document.getElementById("video").onplay = function() {
-                const vid = document.getElementById("video") as HTMLVideoElement;
-                const textTrack = vid.textTracks[0];
-                textTrack.mode = "showing";
-          }
+          document.getElementById("video").onplay = hls.onPlay;
 
           this.setLoadingStateUntilVideoIsLoaded(hls);
           hls.onManifestParsed(function (event, data) {
