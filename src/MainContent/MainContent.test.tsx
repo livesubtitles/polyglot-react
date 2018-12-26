@@ -111,4 +111,19 @@ describe("Socket tests", () => {
     checkStreamEventSent("www.youtube.com", "", done);
   });
 
+  it("Emits stream response with empty Media url and triggers StreamlinkUnavailable error", done => {
+    mockServer.on("connection", socket => {
+      socketEMIT(socket, "stream-response", JSON.stringify({ media: "" }));
+    });
+    const wrapper = enzyme.mount(enzyme.shallow(<MainContent link="www.youtube.com" socket={SocketIO(FAKE_URL)} />).get(0));
+    setTimeout(() => {
+      expect(wrapper.find(PolyglotError).exists()).toBe(false);
+      wrapper.update();
+      expect(wrapper.find(PolyglotError).exists()).toBe(true);
+      expect(wrapper.find(PolyglotError).props().error).toBe(PolyglotErrorType.StreamlinkUnavailable);
+      mockServer.stop(done);
+    }, 500);
+
+  });
+
 });

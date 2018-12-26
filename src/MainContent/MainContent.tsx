@@ -28,7 +28,6 @@ import { VideoOptions } from "src/VideoOptions/VideoOptions";
 // const SERVER_URL = "https://polyglot-livesubtitles.herokuapp.com/";
 
 interface MainContentState {
-    loading: boolean;
     error: PolyglotErrorType;
     mediaURL: string;
     qualities: Quality[];
@@ -82,7 +81,6 @@ class MainContentComponent extends React.Component<MainContentProps, MainContent
     constructor(props) {
         super(props);
         this.state = {
-          loading: false,
           error: null,
           mediaURL: null,
           qualities: [],
@@ -345,11 +343,6 @@ class MainContentComponent extends React.Component<MainContentProps, MainContent
 
     render() {
       const { classes } = this.props;
-
-      // TODO: Style this to appear in the center
-      if (this.state.loading) {
-        return (<CircularProgress/>);
-      }
 
       if (this.state.error) {
         return (<PolyglotError error={this.state.error} restoredError={this.restoredError}/>);
