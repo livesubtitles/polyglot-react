@@ -28,12 +28,12 @@ interface InformationSegment {
 
 const informationSegments : InformationSegment[] = [
   {
-    title: "What is Polyglot?", 
+    title: "What is Polyglot?",
     body: "Polyglot is a hack... I mean subtitling provider for livestreams. \
           For the affordable price of $100 per hour of streaming. You can get half-arsed translations \
           courtesy of Google and Microsoft. i.e companies who know what they are doing."
   },
-  { 
+  {
     title: "What languages are supported?",
     body: "The Polyglot has only been tested with Spanish and French however... in theory \
            it should work for many other languages. We can not be bothered to find people of every language \
@@ -43,7 +43,7 @@ const informationSegments : InformationSegment[] = [
     title: "What platforms are supported?",
     body: "Polyglot is mainly intended for Youtube; However, we are aiming to make it work for many \
           sites such as Twitch, BBC iPlayer and Chaturbate. In theory, it would for for any website \
-          with Streamlink compatabilities."
+          with Streamlink compatibility."
   }
 ];
 
@@ -141,8 +141,8 @@ class InformationComponent extends React.Component<InformationProps & WithTheme,
             </Button>
           }
         />
-      </Card>    
-        </div>  
+      </Card>
+        </div>
       </div>
       );
   }

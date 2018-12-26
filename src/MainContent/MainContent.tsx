@@ -65,9 +65,13 @@ const styles =  createStyles({
   }
 });
 
+type StylesAndURLParams = WithStyles<typeof styles> & URLParams;
 
+interface MainContentProps extends StylesAndURLParams {
+  socket?: any;
+}
 
-class MainContentComponent extends React.Component<WithStyles<typeof styles> & URLParams, MainContentState> {
+class MainContentComponent extends React.Component<MainContentProps, MainContentState> {
 
  videoCSS: any = {
     width: "640px",
@@ -265,7 +269,7 @@ class MainContentComponent extends React.Component<WithStyles<typeof styles> & U
       const self = this;
       console.log(url);
 
-      const socket: SocketIOClient.Socket = io('https://polyglot-livesubtitles.herokuapp.com/streams');
+      const socket: SocketIOClient.Socket = this.getSocket();
       // const socket: SocketIOClient.Socket = io('http://localhost:8000/streams');
 
       this.setState({ socket });
@@ -318,6 +322,10 @@ class MainContentComponent extends React.Component<WithStyles<typeof styles> & U
 
       // Probably within an on connect?
       console.log("Set up socket stream listener");
+    }
+
+    private getSocket() {
+      return this.props.socket ? this.props.socket : io('https://polyglot-livesubtitles.herokuapp.com/streams');
     }
 
     public componentDidMount() {

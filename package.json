@@ -26,6 +26,7 @@
     "lodash": "^4.17.11",
     "material-ui-color-picker": "^2.1.1",
     "mkdirp": "^0.5.1",
+    "mock-socket": "^8.0.5",
     "react": "^16.6.0",
     "react-autosuggest": "^9.4.2",
     "react-dom": "^16.6.0",
