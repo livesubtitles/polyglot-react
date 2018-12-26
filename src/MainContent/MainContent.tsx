@@ -2,8 +2,6 @@ import * as React from 'react';
 // import { postJSON } from 'src/utils/web';
 import CircularProgress from '@material-ui/core/CircularProgress';
 import {
-  // ProcessResponse,
-  // InitialStreamPostArguments,
   LanguageSuggestion,
   PolyglotErrorType,
   URLParams,
@@ -13,7 +11,6 @@ import { PolyglotError } from "src/PolyglotError/PolyglotError";
 import { withStyles, createStyles, WithStyles, Theme } from "@material-ui/core/styles";
 import { Typography } from '@material-ui/core';
 import * as io from 'socket.io-client';
-import * as Hls from "hls.js";
 import Grid from '@material-ui/core/Grid';
 import { FontSizeSlider } from "src/FontSizeSlider/FontSizeSlider";
 import { FontFamilySelector } from "src/FontFamilySelector/FontFamilySelector";
@@ -23,6 +20,7 @@ import { QualityDropdown } from "src/QualityDropdown/QualityDropdown";
 import { SubtitleLanguageDropdown } from "src/SubtitleLanguageDropdown/SubtitleLanguageDropdown";
 import { SubtitleOptions } from "src/SubtitleOptions/SubtitleOptions";
 import { VideoOptions } from "src/VideoOptions/VideoOptions";
+import { HlsService, HlsJS } from "src/MainContent/HlsService";
 
 
 // const SERVER_URL = "https://polyglot-livesubtitles.herokuapp.com/";
@@ -32,7 +30,7 @@ interface MainContentState {
     mediaURL: string;
     qualities: Quality[];
     socket: SocketIOClient.Socket;
-    hls: Hls;
+    hls: HlsService;
 }
 
 const styles =  createStyles({
@@ -119,13 +117,6 @@ class MainContentComponent extends React.Component<MainContentProps, MainContent
     private async handleSearch(search: string, lang: LanguageSuggestion): Promise<void> {
       this.showLoading("loadingdiv", "searchdiv");
       this.setUpSocketStreamListener(search, lang.value);
-      // const postPayload: InitialStreamPostArguments = { url: search, lang: lang.value };
-      // const res: ProcessResponse = await postJSON<ProcessResponse, InitialStreamPostArguments>(SERVER_URL, "stream", postPayload);
-
-      // if (res.error) {
-      //   this.displayError(res.error);
-      // }
-      // console.log(res);
     }
 
     private changeCueCSS(property: string, value: string) {
@@ -226,9 +217,9 @@ class MainContentComponent extends React.Component<MainContentProps, MainContent
       }
     }
 
-    private setLoadingStateUntilVideoIsLoaded(hls) {
+    private setLoadingStateUntilVideoIsLoaded(hls: HlsService) {
       let self = this;
-      hls.on(Hls.Events.BUFFER_APPENDED, function() {
+      hls.onBufferAppended(() => {
         console.log("Buffer appended");
         console.log("LOADING DIV STATE: " + document.getElementById("loadingdiv").style.display);
         self.hideLoading("loadingdiv", "videodiv");
@@ -236,11 +227,11 @@ class MainContentComponent extends React.Component<MainContentProps, MainContent
     }
 
     private loadVideo(manifest_url: string): void {
-      if (Hls.isSupported()) {
+      if (HlsJS.isSupported()) {
           console.log("Hls Supported. Got manifest url: " + manifest_url);
 
 
-          var hls = new Hls();
+          var hls: HlsService = new HlsJS();
           this.setState({ hls });
           console.log("Loading manifest url...");
           hls.loadSource(manifest_url);
@@ -256,7 +247,7 @@ class MainContentComponent extends React.Component<MainContentProps, MainContent
           }
 
           this.setLoadingStateUntilVideoIsLoaded(hls);
-          hls.on(Hls.Events.MANIFEST_PARSED, function (event, data) {
+          hls.onManifestParsed(function (event, data) {
               console.log("Manifest Loaded");
           });
       }
@@ -298,7 +289,7 @@ class MainContentComponent extends React.Component<MainContentProps, MainContent
           console.log("Received stream-response");
           var json = JSON.parse(data);
 
-          if (json.media == "") {
+          if (json.media === "") {
               console.log("Empty media");
               self.displayError(PolyglotErrorType.StreamlinkUnavailable);
               return;

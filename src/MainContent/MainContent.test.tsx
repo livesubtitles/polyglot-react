@@ -21,7 +21,7 @@ it('renders without crashing', () => {
 });
 
 describe("Socket tests", () => {
-
+  const TIMEOUT  = 250;
   const FAKE_URL = 'https://localhost:12345/';
   let mockServer;
 
@@ -58,7 +58,7 @@ describe("Socket tests", () => {
       expect(s.url).toBe(FAKE_URL);
       expect(mockfn).toHaveBeenCalledTimes(1);
       mockServer.stop(done);
-    }, 500);
+    }, TIMEOUT);
   });
 
   function checkPolyglotError(errorEvent: string, typeError: PolyglotErrorType, done) {
@@ -73,7 +73,7 @@ describe("Socket tests", () => {
       expect(wrapper.find(PolyglotError).exists()).toBe(true);
       expect(wrapper.find(PolyglotError).props().error).toBe(typeError);
       mockServer.stop(done);
-    }, 500);
+    }, 250);
   }
 
   it("Receives streamlink error - PolyglotErrorType.StreamlinkUnavailable", done => {
@@ -100,7 +100,7 @@ describe("Socket tests", () => {
     }
     setTimeout(() => {
       mockServer.stop(done);
-    }, 500);
+    }, TIMEOUT);
   }
 
   it("Emits stream event with url and lang on receipt of server ready", done => {
@@ -122,7 +122,7 @@ describe("Socket tests", () => {
       expect(wrapper.find(PolyglotError).exists()).toBe(true);
       expect(wrapper.find(PolyglotError).props().error).toBe(PolyglotErrorType.StreamlinkUnavailable);
       mockServer.stop(done);
-    }, 500);
+    }, TIMEOUT);
 
   });
 
