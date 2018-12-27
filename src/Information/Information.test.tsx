@@ -11,6 +11,11 @@ it("renders without crashing", () => {
   ReactDOM.unmountComponentAtNode(div);
 });
 
+it("Can specify width", () => {
+  const wrapper = enzyme.shallow(<Information imageWidth={200}/>).dive();
+  expect(wrapper.find("#logo").props().width).toBe('200px');
+})
+
 describe("mobile stepper", () => {
   
   let instance;
