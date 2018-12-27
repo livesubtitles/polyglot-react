@@ -107,7 +107,7 @@ export class InformationComponent extends React.Component<InformationProps & Wit
         <CardContent>
         <Typography variant="h5">{informationSegments[slideIndex].title}</Typography>
         <AutoPlaySwipeableViews
-          axis={theme.direction === 'rtl' ? 'x-reverse' : 'x'}
+          axis={'x'}
           index={slideIndex}
           onChangeIndex={this.handleStepChange}
           enableMouseEvents
@@ -130,13 +130,13 @@ export class InformationComponent extends React.Component<InformationProps & Wit
             id="next-button"
             >
               Next
-              {theme.direction === 'rtl' ? <KeyboardArrowLeft /> : <KeyboardArrowRight />}
+              <KeyboardArrowRight />
             </Button>
           }
           backButton={
             <Button size="small" onClick={this.handleBack} disabled={slideIndex === 0}
             id="prev-button">
-              {theme.direction === 'rtl' ? <KeyboardArrowRight /> : <KeyboardArrowLeft />}
+              <KeyboardArrowLeft />
               Back
             </Button>
           }
@@ -149,4 +149,4 @@ export class InformationComponent extends React.Component<InformationProps & Wit
 
 }
 
-export const Information = withStyles(styles, {withTheme : true})(InformationComponent);
+export const Information = withStyles(styles)(InformationComponent);
