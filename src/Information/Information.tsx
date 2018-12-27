@@ -47,7 +47,6 @@ const informationSegments : InformationSegment[] = [
   }
 ];
 
-
 const styles = createStyles({
   root: {
     padding: "2em",
@@ -70,7 +69,7 @@ const styles = createStyles({
   }
 });
 
-class InformationComponent extends React.Component<InformationProps & WithTheme, InformationState> {
+export class InformationComponent extends React.Component<InformationProps & WithTheme, InformationState> {
 
   constructor(props) {
     super(props);
@@ -79,7 +78,7 @@ class InformationComponent extends React.Component<InformationProps & WithTheme,
     };
   }
 
-  public handleNext = () => {
+  private handleNext = () => {
     this.setState(prevState => ({
       slideIndex: prevState.slideIndex + 1,
     }));
@@ -135,7 +134,8 @@ class InformationComponent extends React.Component<InformationProps & WithTheme,
             </Button>
           }
           backButton={
-            <Button size="small" onClick={this.handleBack} disabled={slideIndex === 0}>
+            <Button size="small" onClick={this.handleBack} disabled={slideIndex === 0}
+            id="prev-button">
               {theme.direction === 'rtl' ? <KeyboardArrowRight /> : <KeyboardArrowLeft />}
               Back
             </Button>

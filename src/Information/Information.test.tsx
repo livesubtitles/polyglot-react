@@ -1,6 +1,6 @@
 import * as React from 'react';
 import * as ReactDOM from 'react-dom';
-import { Information } from 'src/Information/Information';
+import { Information, InformationComponent, NUMBER_OF_ITERATION_SEGMENTS } from 'src/Information/Information';
 import * as enzyme from 'enzyme';
 import Button from '@material-ui/core/Button';
 
@@ -10,7 +10,7 @@ it("renders without crashing", () => {
   ReactDOM.unmountComponentAtNode(div);
 });
 
-describe("Button testing", () => {
+describe("behaviour tests", () => {
   
   let instance;
 
@@ -26,4 +26,16 @@ describe("Button testing", () => {
   });
 
   // Other tests handled in the mobile stepper
+  it("forward and backward buttons", () => {
+    // initially at 0
+    expect(instance.find(InformationComponent).state('slideIndex')).toBe(0);
+
+    const nextButton = instance.find('[id="next-button"]').find(Button);
+    nextButton.simulate('click');
+    expect(instance.find(InformationComponent).state('slideIndex')).toBe(1);
+
+    const prevButton = instance.find('[id="prev-button"]').find(Button);
+    prevButton.simulate('click');
+    expect(instance.find(InformationComponent).state('slideIndex')).toBe(0);
+  });
 });
