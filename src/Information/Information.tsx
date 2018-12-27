@@ -101,7 +101,7 @@ export class InformationComponent extends React.Component<InformationProps & Wit
 
     return (
       <div className={classes.root}>
-        <img src={Logo} width={this.props.imageWidth ? this.props.imageWidth.toString() + "px" : "250px"}/>
+        <img id="logo" src={Logo} width={this.props.imageWidth ? this.props.imageWidth.toString() + "px" : "250px"}/>
         <div className={classes.stepper}>
         <Card className={classes.stepperCard}>
         <CardContent>
