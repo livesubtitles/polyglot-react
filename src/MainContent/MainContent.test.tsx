@@ -9,6 +9,7 @@ import { PolyglotError } from "src/PolyglotError/PolyglotError";
 import * as io from 'socket.io-client';
 import { HlsService } from "src/MainContent/HlsService";
 import { VideoOptions } from "src/VideoOptions/VideoOptions";
+import { SubtitleOptions } from "src/SubtitleOptions/SubtitleOptions";
 /*
   @ts-ignore has been added throughout this file, because the creator of the dependency
   we use to mock the socket-io socket is a bit useless and was not able to provide a consistent typings file.
@@ -29,6 +30,7 @@ describe("Socket tests", () => {
 
   beforeEach(() => {
     mockServer = new Server(FAKE_URL);
+    setUpMockDocument();
   });
 
   afterEach(() => {
@@ -146,15 +148,18 @@ describe("Socket tests", () => {
     '</div>';
   }
 
-  function checkRightHlsServiceMethodsAreCalled(mediaURL: string, done, qualities?: Quality[]) {
-    setUpMockDocument();
-    const m = new MockHlsService();
-    const wrapper = enzyme.mount(enzyme.shallow(
+  function createMainContentWithMockHls(m) {
+    return enzyme.mount(enzyme.shallow(
                       <MainContent
                         hls={m}
                         link="www.youtube.com"
                         socket={SocketIO(FAKE_URL)} />)
                       .get(0));
+  }
+
+  function checkRightHlsServiceMethodsAreCalled(mediaURL: string, done, qualities?: Quality[]) {
+    const m = new MockHlsService();
+    const wrapper = createMainContentWithMockHls(m);
 
     setTimeout(() => {
       wrapper.update();
@@ -164,6 +169,7 @@ describe("Socket tests", () => {
       }
       expect(m.isSupported).toHaveBeenCalledTimes(1);
       expect(m.loadSource).toHaveBeenCalledTimes(1);
+      // @ts-ignore
       expect(m.loadSource.mock.calls[0]).toEqual([ mediaURL ]);
       expect(m.attachMedia).toHaveBeenCalledTimes(1);
       expect(m.onManifestParsed).toHaveBeenCalledTimes(1);
@@ -172,6 +178,7 @@ describe("Socket tests", () => {
       // check that the onPlay function has been called to show the subtitles onplay
       expect(m.onPlay).toHaveBeenCalledTimes(0);
       const video = document.getElementById("video") as HTMLVideoElement;
+      // @ts-ignore
       video.dispatchEvent(new window.Event("play"));
       expect(m.onPlay).toHaveBeenCalledTimes(1);
       mockServer.stop(done);
@@ -201,7 +208,6 @@ describe("Socket tests", () => {
   });
 
   it("Calling handleQualitySelection emits quality and destroys the player", done => {
-    setUpMockDocument();
     const m = new MockHlsService();
     const MEDIA_URL = "This is a media url, I swear";
     const FAKE_QUALITY = "Top-notch quality";
@@ -212,12 +218,7 @@ describe("Socket tests", () => {
         expect(payload.quality).toEqual(FAKE_QUALITY);
       });
     });
-    const wrapper = enzyme.mount(enzyme.shallow(
-                      <MainContent
-                        hls={m}
-                        link="www.youtube.com"
-                        socket={SocketIO(FAKE_URL)} />)
-                      .get(0));
+    const wrapper = createMainContentWithMockHls(m);
     setTimeout(() => {
       wrapper.update();
       expect(wrapper.find(VideoOptions).exists()).toBe(true);
@@ -226,6 +227,26 @@ describe("Socket tests", () => {
       mockServer.stop(done);
     }, TIMEOUT);
 
+  });
+
+  it("Calling handleSubtitleLanguageChange emits new language", done => {
+    const m = new MockHlsService();
+    const MEDIA_URL = "This is a media url, I swear";
+    const FAKE_LANGUAGE = "Some random language from somewhere";
+    // to have the VideoOptions component we need a mediaURL
+    mockServer.on("connection", socket => {
+      socketEMIT(socket, "stream-response", JSON.stringify({ media: MEDIA_URL }));
+      socketON(socket, "language", payload => {
+        expect(payload.sub_lang).toEqual(FAKE_LANGUAGE);
+      });
+    });
+    const wrapper = createMainContentWithMockHls(m);
+    setTimeout(() => {
+      wrapper.update();
+      expect(wrapper.find(SubtitleOptions).exists()).toBe(true);
+      wrapper.find(SubtitleOptions).props().onSubtitleLanguageChange(FAKE_LANGUAGE);
+      mockServer.stop(done);
+    }, TIMEOUT);
   });
 
 });
