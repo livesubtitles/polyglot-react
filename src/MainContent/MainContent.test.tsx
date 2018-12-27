@@ -8,6 +8,7 @@ import { PolyglotErrorType, Quality } from "src/utils/interfaces";
 import { PolyglotError } from "src/PolyglotError/PolyglotError";
 import * as io from 'socket.io-client';
 import { HlsService } from "src/MainContent/HlsService";
+import { VideoOptions } from "src/VideoOptions/VideoOptions";
 /*
   @ts-ignore has been added throughout this file, because the creator of the dependency
   we use to mock the socket-io socket is a bit useless and was not able to provide a consistent typings file.
@@ -21,8 +22,9 @@ it('renders without crashing', () => {
 });
 
 describe("Socket tests", () => {
-  const TIMEOUT  = 250;
+  const TIMEOUT  = 200;
   const FAKE_URL = 'https://localhost:12345/';
+  const MockHlsService = createMockHlsService();
   let mockServer;
 
   beforeEach(() => {
@@ -145,7 +147,6 @@ describe("Socket tests", () => {
   }
 
   function checkRightHlsServiceMethodsAreCalled(mediaURL: string, done, qualities?: Quality[]) {
-    const MockHlsService = createMockHlsService();
     setUpMockDocument();
     const m = new MockHlsService();
     const wrapper = enzyme.mount(enzyme.shallow(
@@ -167,6 +168,7 @@ describe("Socket tests", () => {
       expect(m.attachMedia).toHaveBeenCalledTimes(1);
       expect(m.onManifestParsed).toHaveBeenCalledTimes(1);
       expect(m.onBufferAppended).toHaveBeenCalledTimes(1);
+      expect(m.destroy).toHaveBeenCalledTimes(0);
       // check that the onPlay function has been called to show the subtitles onplay
       expect(m.onPlay).toHaveBeenCalledTimes(0);
       const video = document.getElementById("video") as HTMLVideoElement;
@@ -196,6 +198,34 @@ describe("Socket tests", () => {
     });
 
     checkRightHlsServiceMethodsAreCalled(MEDIA_URL, done, QUALITIES);
+  });
+
+  it("Calling handleQualitySelection emits quality and destroys the player", done => {
+    setUpMockDocument();
+    const m = new MockHlsService();
+    const MEDIA_URL = "This is a media url, I swear";
+    const FAKE_QUALITY = "Top-notch quality";
+    // to have the VideoOptions component we need a mediaURL
+    mockServer.on("connection", socket => {
+      socketEMIT(socket, "stream-response", JSON.stringify({ media: MEDIA_URL }));
+      socketON(socket, "quality", payload => {
+        expect(payload.quality).toEqual(FAKE_QUALITY);
+      });
+    });
+    const wrapper = enzyme.mount(enzyme.shallow(
+                      <MainContent
+                        hls={m}
+                        link="www.youtube.com"
+                        socket={SocketIO(FAKE_URL)} />)
+                      .get(0));
+    setTimeout(() => {
+      wrapper.update();
+      expect(wrapper.find(VideoOptions).exists()).toBe(true);
+      wrapper.find(VideoOptions).props().onQualitySelection(FAKE_QUALITY);
+      expect(m.destroy).toHaveBeenCalledTimes(1);
+      mockServer.stop(done);
+    }, TIMEOUT);
+
   });
 
 });

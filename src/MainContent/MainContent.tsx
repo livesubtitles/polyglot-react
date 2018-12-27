@@ -243,7 +243,7 @@ class MainContentComponent extends React.Component<MainContentProps, MainContent
           document.getElementById("video").onplay = hls.onPlay;
 
           this.setLoadingStateUntilVideoIsLoaded(hls);
-          hls.onManifestParsed(function (event, data) {
+          hls.onManifestParsed((event, data) => {
               console.log("Manifest Loaded");
           });
       }
