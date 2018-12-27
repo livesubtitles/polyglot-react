@@ -1,8 +1,9 @@
 import * as React from 'react';
 import * as ReactDOM from 'react-dom';
-import { Information, InformationComponent, NUMBER_OF_ITERATION_SEGMENTS } from 'src/Information/Information';
+import { Information, InformationComponent, AutoPlaySwipeableViews } from 'src/Information/Information';
 import * as enzyme from 'enzyme';
 import Button from '@material-ui/core/Button';
+
 
 it("renders without crashing", () => {
   const div = document.createElement('div');
@@ -10,7 +11,7 @@ it("renders without crashing", () => {
   ReactDOM.unmountComponentAtNode(div);
 });
 
-describe("behaviour tests", () => {
+describe("mobile stepper", () => {
   
   let instance;
 
@@ -37,5 +38,20 @@ describe("behaviour tests", () => {
     const prevButton = instance.find('[id="prev-button"]').find(Button);
     prevButton.simulate('click');
     expect(instance.find(InformationComponent).state('slideIndex')).toBe(0);
+  });
+});
+
+describe("AutoPlaySwipeableViews testing", () => {
+  let wrapper;
+
+  beforeEach(() => {
+    wrapper = enzyme.shallow(<Information/>).dive();
+  });
+
+  it("test change index", () => {
+    const swipableView = wrapper.find(AutoPlaySwipeableViews);
+    expect(swipableView).toHaveLength(1);
+    swipableView.prop("onChangeIndex")(1);
+    expect(wrapper.state('slideIndex')).toBe(1);
   });
 });

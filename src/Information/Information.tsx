@@ -11,7 +11,7 @@ import Card from '@material-ui/core/Card';
 import CardContent from '@material-ui/core/CardContent'
 
 const INTERVAL_TIME = 10000;
-const AutoPlaySwipeableViews = autoPlay(SwipeableViews, 'incremental', INTERVAL_TIME);
+export const AutoPlaySwipeableViews = autoPlay(SwipeableViews, 'incremental', INTERVAL_TIME);
 
 export interface InformationProps extends WithStyles<typeof styles>{
   imageWidth?: number
