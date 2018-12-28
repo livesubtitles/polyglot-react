@@ -21,7 +21,7 @@ import { SubtitleLanguageDropdown } from "src/SubtitleLanguageDropdown/SubtitleL
 import { SubtitleOptions } from "src/SubtitleOptions/SubtitleOptions";
 import { VideoOptions } from "src/VideoOptions/VideoOptions";
 import { HlsService, HlsJS } from "src/MainContent/HlsService";
-import LinearProgress from '@material-ui/core/LinearProgress';
+import { PolyglotLinearProgress } from 'src/PolyglotLinearProgress/PolyglotLinearProgress';
 
 interface MainContentState {
     error: PolyglotErrorType;
@@ -145,17 +145,13 @@ class MainContentComponent extends React.Component<MainContentProps, MainContent
     }
 
     private getVideoMode(classes, mediaURL: string, qualities: Quality[]) {
-
       return (
         <div>
           <div id="loadingdiv" className="loadingcss">
-            <CircularProgress/>
+            <PolyglotLinearProgress value={this.state.progress}/>
           </div>
         <div id="videodiv" className={classes.root}>
         <div className={classes.videoSide}>
-        {/*
-           LEFT SIDE
-        */}
         </div>
         <div className={classes.centre}>
           <div className={classes.video}>
@@ -180,9 +176,6 @@ class MainContentComponent extends React.Component<MainContentProps, MainContent
             </div>
         </div>
         <div className={classes.videoSide}>
-        {/*
-           LEFT SIDE
-        */}
         </div>
       </div></div>);
     }
@@ -220,6 +213,10 @@ class MainContentComponent extends React.Component<MainContentProps, MainContent
 
     }
 
+    private getNewProgress(previousProgress: number, n: number): number {
+      return Math.min(100, previousProgress + n);
+    }
+
     private setLoadingStateUntilVideoIsLoaded(hls: HlsService) {
       let self = this;
       hls.onBufferAppended(() => {
@@ -229,7 +226,7 @@ class MainContentComponent extends React.Component<MainContentProps, MainContent
         if (this.state.progress >= 100) {
           self.hideLoading("loadingdiv", "videodiv");
         } else {
-          this.setState(prevState => ({progress: prevState.progress + 5}));
+          this.setState(prevState => ({progress: this.getNewProgress(prevState.progress, 5)}));
         }
       });
     }
@@ -277,14 +274,14 @@ class MainContentComponent extends React.Component<MainContentProps, MainContent
       });
 
       socket.on('connect', () => {
-          console.log("Socket connected");
+        console.log("Socket connected");
       });
 
       socket.on("progress", payload => {
           console.log("Progress from server");
           const json = JSON.parse(payload);
           self.setState(prevState => ({
-            progress: prevState.progress + json.progress
+            progress: this.getNewProgress(prevState.progress, json.progress)
           }));
       });
 
@@ -294,6 +291,7 @@ class MainContentComponent extends React.Component<MainContentProps, MainContent
 
       socket.on('stream-response', function(data) {
           console.log("Received stream-response");
+          // loading new video, so progress at zero
           var json = JSON.parse(data);
 
           if (json.media === "") {
