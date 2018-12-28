@@ -31,7 +31,7 @@ describe("Socket tests", () => {
 
   beforeEach(() => {
     mockServer = new Server(FAKE_URL);
-    setUpMockDocument();
+    setUpDefaultMockDocument();
   });
 
   afterEach(() => {
@@ -57,7 +57,6 @@ describe("Socket tests", () => {
   function getBasicMainContent() {
     return getMainContentWithSocket(SocketIO(FAKE_URL));
   }
-
 
   it("Connects and calls a function on connection", done => {
     const mockfn = jest.fn();
@@ -117,7 +116,7 @@ describe("Socket tests", () => {
   });
 
   it("search sets up socket listener properly", done => {
-    const URL  = "www.youtube.com";
+    const URL  = "A random url";
     const LANG = { label: "Spanish", value: "es-ES" };
     mockServer.on("connection", socket => {
       socketEMIT(socket, "server-ready", {});
@@ -127,7 +126,7 @@ describe("Socket tests", () => {
       })
     });
 
-    const wrapper = getBasicMainContent();
+    const wrapper = enzyme.mount(enzyme.shallow(<MainContent socket={SocketIO(FAKE_URL)} />).get(0));
     wrapper.find(Search).props().onSearch(URL, LANG);
     setTimeout(() => {
       mockServer.stop(done);
@@ -178,7 +177,7 @@ describe("Socket tests", () => {
   function createMockHlsService() {
     return jest.fn<HlsService>(() => ({
       isSupported: jest.fn(() => true),
-      loadSource: jest.fn(),
+      loadSource: jest.fn(() => setUpVideoModeDocument()),
       attachMedia: jest.fn(),
       onManifestParsed: jest.fn(),
       onBufferAppended: jest.fn(),
@@ -187,20 +186,21 @@ describe("Socket tests", () => {
     }));
   }
 
-  function setUpMockDocument() {
+  // loading div always has to be there
+
+  function setUpDefaultMockDocument() {
     document.body.innerHTML =
     '<div>' +
-    '  <video id="video" />' +
+    '  <div id="loadingdiv" style="display: none;"></div>' +
+    '  <div id="searchdiv" ></div>' +
     '</div>';
   }
 
-  function setUpMockDocumentLoading(firstdiv, seconddiv, thirddiv) {
+  function setUpVideoModeDocument() {
     document.body.innerHTML =
     '<div>' +
-    '  <video id="video" />' +
-    '<div id="' + firstdiv + '"></div>' +
-    '<div id="' + seconddiv  + '"></div>' +
-    '<div id="' + thirddiv  + '"></div>' +
+    '  <div id="loadingdiv" style="display: none;"></div>' +
+    '  <div id="videodiv" ><video id="video" /></div>' +
     '</div>';
   }
 
@@ -305,21 +305,40 @@ describe("Socket tests", () => {
     }, TIMEOUT);
   });
 
-  it("Loading div and search div are shown accordingly", done => {
+  function checkDivHasStyle(div, style) {
+    const divRef = document.getElementById(div)
+    expect(divRef.style.display).toEqual(style);
+  }
+
+  it("Divs are shown properly - when all are available", done => {
     const m = new MockHlsService();
+    const wrapper = createMainContentWithMockHls(m);
+    // before we showLoading, videodiv has not been set yet, loadingdiv is
+    // none because we stopped it
+    m.loadSource = u => {
+      // At this point we know mediaUrl has been set, so video mode document
+      // is the document mock required
+      setUpVideoModeDocument();
+      checkDivHasStyle("loadingdiv", "none");
+      checkDivHasStyle("videodiv", "");
+      expect(document.getElementById("searchdiv")).toBeNull();
+    };
+    m.attachMedia = v => {
+      checkDivHasStyle("loadingdiv", "flex");
+      checkDivHasStyle("videodiv", "none");
+      expect(document.getElementById("searchdiv")).toBeNull();
+    }
     const MEDIA_URL = "This is a media url, I swear";
-    setUpMockDocumentLoading("loadingdiv", "videodiv", "searchdiv");
+    setUpDefaultMockDocument();
 
     mockServer.on("connection", socket => {
       socketEMIT(socket, "stream-response", JSON.stringify({ media: MEDIA_URL }));
-      setTimeout(() => {
-        // expect loading
-        expect(document.getElementById("loadingdiv").style.display).toEqual("flex");
-        expect(document.getElementById("videodiv").style.display).toEqual("none");
-        expect(document.getElementById("searchdiv").style.display).toEqual("none");
-      }, TIMEOUT);
+
     });
-    const wrapper = createMainContentWithMockHls(m);
+    // at the start, search should not have a style
+    checkDivHasStyle("searchdiv", "");
+    checkDivHasStyle("loadingdiv", "none");
+    expect(document.getElementById("videodiv")).toBeNull();
     setTimeout(() => {
       mockServer.stop(done);
     }, TIMEOUT);

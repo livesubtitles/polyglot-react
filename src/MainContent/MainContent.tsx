@@ -21,6 +21,7 @@ import { SubtitleLanguageDropdown } from "src/SubtitleLanguageDropdown/SubtitleL
 import { SubtitleOptions } from "src/SubtitleOptions/SubtitleOptions";
 import { VideoOptions } from "src/VideoOptions/VideoOptions";
 import { HlsService, HlsJS } from "src/MainContent/HlsService";
+import LinearProgress from '@material-ui/core/LinearProgress';
 
 interface MainContentState {
     error: PolyglotErrorType;
@@ -28,6 +29,7 @@ interface MainContentState {
     qualities: Quality[];
     socket: SocketIOClient.Socket;
     hls: HlsService;
+    progress: number;
 }
 
 const styles =  createStyles({
@@ -81,6 +83,7 @@ class MainContentComponent extends React.Component<MainContentProps, MainContent
           mediaURL: null,
           qualities: [],
           socket: null,
+          progress: 0,
           hls: props.hls ? props.hls : new HlsJS(), // default implementation
         };
         this.handleSearch = this.handleSearch.bind(this);
@@ -143,7 +146,12 @@ class MainContentComponent extends React.Component<MainContentProps, MainContent
 
     private getVideoMode(classes, mediaURL: string, qualities: Quality[]) {
 
-      return (<div><div id="loadingdiv" className="loadingcss"><CircularProgress/></div><div id="videodiv" className={classes.root}>
+      return (
+        <div>
+          <div id="loadingdiv" className="loadingcss">
+            <CircularProgress/>
+          </div>
+        <div id="videodiv" className={classes.root}>
         <div className={classes.videoSide}>
         {/*
            LEFT SIDE
@@ -192,10 +200,9 @@ class MainContentComponent extends React.Component<MainContentProps, MainContent
     }
 
     private hideLoading(loadingDiv: string, showableDiv: string) {
+      // loading div is (and must be) always available
       const lDiv = document.getElementById(loadingDiv);
-      if (lDiv) {
-        lDiv.style.display = "none";
-      }
+      lDiv.style.display = "none";
 
       const sDiv = document.getElementById(showableDiv);
       if (sDiv) {
@@ -204,23 +211,26 @@ class MainContentComponent extends React.Component<MainContentProps, MainContent
     }
 
     private showLoading(loadingDiv: string, showableDiv: string) {
-      const sDiv = document.getElementById(showableDiv);
-      if (sDiv) {
-        sDiv.style.display = "none";
-      }
-
+      // loading div is (and must be) always available
       const lDiv = document.getElementById(loadingDiv);
-      if (lDiv) {
-        lDiv.style.display = "flex";
-      }
+      lDiv.style.display = "flex";
+      // we hide the previous showing div, so it is (must be) there always
+      const sDiv = document.getElementById(showableDiv);
+      sDiv.style.display = "none";
+
     }
 
     private setLoadingStateUntilVideoIsLoaded(hls: HlsService) {
       let self = this;
       hls.onBufferAppended(() => {
         console.log("Buffer appended");
-        console.log("LOADING DIV STATE: " + document.getElementById("loadingdiv").style.display);
-        self.hideLoading("loadingdiv", "videodiv");
+        console.log(this.state.progress);
+        // Received buffer, so increase progress
+        if (this.state.progress >= 100) {
+          self.hideLoading("loadingdiv", "videodiv");
+        } else {
+          this.setState(prevState => ({progress: prevState.progress + 5}));
+        }
       });
     }
 
@@ -232,7 +242,7 @@ class MainContentComponent extends React.Component<MainContentProps, MainContent
           this.setState({ hls });
           console.log("Loading manifest url...");
           hls.loadSource(manifest_url);
-          console.log("Attaching Media...")
+          console.log("Attaching Media...");
           this.showLoading("loadingdiv", "videodiv");
           const v = document.getElementById("video") as HTMLVideoElement;
           hls.attachMedia(v);
@@ -258,20 +268,24 @@ class MainContentComponent extends React.Component<MainContentProps, MainContent
 
       socket.on('connect_error', () => {
         console.error("Sorry, there seems to be an issue with the connection");
-        this.setState({ error: PolyglotErrorType.SocketConnection });
+        self.setState({ error: PolyglotErrorType.SocketConnection });
       });
 
       socket.on('streamlink-error', () => {
         console.error("Streamlink error");
-        this.setState({ error: PolyglotErrorType.StreamlinkUnavailable });
+        self.setState({ error: PolyglotErrorType.StreamlinkUnavailable });
       });
 
       socket.on('connect', () => {
           console.log("Socket connected");
       });
 
-      socket.on("progress", () => {
+      socket.on("progress", payload => {
           console.log("Progress from server");
+          const json = JSON.parse(payload);
+          self.setState(prevState => ({
+            progress: prevState.progress + json.progress
+          }));
       });
 
       socket.on('server-ready', () => {
