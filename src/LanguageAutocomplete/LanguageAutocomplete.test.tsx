@@ -1,11 +1,18 @@
 import * as React from 'react';
 import * as ReactDOM from 'react-dom';
 import * as TestRenderer from 'react-test-renderer';
-import { renderSuggestion, LanguageAutocomplete } from 'src/LanguageAutocomplete/LanguageAutocomplete';
+import {
+  renderSuggestion,
+  renderInputComponent,
+  getSuggestionValue,
+  getSuggestions,
+  LanguageAutocomplete } from 'src/LanguageAutocomplete/LanguageAutocomplete';
 import InputLabel from "@material-ui/core/InputLabel";
 import * as Autosuggest from "react-autosuggest";
 import * as enzyme from "enzyme";
 import MenuItem from '@material-ui/core/MenuItem';
+import Language from "@material-ui/icons/Language";
+import TextField from "@material-ui/core/TextField";
 
 it('renders without crashing', () => {
   const div = document.createElement('div');
@@ -65,6 +72,7 @@ describe("Prop testing", () => {
 });
 
 describe("Function testing", () => {
+
   it("renderSuggestion renders matching suggestions properly", () => {
     const SUGGESTION = { label: "Spanish", value: "es-ES" };
     const res = enzyme.mount(renderSuggestion(SUGGESTION, { query: "spa", isHighlighted: true }));
@@ -77,4 +85,42 @@ describe("Function testing", () => {
     expect(strong).toHaveLength(1);
     expect(strong.props().children).toEqual("nish");
   });
+
+  it("renderInputComponent renders input component properly", () => {
+    const klass = { input: "inputClass" };
+    const ref = () => {};
+    const inputProps = { classes: klass, ref: ref };
+    const res = enzyme.mount(renderInputComponent(inputProps));
+    // expect to have a language icon
+    expect(res.find(Language)).toHaveLength(1);
+    // expect the input to have class from inputProps applied
+    expect(res.find(".inputClass")).toHaveLength(1);
+    expect(res.find("input").hasClass("inputClass")).toBe(true);
+    expect(res.find(TextField).exists()).toBe(true);
+  });
+
+  it("getSuggestionValue returns label of suggestion", () => {
+    const res = getSuggestionValue({ label: "SomeRandomLabel", value: "Value!!!" });
+    expect(res).toEqual("SomeRandomLabel");
+  });
+
+  it("getSuggestions works correctly", () => {
+    const res = getSuggestions("Spanish");
+    expect(res).toHaveLength(1);
+    expect(res[0]).toEqual({ label: "Spanish", value: "es-ES"});
+
+    const resMultiple = getSuggestions("C");
+    expect(resMultiple).toHaveLength(2);
+    const multipleSuggestions = [
+      { label: "Catalan", value: "ca-ES" },
+      { label: "Czech", value: "cs-CZ" }
+    ];
+    for (const i in resMultiple) {
+      expect(resMultiple[i]).toEqual(multipleSuggestions[i]);
+    }
+
+    const resNone = getSuggestions("Nothing");
+    expect(resNone).toHaveLength(0);
+  });
+
 });

@@ -37,7 +37,7 @@ const suggestions: LanguageSuggestion[] = [
   { label: "Korean", value: "ko-KR" }
 ];
 
-function renderInputComponent(inputProps) {
+export function renderInputComponent(inputProps) {
   const { classes, inputRef = () => {}, ref, ...other } = inputProps;
 
   return (
@@ -85,7 +85,7 @@ export function renderSuggestion(suggestion, { query, isHighlighted }) {
   );
 }
 
-function getSuggestions(value) {
+export function getSuggestions(value) {
   const inputValue = deburr(value.trim()).toLowerCase();
   const inputLength = inputValue.length;
   let count = 0;
@@ -105,7 +105,9 @@ function getSuggestions(value) {
       });
 }
 
-function getSuggestionValue(suggestion: LanguageSuggestion) {
+// Confusingly, the API wants the "value" of the suggestion, which in our case
+// we call the label
+export function getSuggestionValue(suggestion: LanguageSuggestion) {
   return suggestion.label;
 }
 
