@@ -10,6 +10,7 @@ import * as io from 'socket.io-client';
 import { HlsService } from "src/MainContent/HlsService";
 import { VideoOptions } from "src/VideoOptions/VideoOptions";
 import { SubtitleOptions } from "src/SubtitleOptions/SubtitleOptions";
+import { Search } from "src/Search/Search";
 /*
   @ts-ignore has been added throughout this file, because the creator of the dependency
   we use to mock the socket-io socket is a bit useless and was not able to provide a consistent typings file.
@@ -48,6 +49,16 @@ describe("Socket tests", () => {
     socket.emit(event, func);
   }
 
+
+  function getMainContentWithSocket(socket) {
+    return enzyme.mount(enzyme.shallow(<MainContent link="www.youtube.com" socket={socket} />).get(0));
+  }
+
+  function getBasicMainContent() {
+    return getMainContentWithSocket(SocketIO(FAKE_URL));
+  }
+
+
   it("Connects and calls a function on connection", done => {
     const mockfn = jest.fn();
 
@@ -55,7 +66,7 @@ describe("Socket tests", () => {
       socketON(socket, "connect", mockfn);
     });
 
-    const wrapper = enzyme.mount(enzyme.shallow(<MainContent link="www.youtube.com" socket={SocketIO(FAKE_URL)} />).get(0));
+    const wrapper = getBasicMainContent();
     setTimeout(() => {
       expect(wrapper.state("error")).toBeNull();
       const s = wrapper.state("socket") as any;
@@ -70,7 +81,7 @@ describe("Socket tests", () => {
       socketEMIT(socket, errorEvent, {});
     });
 
-    const wrapper = enzyme.mount(enzyme.shallow(<MainContent link="www.youtube.com" socket={SocketIO(FAKE_URL)} />).get(0));
+    const wrapper = getBasicMainContent();
     setTimeout(() => {
       expect(wrapper.find(PolyglotError).exists()).toBe(false);
       wrapper.update();
@@ -84,8 +95,43 @@ describe("Socket tests", () => {
     checkPolyglotError("streamlink-error", PolyglotErrorType.StreamlinkUnavailable, done);
   });
 
-  it("Receives connection error - PolyglotErrorType.SocketConnection" done => {
+  it("Receives connection error - PolyglotErrorType.SocketConnection", done => {
     checkPolyglotError("connect_error", PolyglotErrorType.SocketConnection, done);
+  });
+
+  it("Restoring error gets you back to home page", done => {
+    mockServer.on("connection", socket => {
+      socketEMIT(socket, "connect_error", {});
+    });
+    const mockfn = jest.fn();
+    window.location.reload = mockfn;
+    const wrapper = getBasicMainContent();
+    setTimeout(() => {
+      wrapper.update();
+      expect(wrapper.find(PolyglotError).exists()).toBe(true);
+      wrapper.find(PolyglotError).props().restoredError();
+      // reload location, so go back to home page
+      expect(mockfn).toHaveBeenCalledTimes(1);
+      mockServer.stop(done);
+    }, TIMEOUT);
+  });
+
+  it("search sets up socket listener properly", done => {
+    const URL  = "www.youtube.com";
+    const LANG = { label: "Spanish", value: "es-ES" };
+    mockServer.on("connection", socket => {
+      socketEMIT(socket, "server-ready", {});
+      socketON(socket, "stream", payload => {
+        expect(payload.url).toEqual(URL);
+        expect(payload.lang).toEqual(LANG);
+      })
+    });
+
+    const wrapper = getBasicMainContent();
+    wrapper.find(Search).props().onSearch(URL, LANG);
+    setTimeout(() => {
+      mockServer.stop(done);
+    }, TIMEOUT);
   });
 
   function checkStreamEventSent(url, lang, done) {
@@ -100,7 +146,7 @@ describe("Socket tests", () => {
     if (lang !== "") {
       wrapper = enzyme.mount(enzyme.shallow(<MainContent link={url} lang={lang} socket={SocketIO(FAKE_URL)} />).get(0));
     } else {
-      wrapper = enzyme.mount(enzyme.shallow(<MainContent link={url} socket={SocketIO(FAKE_URL)} />).get(0));
+      wrapper = getBasicMainContent();
     }
     setTimeout(() => {
       mockServer.stop(done);
@@ -119,7 +165,7 @@ describe("Socket tests", () => {
     mockServer.on("connection", socket => {
       socketEMIT(socket, "stream-response", JSON.stringify({ media: "" }));
     });
-    const wrapper = enzyme.mount(enzyme.shallow(<MainContent link="www.youtube.com" socket={SocketIO(FAKE_URL)} />).get(0));
+    const wrapper = getBasicMainContent();
     setTimeout(() => {
       expect(wrapper.find(PolyglotError).exists()).toBe(false);
       wrapper.update();
@@ -145,6 +191,16 @@ describe("Socket tests", () => {
     document.body.innerHTML =
     '<div>' +
     '  <video id="video" />' +
+    '</div>';
+  }
+
+  function setUpMockDocumentLoading(firstdiv, seconddiv, thirddiv) {
+    document.body.innerHTML =
+    '<div>' +
+    '  <video id="video" />' +
+    '<div id="' + firstdiv + '"></div>' +
+    '<div id="' + seconddiv  + '"></div>' +
+    '<div id="' + thirddiv  + '"></div>' +
     '</div>';
   }
 
@@ -245,6 +301,26 @@ describe("Socket tests", () => {
       wrapper.update();
       expect(wrapper.find(SubtitleOptions).exists()).toBe(true);
       wrapper.find(SubtitleOptions).props().onSubtitleLanguageChange(FAKE_LANGUAGE);
+      mockServer.stop(done);
+    }, TIMEOUT);
+  });
+
+  it("Loading div and search div are shown accordingly", done => {
+    const m = new MockHlsService();
+    const MEDIA_URL = "This is a media url, I swear";
+    setUpMockDocumentLoading("loadingdiv", "videodiv", "searchdiv");
+
+    mockServer.on("connection", socket => {
+      socketEMIT(socket, "stream-response", JSON.stringify({ media: MEDIA_URL }));
+      setTimeout(() => {
+        // expect loading
+        expect(document.getElementById("loadingdiv").style.display).toEqual("flex");
+        expect(document.getElementById("videodiv").style.display).toEqual("none");
+        expect(document.getElementById("searchdiv").style.display).toEqual("none");
+      }, TIMEOUT);
+    });
+    const wrapper = createMainContentWithMockHls(m);
+    setTimeout(() => {
       mockServer.stop(done);
     }, TIMEOUT);
   });

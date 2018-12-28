@@ -22,9 +22,6 @@ import { SubtitleOptions } from "src/SubtitleOptions/SubtitleOptions";
 import { VideoOptions } from "src/VideoOptions/VideoOptions";
 import { HlsService, HlsJS } from "src/MainContent/HlsService";
 
-
-// const SERVER_URL = "https://polyglot-livesubtitles.herokuapp.com/";
-
 interface MainContentState {
     error: PolyglotErrorType;
     mediaURL: string;

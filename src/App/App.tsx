@@ -216,7 +216,7 @@ class AppComponent extends React.Component<URLParams & WithStyles<typeof styles>
           open={this.state.open}
         >
           <div className={classes.toolbar}>
-            <IconButton 
+            <IconButton
             id="closeDrawerButton"
             onClick={this.handleDrawerClose}>
               {theme.direction === "rtl" ? (
