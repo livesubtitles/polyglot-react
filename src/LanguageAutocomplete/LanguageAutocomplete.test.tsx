@@ -25,17 +25,32 @@ it('renders without crashing', () => {
   ReactDOM.unmountComponentAtNode(div);
 });
 
+const C_SUGGESTIONS = [
+  { label: "Catalan", value: "ca-ES" },
+  { label: "Czech", value: "cs-CZ" }
+];
+
 describe("Prop testing", () => {
 
   let mockOnSuggestionSelected;
   let mockOnChangeValue;
 
-  function getLanguageAutocomplete(isErrorSuggestion: boolean) {
-    return TestRenderer.create(<LanguageAutocomplete
+  function getLanguageAutocompleteShallow(isErrorSuggestion: boolean) {
+    return enzyme.shallow(<LanguageAutocomplete
       onSuggestionSelected={mockOnSuggestionSelected}
       onChangeValue={mockOnChangeValue}
       isErrorSuggestion={isErrorSuggestion}
-    />).root;
+    />).dive();
+  }
+
+  // only way to get the state without exporting the component without styles
+  // it blows up types, but the alternative is to export the component without styles
+  // but then typing of "classes" mess everything up, and aint got time for that
+  function getLanguageAutocompleteWithState(isErrorSuggestion: boolean) {
+    return enzyme.mount(enzyme.shallow(<LanguageAutocomplete
+      onSuggestionSelected={mockOnSuggestionSelected}
+      onChangeValue={mockOnChangeValue}
+      isErrorSuggestion={isErrorSuggestion}/>).get(0));
   }
 
   beforeEach(() => {
@@ -43,31 +58,46 @@ describe("Prop testing", () => {
     mockOnChangeValue = jest.fn();
   });
 
-  it("calls onChangeValue when there is a change in the input", (done) => {
-    const instance = getLanguageAutocomplete(false);
-    const input = instance.find(el => el.type === "input");
+  it("calls onChangeValue when there is a change in the input", () => {
+    const instance = getLanguageAutocompleteWithState(false);
+    const input = instance.find("input");
     const testValue = "SomeValue";
-    input.props.onChange({ target: { value: testValue } });
+    // dont really get why this is not accepted, guess it's a problem with typings
+    // currentTarget does not work
+    // @ts-ignore
+    input.props().onChange({ target: { value: testValue } });
     expect(mockOnChangeValue.mock.calls.length).toEqual(1);
     expect(mockOnChangeValue.mock.calls[0]).toEqual([testValue]);
-    done();
   });
 
-  it("shows invalid message if it is an error suggestion", (done) => {
-    const instance = getLanguageAutocomplete(true);
-    const input = instance.findByType(InputLabel);
-    expect(input.props.children).toEqual("Invalid language");
-    done();
+  it("shows invalid message if it is an error suggestion", () => {
+    const instance = getLanguageAutocompleteWithState(true);
+    const input = instance.find(InputLabel);
+    expect(input.props().children).toEqual("Invalid language");
   });
 
-  it("calls onSuggestionSelected when a suggestion is selected", (done) => {
-    const instance = getLanguageAutocomplete(false);
-    const autosuggest = instance.findByType(Autosuggest);
+  it("calls onSuggestionSelected when a suggestion is selected", () => {
+    const instance = getLanguageAutocompleteShallow(false);
+    const autosuggest = instance.find(Autosuggest);
     const suggestion = { label: "English", value: "en-US"};
-    autosuggest.props.onSuggestionSelected(null, { suggestion: suggestion });
+    // onSuggestionSelected is not typed as prop for autosuggest? or at least
+    // enzyme does not see it
+    // @ts-ignore
+    autosuggest.props().onSuggestionSelected(null, { suggestion: suggestion });
     expect(mockOnSuggestionSelected.mock.calls.length).toEqual(1);
-    expect(mockOnSuggestionSelected.mock.calls[0]).toEqual([null, { suggestion: suggestion }])
-    done();
+    expect(mockOnSuggestionSelected.mock.calls[0]).toEqual([null, { suggestion: suggestion }]);
+  });
+
+  it("obtains and clear suggestions properly", () => {
+    const instance = getLanguageAutocompleteWithState(false);
+    const autosuggest: enzyme.ReactWrapper = instance.find(Autosuggest);
+    expect(instance.state("suggestions")).toEqual([]);
+    // @ts-ignore
+    autosuggest.props().onSuggestionsFetchRequested({ value: "C" });
+    expect(instance.state("suggestions")).toEqual(C_SUGGESTIONS);
+    // @ts-ignore
+    autosuggest.props().onSuggestionsClearRequested();
+    expect(instance.state("suggestions")).toEqual([]);
   });
 });
 
@@ -87,15 +117,13 @@ describe("Function testing", () => {
   });
 
   it("renderInputComponent renders input component properly", () => {
-    const klass = { input: "inputClass" };
+    const k = { input: "inputClass" };
     const ref = () => {};
-    const inputProps = { classes: klass, ref: ref };
+    const inputProps = { classes: k, ref: ref };
     const res = enzyme.mount(renderInputComponent(inputProps));
+    expect(res.find("input").hasClass("inputClass")).toBe(true);
     // expect to have a language icon
     expect(res.find(Language)).toHaveLength(1);
-    // expect the input to have class from inputProps applied
-    expect(res.find(".inputClass")).toHaveLength(1);
-    expect(res.find("input").hasClass("inputClass")).toBe(true);
     expect(res.find(TextField).exists()).toBe(true);
   });
 
@@ -111,12 +139,8 @@ describe("Function testing", () => {
 
     const resMultiple = getSuggestions("C");
     expect(resMultiple).toHaveLength(2);
-    const multipleSuggestions = [
-      { label: "Catalan", value: "ca-ES" },
-      { label: "Czech", value: "cs-CZ" }
-    ];
     for (const i in resMultiple) {
-      expect(resMultiple[i]).toEqual(multipleSuggestions[i]);
+      expect(resMultiple[i]).toEqual(C_SUGGESTIONS[i]);
     }
 
     const resNone = getSuggestions("Nothing");
