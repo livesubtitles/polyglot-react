@@ -119,7 +119,7 @@ describe("Function testing", () => {
   it("renderInputComponent renders input component properly", () => {
     const k = { input: "inputClass" };
     const ref = () => {};
-    const inputProps = { classes: k, ref: ref };
+    const inputProps = { classes: k, ref: ref, other: "other", inputRef: () => {} };
     const res = enzyme.mount(renderInputComponent(inputProps));
     expect(res.find("input").hasClass("inputClass")).toBe(true);
     // expect to have a language icon
@@ -145,6 +145,9 @@ describe("Function testing", () => {
 
     const resNone = getSuggestions("Nothing");
     expect(resNone).toHaveLength(0);
+
+    const resEmpty = getSuggestions("");
+    expect(resEmpty).toHaveLength(0);
   });
 
 });
