@@ -124,7 +124,6 @@ class MainContentComponent extends React.Component<MainContentProps, MainContent
     }
 
     private changeCueCSS(property: string, value: string) {
-      console.log(`Change Cue CSS to: ${property} with value: ${value}`);
       const stylesheet = document.styleSheets[0] as any;
       // Complains because of compatibility issues with Firefox;
       stylesheet.addRule("::cue", `${property}: ${value}`);
@@ -132,7 +131,6 @@ class MainContentComponent extends React.Component<MainContentProps, MainContent
 
     private handleFontSizeChange(newSize: number): void {
       this.changeCueCSS("font-size", `${newSize}px`);
-      //document.styleSheets[0].addRule("::cue", "font: italic 45px sans-serif");
     }
 
     private handleFontSelection(newFontFamily: string): void {
@@ -287,6 +285,11 @@ class MainContentComponent extends React.Component<MainContentProps, MainContent
           self.setState(prevState => ({
             progress: this.getNewProgress(prevState.progress, json.progress)
           }));
+      });
+
+      socket.on("login-required", () => {
+        this.state.hls.destroy();
+        self.setState({ error: PolyglotErrorType.MaxTimeExceededLoginRequired });
       });
 
       socket.on('server-ready', () => {

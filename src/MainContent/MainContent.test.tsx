@@ -87,27 +87,53 @@ describe("Socket tests", () => {
     expect(fetchMock.called(`${SERVER_URL}/`)).toBe(true);
   });
 
-  function checkPolyglotError(errorEvent: string, typeError: PolyglotErrorType, done) {
+  function checkPolyglotError(errorEvent: string, typeError: PolyglotErrorType, wrapperCreator, finalExpects, done) {
     mockServer.on("connection", socket => {
       socketEMIT(socket, errorEvent, {});
     });
 
-    const wrapper = getBasicMainContent();
+    const wrapper = wrapperCreator();
     setTimeout(() => {
       expect(wrapper.find(PolyglotError).exists()).toBe(false);
       wrapper.update();
       expect(wrapper.find(PolyglotError).exists()).toBe(true);
       expect(wrapper.find(PolyglotError).props().error).toBe(typeError);
+      finalExpects(wrapper);
       mockServer.stop(done);
     }, 250);
   }
 
   it("Receives streamlink error - PolyglotErrorType.StreamlinkUnavailable", done => {
-    checkPolyglotError("streamlink-error", PolyglotErrorType.StreamlinkUnavailable, done);
+    checkPolyglotError(
+      "streamlink-error",
+      PolyglotErrorType.StreamlinkUnavailable,
+      () => getBasicMainContent(),
+      wrapper => {},
+      done
+    );
   });
 
   it("Receives connection error - PolyglotErrorType.SocketConnection", done => {
-    checkPolyglotError("connect_error", PolyglotErrorType.SocketConnection, done);
+    checkPolyglotError(
+      "connect_error",
+      PolyglotErrorType.SocketConnection,
+      () => getBasicMainContent(),
+      wrapper => {},
+      done
+    );
+  });
+
+  it("Receiving login-required from server shows MaxTimeExceededLoginRequired error and destroys hls player", done => {
+    const m = new MockHlsService();
+    checkPolyglotError(
+      "login-required",
+      PolyglotErrorType.MaxTimeExceededLoginRequired,
+      () => createMainContentWithMockHls(m),
+      wrapper => {
+        expect(m.destroy).toHaveBeenCalledTimes(1);
+      },
+      done
+    );
   });
 
   it("Restoring error gets you back to home page", done => {

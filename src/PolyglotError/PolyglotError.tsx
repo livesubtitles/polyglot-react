@@ -17,16 +17,37 @@ interface PolyglotErrorState {
   open: boolean;
 }
 
+interface ErrorDescription {
+  errorText: string;
+  buttonText: string;
+}
+
 interface ErrorMap {
-  [error: string]: string;
+  [error: string]: ErrorDescription;
 }
 
 export class PolyglotError extends React.Component<PolyglotErrorProps, PolyglotErrorState> {
 
+  private static RETRY_BUTTON = "Retry";
+  private static BACK_BUTTON  = "Back";
+
   private static errorMap: ErrorMap = {
-    [PolyglotErrorType.UninitialisedStreamer]: "Server error. Please try again. Error: UninitialisedStreamer.",
-    [PolyglotErrorType.StreamlinkUnavailable]: "Cannot subtitle video. For the list of supported websites, please see X. Error: StreamlinkUnavailable.",
-    [PolyglotErrorType.SocketConnection]: "Error connecting to the socket on the server"
+    [PolyglotErrorType.UninitialisedStreamer]: {
+      errorText: "Server error. Please try again. Error: UninitialisedStreamer.",
+      buttonText: PolyglotError.RETRY_BUTTON
+    },
+    [PolyglotErrorType.StreamlinkUnavailable]: {
+      errorText: "Cannot subtitle video. For the list of supported websites, please see https://streamlink.github.io/. Error: StreamlinkUnavailable.",
+      buttonText: PolyglotError.BACK_BUTTON
+    },
+    [PolyglotErrorType.SocketConnection]: {
+      errorText: "Error connecting to the socket on the server. Error: SocketConnection.",
+      buttonText: PolyglotError.RETRY_BUTTON
+    },
+    [PolyglotErrorType.MaxTimeExceededLoginRequired]: {
+       errorText: "Maximum time without login exceeded. Please log in to continue using Polyglot. Error: MaxTimeExceededLoginRequired.",
+       buttonText: PolyglotError.BACK_BUTTON
+     }
   };
 
   constructor(props) {
@@ -54,12 +75,12 @@ export class PolyglotError extends React.Component<PolyglotErrorProps, PolyglotE
          <DialogTitle id="alert-dialog-title"><Typography>Error</Typography></DialogTitle>
          <DialogContent>
            <DialogContentText id="alert-dialog-description">
-             {PolyglotError.errorMap[this.props.error]}
+             {PolyglotError.errorMap[this.props.error].errorText}
            </DialogContentText>
          </DialogContent>
          <DialogActions>
            <Button onClick={this.handleClose} color="primary">
-             <Typography> Retry </Typography>
+             <Typography> {PolyglotError.errorMap[this.props.error].buttonText} </Typography>
            </Button>
          </DialogActions>
       </Dialog>
