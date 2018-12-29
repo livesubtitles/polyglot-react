@@ -12,3 +12,10 @@ export function postJSON<ReturnType, PostArgType>(url: string, endpoint: string,
     }
   );
 }
+
+export function simpleGet(url: string, endpoint: string): Promise<Response> {
+  return fetch(url + "/" + endpoint,
+  {
+      method: "GET"
+  });
+}

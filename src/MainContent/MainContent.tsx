@@ -22,6 +22,7 @@ import { SubtitleOptions } from "src/SubtitleOptions/SubtitleOptions";
 import { VideoOptions } from "src/VideoOptions/VideoOptions";
 import { HlsService, HlsJS } from "src/MainContent/HlsService";
 import { PolyglotLinearProgress } from 'src/PolyglotLinearProgress/PolyglotLinearProgress';
+import { simpleGet } from "src/utils/web";
 
 interface MainContentState {
     error: PolyglotErrorType;
@@ -31,6 +32,8 @@ interface MainContentState {
     hls: HlsService;
     progress: number;
 }
+
+export const SERVER_URL = "https://polyglot-livesubtitles.herokuapp.com";
 
 const styles =  createStyles({
   root: {
@@ -314,19 +317,21 @@ class MainContentComponent extends React.Component<MainContentProps, MainContent
           }
       });
 
-
-      // Probably within an on connect?
       console.log("Set up socket stream listener");
     }
 
+    private wakeUpPing(): void {
+      simpleGet(SERVER_URL, "");
+    }
+
     private getSocket() {
-      return this.props.socket ? this.props.socket : io('https://polyglot-livesubtitles.herokuapp.com/streams');
+      return this.props.socket ? this.props.socket : io(`${SERVER_URL}/streams`);
     }
 
     public componentDidMount() {
 
-      // set up socket event listener
-      // TODO: Grab link and language if we have them, emit socket event and set up socket event listener which will update mediaURLs
+      this.wakeUpPing();
+
       if (this.props.link) {
         console.log("componentDidMount");
         // We came from a link url

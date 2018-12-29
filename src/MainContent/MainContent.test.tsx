@@ -1,6 +1,6 @@
 import * as React from 'react';
 import * as ReactDOM from 'react-dom';
-import { MainContent } from 'src/MainContent/MainContent';
+import { MainContent, SERVER_URL } from 'src/MainContent/MainContent';
 import * as enzyme from 'enzyme';
 // @ts-ignore
 import { SocketIO, Server } from 'mock-socket';
@@ -12,6 +12,7 @@ import { VideoOptions } from "src/VideoOptions/VideoOptions";
 import { SubtitleOptions } from "src/SubtitleOptions/SubtitleOptions";
 import { Search } from "src/Search/Search";
 import { PolyglotLinearProgress } from "src/PolyglotLinearProgress/PolyglotLinearProgress";
+import * as fetchMock from "fetch-mock";
 /*
   @ts-ignore has been added throughout this file, because the creator of the dependency
   we use to mock the socket-io socket is a bit useless and was not able to provide a consistent typings file.
@@ -26,7 +27,7 @@ it('renders without crashing', () => {
 
 const TIMEOUT  = 200;
 const FAKE_URL = 'https://localhost:12345/';
-
+fetchMock.get(`${SERVER_URL}/`, { hasBeenCalled: true });
 
 function getMainContentWithSocket(socket) {
   return enzyme.mount(enzyme.shallow(<MainContent link="www.youtube.com" socket={socket} />).get(0));
@@ -54,10 +55,12 @@ describe("Socket tests", () => {
 
   beforeEach(() => {
     mockServer = new Server(FAKE_URL);
+    // mocks the wake up call to the server
     setUpDefaultMockDocument();
   });
 
   afterEach(() => {
+    fetchMock.resetHistory();
     mockServer.stop();
   });
 
@@ -76,6 +79,12 @@ describe("Socket tests", () => {
       expect(mockfn).toHaveBeenCalledTimes(1);
       mockServer.stop(done);
     }, TIMEOUT);
+  });
+
+  it("Mounting the component makes a wake up call", () => {
+    expect(fetchMock.called(`${SERVER_URL}/`)).toBe(false);
+    const wrapper = getBasicMainContent();
+    expect(fetchMock.called(`${SERVER_URL}/`)).toBe(true);
   });
 
   function checkPolyglotError(errorEvent: string, typeError: PolyglotErrorType, done) {
