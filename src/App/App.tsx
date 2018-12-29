@@ -23,6 +23,7 @@ import HelpIcon from "@material-ui/icons/Help";
 import { Information } from 'src/Information/Information';
 import { QualityDropdown } from "src/QualityDropdown/QualityDropdown";
 import $ from 'jquery';
+import { Help } from 'src/Help/Help';
 declare const gapi;
 
 const drawerWidth = 240;
@@ -99,6 +100,7 @@ const styles = theme => createStyles({
 enum APP_MODE {
   HOME,
   INFO,
+  HELP,
 }
 
 interface AppState {
@@ -130,6 +132,11 @@ class AppComponent extends React.Component<URLParams & WithStyles<typeof styles>
 
   private handleHomeClick = () => {
     this.setState({ appMode: APP_MODE.HOME })
+  }
+
+  private handleHelpClick = () => {
+    console.log("help clicked");
+    this.setState({ appMode: APP_MODE.HELP });
   }
 
   private signInRequest = () => {
@@ -169,6 +176,8 @@ class AppComponent extends React.Component<URLParams & WithStyles<typeof styles>
                 lang={this.props.lang}/>;
     } else if (this.state.appMode == APP_MODE.INFO) {
       body = <Information/>;
+    } else if (this.state.appMode == APP_MODE.HELP) {
+      body = <Help/>;
     }
 
 
@@ -245,17 +254,12 @@ class AppComponent extends React.Component<URLParams & WithStyles<typeof styles>
               </ListItemIcon>
               <ListItemText primary="Information" />
             </ListItem>
-            <ListItem id="helpButtonApp" button>
+            <ListItem id="helpButtonApp" button
+                      onClick={this.handleHelpClick}>
               <ListItemIcon>
                 <HelpIcon />
               </ListItemIcon>
               <ListItemText primary="Help" />
-            </ListItem>
-            <ListItem id="settingsButtonApp" button>
-              <ListItemIcon>
-                <SettingsIcon />
-              </ListItemIcon>
-              <ListItemText primary="Settings" />
             </ListItem>
           </List>
         </Drawer>
