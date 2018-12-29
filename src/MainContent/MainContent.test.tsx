@@ -24,9 +24,31 @@ it('renders without crashing', () => {
   ReactDOM.unmountComponentAtNode(div);
 });
 
+const TIMEOUT  = 200;
+const FAKE_URL = 'https://localhost:12345/';
+
+
+function getMainContentWithSocket(socket) {
+  return enzyme.mount(enzyme.shallow(<MainContent link="www.youtube.com" socket={socket} />).get(0));
+}
+
+function getBasicMainContent() {
+  return getMainContentWithSocket(SocketIO(FAKE_URL));
+}
+
+// Because whoever wrote the library had no idea of typescript
+function socketON(socket, event: string, func) {
+  // @ts-ignore
+  socket.on(event, func);
+}
+
+function socketEMIT(socket, event: string, func) {
+  // @ts-ignore
+  socket.emit(event, func);
+}
+
 describe("Socket tests", () => {
-  const TIMEOUT  = 200;
-  const FAKE_URL = 'https://localhost:12345/';
+
   const MockHlsService = createMockHlsService();
   let mockServer;
 
@@ -38,26 +60,6 @@ describe("Socket tests", () => {
   afterEach(() => {
     mockServer.stop();
   });
-
-  // Because whoever wrote the library had no idea of typescript
-  function socketON(socket, event: string, func) {
-    // @ts-ignore
-    socket.on(event, func);
-  }
-
-  function socketEMIT(socket, event: string, func) {
-    // @ts-ignore
-    socket.emit(event, func);
-  }
-
-
-  function getMainContentWithSocket(socket) {
-    return enzyme.mount(enzyme.shallow(<MainContent link="www.youtube.com" socket={socket} />).get(0));
-  }
-
-  function getBasicMainContent() {
-    return getMainContentWithSocket(SocketIO(FAKE_URL));
-  }
 
   it("Connects and calls a function on connection", done => {
     const mockfn = jest.fn();
@@ -358,6 +360,58 @@ describe("Socket tests", () => {
       expect(wrapper.find(PolyglotLinearProgress).props().value).toBe(15);
       mockServer.stop(done);
     }, TIMEOUT);
+  });
+
+});
+
+describe("CSS addRule tests", () => {
+
+  let mockServer;
+  let mst;
+
+  beforeEach(() => {
+    mockServer = new Server(FAKE_URL);
+    mst = setUpMockStylesheet();
+  });
+
+  afterEach(() => {
+    mockServer.stop();
+  });
+
+  function createMockStylesheet() {
+    return jest.fn(() => ({
+      addRule: jest.fn()
+    }));
+  }
+
+  function setUpMockStylesheet() {
+    const MockStylesheet = createMockStylesheet();
+    const mStylesheet = new MockStylesheet();
+    // we dont need anything else for the mock, so dont bother
+    // @ts-ignore
+    document.styleSheets[0] = mStylesheet;
+    return mStylesheet;
+  }
+
+  function checkPropWithChangeCueCSS(func, arglist, done) {
+    mockServer.on("connection", socket => {
+      socketEMIT(socket, "stream-response", JSON.stringify({ media: "Some media url" }));
+    });
+    const wrapper = getBasicMainContent();
+    setTimeout(() => {
+      wrapper.update();
+      func(wrapper);
+      expect(mst.addRule).toHaveBeenCalledTimes(1);
+      expect(mst.addRule.mock.calls[0]).toEqual(arglist);
+      mockServer.stop(done);
+    }, TIMEOUT);
+  }
+
+  it("handleFontSizeChange calls changeCueCSS correctly", done => {
+    const FONT_SIZE = 3;
+    checkPropWithChangeCueCSS(wrapper => {
+      wrapper.find(SubtitleOptions).props().onFontSizeChange(FONT_SIZE);
+    }, ["::cue", `font-size: ${FONT_SIZE}px`], done);
   });
 
 });
