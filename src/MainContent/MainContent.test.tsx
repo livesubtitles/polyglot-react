@@ -414,4 +414,25 @@ describe("CSS addRule tests", () => {
     }, ["::cue", `font-size: ${FONT_SIZE}px`], done);
   });
 
+  it("handleFontSelection calls changeCueCSS correctly", done => {
+    const FONT_FAMILY = "Comic Sans";
+    checkPropWithChangeCueCSS(wrapper => {
+      wrapper.find(SubtitleOptions).props().onFontSelection(FONT_FAMILY);
+    }, ["::cue", `font-family: ${FONT_FAMILY}`], done);
+  });
+
+  it("handleBackgroundColorChange calls changeCueCSS correctly", done => {
+    const COLOR = "yellow";
+    checkPropWithChangeCueCSS(wrapper => {
+      wrapper.find(SubtitleOptions).props().onBackgroundColorChange(COLOR);
+    }, ["::cue", `background-color: ${COLOR}`], done);
+  });
+
+  it("handleSubtitleColorChange calls changeCueCSS correctly", done => {
+    const COLOR = "blue";
+    checkPropWithChangeCueCSS(wrapper => {
+      wrapper.find(SubtitleOptions).props().onSubtitleColorChange(COLOR);
+    }, ["::cue", `color: ${COLOR}`], done);
+  });
+
 });
