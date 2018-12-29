@@ -11,6 +11,7 @@ import { HlsService } from "src/MainContent/HlsService";
 import { VideoOptions } from "src/VideoOptions/VideoOptions";
 import { SubtitleOptions } from "src/SubtitleOptions/SubtitleOptions";
 import { Search } from "src/Search/Search";
+import { PolyglotLinearProgress } from "src/PolyglotLinearProgress/PolyglotLinearProgress";
 /*
   @ts-ignore has been added throughout this file, because the creator of the dependency
   we use to mock the socket-io socket is a bit useless and was not able to provide a consistent typings file.
@@ -340,6 +341,21 @@ describe("Socket tests", () => {
     checkDivHasStyle("loadingdiv", "none");
     expect(document.getElementById("videodiv")).toBeNull();
     setTimeout(() => {
+      mockServer.stop(done);
+    }, TIMEOUT);
+  });
+
+  it("Receiving progress from server updates progress of PolyglotLinearProgress", done => {
+    mockServer.on("connection", socket => {
+      socketEMIT(socket, "stream-response", JSON.stringify({ media: "Some media url" }));
+      socketEMIT(socket, "progress", JSON.stringify({ progress: 5 }));
+      socketEMIT(socket, "progress", JSON.stringify({ progress: 10}));
+    });
+
+    const wrapper = getBasicMainContent();
+    setTimeout(() => {
+      wrapper.update();
+      expect(wrapper.find(PolyglotLinearProgress).props().value).toBe(15);
       mockServer.stop(done);
     }, TIMEOUT);
   });
