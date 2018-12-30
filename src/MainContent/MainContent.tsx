@@ -337,6 +337,7 @@ class MainContentComponent extends React.Component<MainContentProps, MainContent
 
       if (this.props.link) {
         console.log("componentDidMount");
+        this.showLoading("loadingdiv", "searchdiv");
         // We came from a link url
         const url: string = decodeURIComponent(this.props.link);
         const lang: string = this.props.lang ? this.props.lang : "";

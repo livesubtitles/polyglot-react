@@ -72,7 +72,7 @@ export class PolyglotError extends React.Component<PolyglotErrorProps, PolyglotE
          aria-labelledby="alert-dialog-title"
          aria-describedby="alert-dialog-description"
        >
-         <DialogTitle id="alert-dialog-title"><Typography>Error</Typography></DialogTitle>
+         <DialogTitle id="alert-dialog-title">Error</DialogTitle>
          <DialogContent>
            <DialogContentText id="alert-dialog-description">
              {PolyglotError.errorMap[this.props.error].errorText}
@@ -80,7 +80,7 @@ export class PolyglotError extends React.Component<PolyglotErrorProps, PolyglotE
          </DialogContent>
          <DialogActions>
            <Button onClick={this.handleClose} color="primary">
-             <Typography> {PolyglotError.errorMap[this.props.error].buttonText} </Typography>
+             {PolyglotError.errorMap[this.props.error].buttonText}
            </Button>
          </DialogActions>
       </Dialog>

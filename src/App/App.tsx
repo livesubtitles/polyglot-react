@@ -27,6 +27,14 @@ declare const gapi;
 
 const drawerWidth = 240;
 
+const themeM = createMuiTheme({
+  palette: {
+    primary: { main: "#42a5f5" },
+    secondary: { main: '#f50057' },
+  },
+  typography: { useNextVariants: true },
+});
+
 const styles = theme => createStyles({
     appRoot: {
       display: "flex"
@@ -47,7 +55,8 @@ const styles = theme => createStyles({
       })
     },
     button: {
-      marginLeft: 900
+      position: "absolute",
+      right: "1em"
     },
     menuButton: {
       marginLeft: 12,
@@ -173,6 +182,7 @@ class AppComponent extends React.Component<URLParams & WithStyles<typeof styles>
 
 
     return (
+    <MuiThemeProvider theme={themeM}>
       <div className={classes.appRoot}>
         <CssBaseline />
         <AppBar
@@ -196,7 +206,7 @@ class AppComponent extends React.Component<URLParams & WithStyles<typeof styles>
             <Typography variant="h6" color="inherit" noWrap>
             Polyglot
             </Typography>
-            <Button variant="outlined" className={classes.button} onClick={this.signInRequest}>
+            <Button variant="contained" color="secondary" className={classes.button} onClick={this.signInRequest}>
              Sign In
             </Button>
           </Toolbar>
@@ -264,6 +274,7 @@ class AppComponent extends React.Component<URLParams & WithStyles<typeof styles>
           {body}
         </div>
       </div>
+      </MuiThemeProvider>
     );
   }
 }
