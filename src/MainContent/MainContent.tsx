@@ -21,9 +21,8 @@ import { SubtitleLanguageDropdown } from "src/SubtitleLanguageDropdown/SubtitleL
 import { SubtitleOptions } from "src/SubtitleOptions/SubtitleOptions";
 import { VideoOptions } from "src/VideoOptions/VideoOptions";
 import { HlsService, HlsJS } from "src/MainContent/HlsService";
-
-
-// const SERVER_URL = "https://polyglot-livesubtitles.herokuapp.com/";
+import { PolyglotLinearProgress } from 'src/PolyglotLinearProgress/PolyglotLinearProgress';
+import { simpleGet } from "src/utils/web";
 
 interface MainContentState {
     error: PolyglotErrorType;
@@ -31,7 +30,10 @@ interface MainContentState {
     qualities: Quality[];
     socket: SocketIOClient.Socket;
     hls: HlsService;
+    progress: number;
 }
+
+export const SERVER_URL = "https://polyglot-livesubtitles.herokuapp.com";
 
 const styles =  createStyles({
   root: {
@@ -84,6 +86,7 @@ class MainContentComponent extends React.Component<MainContentProps, MainContent
           mediaURL: null,
           qualities: [],
           socket: null,
+          progress: 0,
           hls: props.hls ? props.hls : new HlsJS(), // default implementation
         };
         this.handleSearch = this.handleSearch.bind(this);
@@ -121,7 +124,6 @@ class MainContentComponent extends React.Component<MainContentProps, MainContent
     }
 
     private changeCueCSS(property: string, value: string) {
-      console.log(`Change Cue CSS to: ${property} with value: ${value}`);
       const stylesheet = document.styleSheets[0] as any;
       // Complains because of compatibility issues with Firefox;
       stylesheet.addRule("::cue", `${property}: ${value}`);
@@ -129,7 +131,6 @@ class MainContentComponent extends React.Component<MainContentProps, MainContent
 
     private handleFontSizeChange(newSize: number): void {
       this.changeCueCSS("font-size", `${newSize}px`);
-      //document.styleSheets[0].addRule("::cue", "font: italic 45px sans-serif");
     }
 
     private handleFontSelection(newFontFamily: string): void {
@@ -145,12 +146,13 @@ class MainContentComponent extends React.Component<MainContentProps, MainContent
     }
 
     private getVideoMode(classes, mediaURL: string, qualities: Quality[]) {
-
-      return (<div><div id="loadingdiv" className="loadingcss"><CircularProgress/></div><div id="videodiv" className={classes.root}>
+      return (
+        <div>
+          <div id="loadingdiv" className="loadingcss">
+            <PolyglotLinearProgress value={this.state.progress}/>
+          </div>
+        <div id="videodiv" className={classes.root}>
         <div className={classes.videoSide}>
-        {/*
-           LEFT SIDE
-        */}
         </div>
         <div className={classes.centre}>
           <div className={classes.video}>
@@ -175,9 +177,6 @@ class MainContentComponent extends React.Component<MainContentProps, MainContent
             </div>
         </div>
         <div className={classes.videoSide}>
-        {/*
-           LEFT SIDE
-        */}
         </div>
       </div></div>);
     }
@@ -195,10 +194,9 @@ class MainContentComponent extends React.Component<MainContentProps, MainContent
     }
 
     private hideLoading(loadingDiv: string, showableDiv: string) {
+      // loading div is (and must be) always available
       const lDiv = document.getElementById(loadingDiv);
-      if (lDiv) {
-        lDiv.style.display = "none";
-      }
+      lDiv.style.display = "none";
 
       const sDiv = document.getElementById(showableDiv);
       if (sDiv) {
@@ -207,23 +205,31 @@ class MainContentComponent extends React.Component<MainContentProps, MainContent
     }
 
     private showLoading(loadingDiv: string, showableDiv: string) {
-      const sDiv = document.getElementById(showableDiv);
-      if (sDiv) {
-        sDiv.style.display = "none";
-      }
-
+      // loading div is (and must be) always available
       const lDiv = document.getElementById(loadingDiv);
-      if (lDiv) {
-        lDiv.style.display = "flex";
-      }
+      lDiv.style.display = "flex";
+      // we hide the previous showing div, so it is (must be) there always
+      const sDiv = document.getElementById(showableDiv);
+      sDiv.style.display = "none";
+
+    }
+
+    private getNewProgress(previousProgress: number, n: number): number {
+      return Math.min(100, previousProgress + n);
     }
 
     private setLoadingStateUntilVideoIsLoaded(hls: HlsService) {
       let self = this;
       hls.onBufferAppended(() => {
         console.log("Buffer appended");
-        console.log("LOADING DIV STATE: " + document.getElementById("loadingdiv").style.display);
-        self.hideLoading("loadingdiv", "videodiv");
+        console.log(this.state.progress);
+        const INCREASE = 10;
+        // Received buffer, so increase progress
+        if (this.state.progress + INCREASE >= 100) {
+          self.hideLoading("loadingdiv", "videodiv");
+        } else {
+          this.setState(prevState => ({progress: this.getNewProgress(prevState.progress, INCREASE)}));
+        }
       });
     }
 
@@ -235,7 +241,7 @@ class MainContentComponent extends React.Component<MainContentProps, MainContent
           this.setState({ hls });
           console.log("Loading manifest url...");
           hls.loadSource(manifest_url);
-          console.log("Attaching Media...")
+          console.log("Attaching Media...");
           this.showLoading("loadingdiv", "videodiv");
           const v = document.getElementById("video") as HTMLVideoElement;
           hls.attachMedia(v);
@@ -261,20 +267,29 @@ class MainContentComponent extends React.Component<MainContentProps, MainContent
 
       socket.on('connect_error', () => {
         console.error("Sorry, there seems to be an issue with the connection");
-        this.setState({ error: PolyglotErrorType.SocketConnection });
+        self.setState({ error: PolyglotErrorType.SocketConnection });
       });
 
       socket.on('streamlink-error', () => {
         console.error("Streamlink error");
-        this.setState({ error: PolyglotErrorType.StreamlinkUnavailable });
+        self.setState({ error: PolyglotErrorType.StreamlinkUnavailable });
       });
 
       socket.on('connect', () => {
-          console.log("Socket connected");
+        console.log("Socket connected");
       });
 
-      socket.on("progress", () => {
+      socket.on("progress", payload => {
           console.log("Progress from server");
+          const json = JSON.parse(payload);
+          self.setState(prevState => ({
+            progress: this.getNewProgress(prevState.progress, json.progress)
+          }));
+      });
+
+      socket.on("login-required", () => {
+        this.state.hls.destroy();
+        self.setState({ error: PolyglotErrorType.MaxTimeExceededLoginRequired });
       });
 
       socket.on('server-ready', () => {
@@ -283,6 +298,7 @@ class MainContentComponent extends React.Component<MainContentProps, MainContent
 
       socket.on('stream-response', function(data) {
           console.log("Received stream-response");
+          // loading new video, so progress at zero
           var json = JSON.parse(data);
 
           if (json.media === "") {
@@ -304,21 +320,24 @@ class MainContentComponent extends React.Component<MainContentProps, MainContent
           }
       });
 
-
-      // Probably within an on connect?
       console.log("Set up socket stream listener");
     }
 
+    private wakeUpPing(): void {
+      simpleGet(SERVER_URL, "");
+    }
+
     private getSocket() {
-      return this.props.socket ? this.props.socket : io('https://polyglot-livesubtitles.herokuapp.com/streams');
+      return this.props.socket ? this.props.socket : io(`${SERVER_URL}/streams`);
     }
 
     public componentDidMount() {
 
-      // set up socket event listener
-      // TODO: Grab link and language if we have them, emit socket event and set up socket event listener which will update mediaURLs
+      this.wakeUpPing();
+
       if (this.props.link) {
         console.log("componentDidMount");
+        this.showLoading("loadingdiv", "searchdiv");
         // We came from a link url
         const url: string = decodeURIComponent(this.props.link);
         const lang: string = this.props.lang ? this.props.lang : "";

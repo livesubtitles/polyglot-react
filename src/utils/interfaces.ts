@@ -18,9 +18,10 @@ export interface LanguageSuggestion {
 export type Quality = string;
 
 export enum PolyglotErrorType {
-  StreamlinkUnavailable = "StreamlinkUnavailable",
-  UninitialisedStreamer = "UninitialisedStreamer",
-  SocketConnection = "SocketConnection"
+  StreamlinkUnavailable         = "StreamlinkUnavailable",
+  UninitialisedStreamer         = "UninitialisedStreamer",
+  SocketConnection              = "SocketConnection",
+  MaxTimeExceededLoginRequired  = "MaxTimeExceededLoginRequired"
 }
 
 export interface URLParams {

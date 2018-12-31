@@ -1,8 +1,8 @@
 import * as React from "react";
 import { deburr } from "lodash";
 import * as Autosuggest from "react-autosuggest";
-import match from "autosuggest-highlight/match";
-import parse from "autosuggest-highlight/parse";
+import * as match from "autosuggest-highlight/match";
+import * as parse from "autosuggest-highlight/parse";
 import TextField from "@material-ui/core/TextField";
 import Paper from "@material-ui/core/Paper";
 import MenuItem from "@material-ui/core/MenuItem";
@@ -37,7 +37,7 @@ const suggestions: LanguageSuggestion[] = [
   { label: "Korean", value: "ko-KR" }
 ];
 
-function renderInputComponent(inputProps) {
+export function renderInputComponent(inputProps) {
   const { classes, inputRef = () => {}, ref, ...other } = inputProps;
 
   return (
@@ -62,7 +62,7 @@ function renderInputComponent(inputProps) {
   );
 }
 
-function renderSuggestion(suggestion, { query, isHighlighted }) {
+export function renderSuggestion(suggestion, { query, isHighlighted }) {
   const matches = match(suggestion.label, query);
   const parts = parse(suggestion.label, matches);
 
@@ -71,11 +71,11 @@ function renderSuggestion(suggestion, { query, isHighlighted }) {
       <div>
         {parts.map((part, index) => {
           return part.highlight ? (
-            <span key={String(index)} style={{ fontWeight: 500 }}>
+            <span className="renderSuggestionSpan" key={String(index)} style={{ fontWeight: 500 }}>
               {part.text}
             </span>
           ) : (
-            <strong key={String(index)} style={{ fontWeight: 300 }}>
+            <strong className="renderSuggestionStrong" key={String(index)} style={{ fontWeight: 300 }}>
               {part.text}
             </strong>
           );
@@ -85,7 +85,7 @@ function renderSuggestion(suggestion, { query, isHighlighted }) {
   );
 }
 
-function getSuggestions(value) {
+export function getSuggestions(value) {
   const inputValue = deburr(value.trim()).toLowerCase();
   const inputLength = inputValue.length;
   let count = 0;
@@ -105,7 +105,9 @@ function getSuggestions(value) {
       });
 }
 
-function getSuggestionValue(suggestion: LanguageSuggestion) {
+// Confusingly, the API wants the "value" of the suggestion, which in our case
+// we call the label
+export function getSuggestionValue(suggestion: LanguageSuggestion) {
   return suggestion.label;
 }
 

@@ -1,6 +1,6 @@
 import * as React from 'react';
 import * as ReactDOM from 'react-dom';
-import { MainContent } from 'src/MainContent/MainContent';
+import { MainContent, SERVER_URL } from 'src/MainContent/MainContent';
 import * as enzyme from 'enzyme';
 // @ts-ignore
 import { SocketIO, Server } from 'mock-socket';
@@ -10,6 +10,9 @@ import * as io from 'socket.io-client';
 import { HlsService } from "src/MainContent/HlsService";
 import { VideoOptions } from "src/VideoOptions/VideoOptions";
 import { SubtitleOptions } from "src/SubtitleOptions/SubtitleOptions";
+import { Search } from "src/Search/Search";
+import { PolyglotLinearProgress } from "src/PolyglotLinearProgress/PolyglotLinearProgress";
+import * as fetchMock from "fetch-mock";
 /*
   @ts-ignore has been added throughout this file, because the creator of the dependency
   we use to mock the socket-io socket is a bit useless and was not able to provide a consistent typings file.
@@ -22,31 +25,44 @@ it('renders without crashing', () => {
   ReactDOM.unmountComponentAtNode(div);
 });
 
+const TIMEOUT  = 200;
+const FAKE_URL = 'https://localhost:12345/';
+fetchMock.get(`${SERVER_URL}/`, { hasBeenCalled: true });
+
+function getMainContentWithSocket(socket) {
+  return enzyme.mount(enzyme.shallow(<MainContent link="www.youtube.com" socket={socket} />).get(0));
+}
+
+function getBasicMainContent() {
+  return getMainContentWithSocket(SocketIO(FAKE_URL));
+}
+
+// Because whoever wrote the library had no idea of typescript
+function socketON(socket, event: string, func) {
+  // @ts-ignore
+  socket.on(event, func);
+}
+
+function socketEMIT(socket, event: string, func) {
+  // @ts-ignore
+  socket.emit(event, func);
+}
+
 describe("Socket tests", () => {
-  const TIMEOUT  = 200;
-  const FAKE_URL = 'https://localhost:12345/';
+
   const MockHlsService = createMockHlsService();
   let mockServer;
 
   beforeEach(() => {
     mockServer = new Server(FAKE_URL);
-    setUpMockDocument();
+    // mocks the wake up call to the server
+    setUpDefaultMockDocument();
   });
 
   afterEach(() => {
+    fetchMock.resetHistory();
     mockServer.stop();
   });
-
-  // Because whoever wrote the library had no idea of typescript
-  function socketON(socket, event: string, func) {
-    // @ts-ignore
-    socket.on(event, func);
-  }
-
-  function socketEMIT(socket, event: string, func) {
-    // @ts-ignore
-    socket.emit(event, func);
-  }
 
   it("Connects and calls a function on connection", done => {
     const mockfn = jest.fn();
@@ -55,7 +71,7 @@ describe("Socket tests", () => {
       socketON(socket, "connect", mockfn);
     });
 
-    const wrapper = enzyme.mount(enzyme.shallow(<MainContent link="www.youtube.com" socket={SocketIO(FAKE_URL)} />).get(0));
+    const wrapper = getBasicMainContent();
     setTimeout(() => {
       expect(wrapper.state("error")).toBeNull();
       const s = wrapper.state("socket") as any;
@@ -65,27 +81,94 @@ describe("Socket tests", () => {
     }, TIMEOUT);
   });
 
-  function checkPolyglotError(errorEvent: string, typeError: PolyglotErrorType, done) {
+  it("Mounting the component makes a wake up call", () => {
+    expect(fetchMock.called(`${SERVER_URL}/`)).toBe(false);
+    const wrapper = getBasicMainContent();
+    expect(fetchMock.called(`${SERVER_URL}/`)).toBe(true);
+  });
+
+  function checkPolyglotError(errorEvent: string, typeError: PolyglotErrorType, wrapperCreator, finalExpects, done) {
     mockServer.on("connection", socket => {
       socketEMIT(socket, errorEvent, {});
     });
 
-    const wrapper = enzyme.mount(enzyme.shallow(<MainContent link="www.youtube.com" socket={SocketIO(FAKE_URL)} />).get(0));
+    const wrapper = wrapperCreator();
     setTimeout(() => {
       expect(wrapper.find(PolyglotError).exists()).toBe(false);
       wrapper.update();
       expect(wrapper.find(PolyglotError).exists()).toBe(true);
       expect(wrapper.find(PolyglotError).props().error).toBe(typeError);
+      finalExpects(wrapper);
       mockServer.stop(done);
     }, 250);
   }
 
   it("Receives streamlink error - PolyglotErrorType.StreamlinkUnavailable", done => {
-    checkPolyglotError("streamlink-error", PolyglotErrorType.StreamlinkUnavailable, done);
+    checkPolyglotError(
+      "streamlink-error",
+      PolyglotErrorType.StreamlinkUnavailable,
+      () => getBasicMainContent(),
+      wrapper => {},
+      done
+    );
   });
 
-  it("Receives connection error - PolyglotErrorType.SocketConnection" done => {
-    checkPolyglotError("connect_error", PolyglotErrorType.SocketConnection, done);
+  it("Receives connection error - PolyglotErrorType.SocketConnection", done => {
+    checkPolyglotError(
+      "connect_error",
+      PolyglotErrorType.SocketConnection,
+      () => getBasicMainContent(),
+      wrapper => {},
+      done
+    );
+  });
+
+  it("Receiving login-required from server shows MaxTimeExceededLoginRequired error and destroys hls player", done => {
+    const m = new MockHlsService();
+    checkPolyglotError(
+      "login-required",
+      PolyglotErrorType.MaxTimeExceededLoginRequired,
+      () => createMainContentWithMockHls(m),
+      wrapper => {
+        expect(m.destroy).toHaveBeenCalledTimes(1);
+      },
+      done
+    );
+  });
+
+  it("Restoring error gets you back to home page", done => {
+    mockServer.on("connection", socket => {
+      socketEMIT(socket, "connect_error", {});
+    });
+    const mockfn = jest.fn();
+    window.location.reload = mockfn;
+    const wrapper = getBasicMainContent();
+    setTimeout(() => {
+      wrapper.update();
+      expect(wrapper.find(PolyglotError).exists()).toBe(true);
+      wrapper.find(PolyglotError).props().restoredError();
+      // reload location, so go back to home page
+      expect(mockfn).toHaveBeenCalledTimes(1);
+      mockServer.stop(done);
+    }, TIMEOUT);
+  });
+
+  it("search sets up socket listener properly", done => {
+    const URL  = "A random url";
+    const LANG = { label: "Spanish", value: "es-ES" };
+    mockServer.on("connection", socket => {
+      socketEMIT(socket, "server-ready", {});
+      socketON(socket, "stream", payload => {
+        expect(payload.url).toEqual(URL);
+        expect(payload.lang).toEqual(LANG);
+      })
+    });
+
+    const wrapper = enzyme.mount(enzyme.shallow(<MainContent socket={SocketIO(FAKE_URL)} />).get(0));
+    wrapper.find(Search).props().onSearch(URL, LANG);
+    setTimeout(() => {
+      mockServer.stop(done);
+    }, TIMEOUT);
   });
 
   function checkStreamEventSent(url, lang, done) {
@@ -100,7 +183,7 @@ describe("Socket tests", () => {
     if (lang !== "") {
       wrapper = enzyme.mount(enzyme.shallow(<MainContent link={url} lang={lang} socket={SocketIO(FAKE_URL)} />).get(0));
     } else {
-      wrapper = enzyme.mount(enzyme.shallow(<MainContent link={url} socket={SocketIO(FAKE_URL)} />).get(0));
+      wrapper = getBasicMainContent();
     }
     setTimeout(() => {
       mockServer.stop(done);
@@ -119,7 +202,7 @@ describe("Socket tests", () => {
     mockServer.on("connection", socket => {
       socketEMIT(socket, "stream-response", JSON.stringify({ media: "" }));
     });
-    const wrapper = enzyme.mount(enzyme.shallow(<MainContent link="www.youtube.com" socket={SocketIO(FAKE_URL)} />).get(0));
+    const wrapper = getBasicMainContent();
     setTimeout(() => {
       expect(wrapper.find(PolyglotError).exists()).toBe(false);
       wrapper.update();
@@ -132,7 +215,7 @@ describe("Socket tests", () => {
   function createMockHlsService() {
     return jest.fn<HlsService>(() => ({
       isSupported: jest.fn(() => true),
-      loadSource: jest.fn(),
+      loadSource: jest.fn(() => setUpVideoModeDocument()),
       attachMedia: jest.fn(),
       onManifestParsed: jest.fn(),
       onBufferAppended: jest.fn(),
@@ -141,10 +224,21 @@ describe("Socket tests", () => {
     }));
   }
 
-  function setUpMockDocument() {
+  // loading div always has to be there
+
+  function setUpDefaultMockDocument() {
     document.body.innerHTML =
     '<div>' +
-    '  <video id="video" />' +
+    '  <div id="loadingdiv" style="display: none;"></div>' +
+    '  <div id="searchdiv" ></div>' +
+    '</div>';
+  }
+
+  function setUpVideoModeDocument() {
+    document.body.innerHTML =
+    '<div>' +
+    '  <div id="loadingdiv" style="display: none;"></div>' +
+    '  <div id="videodiv" ><video id="video" /></div>' +
     '</div>';
   }
 
@@ -247,6 +341,133 @@ describe("Socket tests", () => {
       wrapper.find(SubtitleOptions).props().onSubtitleLanguageChange(FAKE_LANGUAGE);
       mockServer.stop(done);
     }, TIMEOUT);
+  });
+
+  function checkDivHasStyle(div, style) {
+    const divRef = document.getElementById(div)
+    expect(divRef.style.display).toEqual(style);
+  }
+
+  it("Divs are shown properly - when all are available", done => {
+    const m = new MockHlsService();
+    const wrapper = createMainContentWithMockHls(m);
+    // before we showLoading, videodiv has not been set yet, loadingdiv is
+    // none because we stopped it
+    m.loadSource = u => {
+      // At this point we know mediaUrl has been set, so video mode document
+      // is the document mock required
+      setUpVideoModeDocument();
+      checkDivHasStyle("loadingdiv", "none");
+      checkDivHasStyle("videodiv", "");
+      expect(document.getElementById("searchdiv")).toBeNull();
+    };
+    m.attachMedia = v => {
+      checkDivHasStyle("loadingdiv", "flex");
+      checkDivHasStyle("videodiv", "none");
+      expect(document.getElementById("searchdiv")).toBeNull();
+    }
+    const MEDIA_URL = "This is a media url, I swear";
+    setUpDefaultMockDocument();
+
+    mockServer.on("connection", socket => {
+      socketEMIT(socket, "stream-response", JSON.stringify({ media: MEDIA_URL }));
+
+    });
+    // at the start, search should not have a style
+    checkDivHasStyle("searchdiv", "");
+    checkDivHasStyle("loadingdiv", "none");
+    expect(document.getElementById("videodiv")).toBeNull();
+    setTimeout(() => {
+      mockServer.stop(done);
+    }, TIMEOUT);
+  });
+
+  it("Receiving progress from server updates progress of PolyglotLinearProgress", done => {
+    mockServer.on("connection", socket => {
+      socketEMIT(socket, "stream-response", JSON.stringify({ media: "Some media url" }));
+      socketEMIT(socket, "progress", JSON.stringify({ progress: 5 }));
+      socketEMIT(socket, "progress", JSON.stringify({ progress: 10}));
+    });
+
+    const wrapper = getBasicMainContent();
+    setTimeout(() => {
+      wrapper.update();
+      expect(wrapper.find(PolyglotLinearProgress).props().value).toBe(15);
+      mockServer.stop(done);
+    }, TIMEOUT);
+  });
+
+});
+
+describe("CSS addRule tests", () => {
+
+  let mockServer;
+  let mst;
+
+  beforeEach(() => {
+    mockServer = new Server(FAKE_URL);
+    mst = setUpMockStylesheet();
+  });
+
+  afterEach(() => {
+    mockServer.stop();
+  });
+
+  function createMockStylesheet() {
+    return jest.fn(() => ({
+      addRule: jest.fn()
+    }));
+  }
+
+  function setUpMockStylesheet() {
+    const MockStylesheet = createMockStylesheet();
+    const mStylesheet = new MockStylesheet();
+    // we dont need anything else for the mock, so dont bother
+    // @ts-ignore
+    document.styleSheets[0] = mStylesheet;
+    return mStylesheet;
+  }
+
+  function checkPropWithChangeCueCSS(func, arglist, done) {
+    mockServer.on("connection", socket => {
+      socketEMIT(socket, "stream-response", JSON.stringify({ media: "Some media url" }));
+    });
+    const wrapper = getBasicMainContent();
+    setTimeout(() => {
+      wrapper.update();
+      func(wrapper);
+      expect(mst.addRule).toHaveBeenCalledTimes(1);
+      expect(mst.addRule.mock.calls[0]).toEqual(arglist);
+      mockServer.stop(done);
+    }, TIMEOUT);
+  }
+
+  it("handleFontSizeChange calls changeCueCSS correctly", done => {
+    const FONT_SIZE = 3;
+    checkPropWithChangeCueCSS(wrapper => {
+      wrapper.find(SubtitleOptions).props().onFontSizeChange(FONT_SIZE);
+    }, ["::cue", `font-size: ${FONT_SIZE}px`], done);
+  });
+
+  it("handleFontSelection calls changeCueCSS correctly", done => {
+    const FONT_FAMILY = "Comic Sans";
+    checkPropWithChangeCueCSS(wrapper => {
+      wrapper.find(SubtitleOptions).props().onFontSelection(FONT_FAMILY);
+    }, ["::cue", `font-family: ${FONT_FAMILY}`], done);
+  });
+
+  it("handleBackgroundColorChange calls changeCueCSS correctly", done => {
+    const COLOR = "yellow";
+    checkPropWithChangeCueCSS(wrapper => {
+      wrapper.find(SubtitleOptions).props().onBackgroundColorChange(COLOR);
+    }, ["::cue", `background-color: ${COLOR}`], done);
+  });
+
+  it("handleSubtitleColorChange calls changeCueCSS correctly", done => {
+    const COLOR = "blue";
+    checkPropWithChangeCueCSS(wrapper => {
+      wrapper.find(SubtitleOptions).props().onSubtitleColorChange(COLOR);
+    }, ["::cue", `color: ${COLOR}`], done);
   });
 
 });
