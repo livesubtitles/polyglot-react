@@ -118,7 +118,7 @@ class HelpComponent extends React.Component<HelpProps, HelpState> {
                         onClick={this.handleNext}
                         className={classes.button}
                       >
-                        {step === steps.length - 1 ? 'Try it now!' : 'Next'}
+                        Next
                       </Button>
                     </div>
                   </div>
