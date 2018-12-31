@@ -17,7 +17,17 @@ interface HelpState {
 
 const styles = createStyles({
   root: {
-    
+    width: "60%"
+  },
+  button: {
+    marginTop: "10px",
+    marginBottom: "10px"
+  },
+  actions: {
+    marginBottom: "10px"
+  },
+  finish: {
+    padding: "15px"
   }
 });
 
@@ -27,9 +37,30 @@ interface StepInfo {
 }
 
 const steps : StepInfo[] = [
-  { title: "Step 1", description: "Description for step 1" },
-  { title: "Step 2", description: "Description for step 2" },
-  { title: "Step 3", description: "Descrpition for step 3" },
+  { 
+    title: "Browser", 
+    description: 
+    "Please make sure that you are using Google Chrome if you have not been \
+    redirected from the Polyglot extension" 
+  },
+  { 
+    title: "Sign In", 
+    description:
+    "You will be entitled to up to one hour of free live subtitle streaming. After this, you will \
+    need to sign in to your Google account to pay for exactly as much as you need."
+  },
+  {
+     title: "Finding the livesteam",
+     description: 
+     "Polyglot was initially designed to support YouTube live streams. However, it should work \
+     Twitch and BBC iPlayer. Please refer to this list of websites that are compatible with Streamlink \
+     [insert-link-here]" 
+  },{
+    title: "Get live subtitles",
+    description:
+    "Navigate to the home page with the sidebar to the left. And enter the link to the live stream souce \
+    and the language which the stream is in. "
+  }
 ];
 
 class HelpComponent extends React.Component<HelpProps, HelpState> {
@@ -38,28 +69,6 @@ class HelpComponent extends React.Component<HelpProps, HelpState> {
     this.state = {
       step: 0
     };
-  }
-
-  private getSteps = () => {
-    return ['Select campaign settings', 'Create an ad group', 'Create an ad'];
-  }
-
-  private getStepContent = (step : number) => {
-    switch (step) {
-      case 0:
-        return `For each ad campaign that you create, you can control how much
-                you're willing to spend on clicks and conversions, which networks
-                and geographical locations you want your ads to show on, and more.`;
-      case 1:
-        return 'An ad group contains one or more ads which target a shared set of keywords.';
-      case 2:
-        return `Try out different ad text to see what brings in the most customers,
-                and learn how to enhance your ads using features like ad extensions.
-                If you run into any problems with your ads, find out how to tell if
-                they're running and how to resolve approval issues.`;
-      default:
-        return 'Unknown step';
-    }
   }
 
   private handleNext = () => {
@@ -84,18 +93,22 @@ class HelpComponent extends React.Component<HelpProps, HelpState> {
 
     return (
       <div className={classes.root}>
+        <Typography variant="h3" gutterBottom>
+          Instructions
+        </Typography>
         <Stepper activeStep={step} orientation="vertical">
           {steps.map((stepInfo : StepInfo, index) => {
             return (
               <Step key={stepInfo.title}>
-                <StepLabel>{stepInfo.title}</StepLabel>
+                <StepLabel><Typography variant="h6">{stepInfo.title}</Typography></StepLabel>
                 <StepContent>
-                  <Typography>{stepInfo.description}</Typography>
-                  <div>
+                  <Typography variant="body1">{stepInfo.description}</Typography>
+                  <div className={classes.actions}>
                     <div>
                       <Button
                         disabled={step === 0}
                         onClick={this.handlePrev}
+                        className={classes.button}
                       >
                         Back
                       </Button>
@@ -103,8 +116,9 @@ class HelpComponent extends React.Component<HelpProps, HelpState> {
                         variant="contained"
                         color="primary"
                         onClick={this.handleNext}
+                        className={classes.button}
                       >
-                        {step === steps.length - 1 ? 'Finish' : 'Next'}
+                        {step === steps.length - 1 ? 'Try it now!' : 'Next'}
                       </Button>
                     </div>
                   </div>
@@ -114,10 +128,10 @@ class HelpComponent extends React.Component<HelpProps, HelpState> {
           })}
         </Stepper>
         {step === steps.length && (
-          <Paper square elevation={0}>
-            <Typography>All steps completed - you&apos;re finished</Typography>
-            <Button onClick={this.handleReset}>
-              Reset
+          <Paper square elevation={0} className={classes.finish}>
+            <Button onClick={this.handleReset}
+                    className={classes.button}>
+              Try it now!
             </Button>
           </Paper>
         )}
