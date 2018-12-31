@@ -33,33 +33,41 @@ const styles = createStyles({
 
 interface StepInfo {
   title: string;
-  description: string; 
+  description: JSX.Element; 
 }
 
 const steps : StepInfo[] = [
   { 
     title: "Browser", 
     description: 
-    "Please make sure that you are using Google Chrome if you have not been \
-    redirected from the Polyglot extension" 
+    <Typography variant="body1">
+      Please make sure that you are using Google Chrome if you have not been \
+      redirected from the Polyglot extension
+    </Typography> 
   },
   { 
     title: "Sign In", 
     description:
-    "You will be entitled to up to one hour of free live subtitle streaming. After this, you will \
-    need to sign in to your Google account to pay for exactly as much as you need."
+    <Typography variant="body1">
+      You will be entitled to up to one hour of free live subtitle streaming. After this, you will \
+      need to sign in to your Google account to pay for exactly as much as you need.
+    </Typography>
   },
   {
      title: "Finding the livesteam",
      description: 
-     "Polyglot was initially designed to support YouTube live streams. However, it should work \
-     Twitch and BBC iPlayer. Please refer to this list of websites that are compatible with Streamlink \
-     [insert-link-here]" 
+     <Typography variant="body1">
+       Polyglot was initially designed to support YouTube live streams. However, it should work \
+       Twitch and BBC iPlayer. Please refer to this list of websites that are compatible with Streamlink \
+       [insert-link-here]
+     </Typography>
   },{
     title: "Get live subtitles",
     description:
-    "Navigate to the home page with the sidebar to the left. And enter the link to the live stream souce \
-    and the language which the stream is in. "
+    <Typography variant="body1">
+      Navigate to the home page with the sidebar to the left. And enter the link to the live stream souce \
+      and the language which the stream is in.
+    </Typography>
   }
 ];
 
@@ -102,7 +110,7 @@ class HelpComponent extends React.Component<HelpProps, HelpState> {
               <Step key={stepInfo.title}>
                 <StepLabel><Typography variant="h6">{stepInfo.title}</Typography></StepLabel>
                 <StepContent>
-                  <Typography variant="body1">{stepInfo.description}</Typography>
+                  {stepInfo.description}
                   <div className={classes.actions}>
                     <div>
                       <Button
