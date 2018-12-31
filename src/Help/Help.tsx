@@ -9,6 +9,7 @@ import Paper from '@material-ui/core/Paper';
 import Typography from '@material-ui/core/Typography';
 
 export interface HelpProps extends WithStyles<typeof styles> {
+  onFinish() : void;
 }
 
 interface HelpState {
@@ -91,10 +92,6 @@ class HelpComponent extends React.Component<HelpProps, HelpState> {
     }))
   };
 
-  private handleReset = () => {
-    this.setState({step: 0});
-  };
-
   render() {
     const { classes } = this.props;
     const { step } = this.state;
@@ -137,7 +134,7 @@ class HelpComponent extends React.Component<HelpProps, HelpState> {
         </Stepper>
         {step === steps.length && (
           <Paper square elevation={0} className={classes.finish}>
-            <Button onClick={this.handleReset}
+            <Button onClick={this.props.onFinish}
                     className={classes.button}>
               Try it now!
             </Button>

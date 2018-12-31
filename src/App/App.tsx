@@ -186,7 +186,7 @@ class AppComponent extends React.Component<URLParams & WithStyles<typeof styles>
     } else if (this.state.appMode == APP_MODE.INFO) {
       body = <Information/>;
     } else if (this.state.appMode == APP_MODE.HELP) {
-      body = <Help/>;
+      body = <Help onFinish={() => this.setState({ appMode: APP_MODE.HOME })} />;
     }
 
 
