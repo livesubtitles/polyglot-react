@@ -7,6 +7,9 @@ import StepContent from '@material-ui/core/StepContent';
 import Button from '@material-ui/core/Button';
 import Paper from '@material-ui/core/Paper';
 import Typography from '@material-ui/core/Typography';
+import List from '@material-ui/core/List';
+import ListItem from '@material-ui/core/ListItem';
+import ListItemText from '@material-ui/core/ListItemText';
 
 export interface HelpProps extends WithStyles<typeof styles> {
   onFinish() : void;
@@ -42,32 +45,47 @@ const steps : StepInfo[] = [
     title: "Browser", 
     description: 
     <Typography variant="body1">
-      Please make sure that you are using Google Chrome if you have not been \
-      redirected from the Polyglot extension
+      If you haven't been redirected from the Polyglot Google Chrome web extension,
+      make sure you are using Google Chrome. Polyglot is designed with Google Chrome in mind
+      and may not be compatible with other browsers.
     </Typography> 
   },
   { 
-    title: "Sign In", 
+    title: "Payment", 
     description:
-    <Typography variant="body1">
-      You will be entitled to up to one hour of free live subtitle streaming. After this, you will \
-      need to sign in to your Google account to pay for exactly as much as you need.
-    </Typography>
+    <React.Fragment>
+      <Typography variant="body1">
+        You will be entitled to up to one hour of free live subtitle streaming. After this, you can
+        pay for exactly as much as you need through the following methods:
+      </Typography>
+      <List dense>
+        <ListItem>
+          <ListItemText
+            primary="Pay for your API using Google Pay"
+          />
+        </ListItem>
+        <ListItem>
+          <ListItemText
+            primary="Login to your Google account and use your own Google Translate API credit"
+          />
+        </ListItem>
+      </List>
+    </React.Fragment>
   },
   {
-     title: "Finding the livesteam",
+     title: "Finding the live stream",
      description: 
      <Typography variant="body1">
-       Polyglot was initially designed to support YouTube live streams. However, it should work \
-       Twitch and BBC iPlayer. Please refer to this list of websites that are compatible with Streamlink \
-       [insert-link-here]
+       Polyglot was initially designed to support YouTube live streams. However, it can also work for
+       Twitch and BBC iPlayer. Any platform supported by Streamlink should also be compatable. Please
+       refer to this list <a href="https://streamlink.github.io/plugin_matrix.html#plugin-matrix">here</a> and try it out!
      </Typography>
   },{
     title: "Get live subtitles",
     description:
     <Typography variant="body1">
       Navigate to the home page with the sidebar to the left. And enter the link to the live stream souce \
-      and the language which the stream is in.
+      and the language which the stream is in and go!
     </Typography>
   }
 ];
