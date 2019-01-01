@@ -23,27 +23,33 @@ interface InformationState {
 
 interface InformationSegment {
   title: string;
-  body: string;
+  body: JSX.Element;
 }
+
 
 const informationSegments : InformationSegment[] = [
   {
     title: "What is Polyglot?",
-    body: "Polyglot is a hack... I mean subtitling provider for livestreams. \
-          For the affordable price of $100 per hour of streaming. You can get half-arsed translations \
-          courtesy of Google and Microsoft. i.e companies who know what they are doing."
+    body: <Typography variant="h6">Polyglot is a hack... I mean subtitling provider for livestreams.
+            For the affordable price of $100 per hour of streaming. You can get half-arsed translations
+            courtesy of Google and Microsoft. i.e companies who know what they are doing.
+          </Typography>
   },
   {
     title: "What languages are supported?",
-    body: "The Polyglot has only been tested with Spanish and French however... in theory \
-           it should work for many other languages. We can not be bothered to find people of every language \
-           this supports. If you notice an error in the translation.... blame Google."
+    body:  <Typography variant="h6">
+            The Polyglot has only been tested with Spanish and French however... in theory
+            it should work for many other languages. We can not be bothered to find people of every language \
+            this supports. If you notice an error in the translation.... blame Google.
+           </Typography>
   },
   {
     title: "What platforms are supported?",
-    body: "Polyglot is mainly intended for Youtube; However, we are aiming to make it work for many \
-          sites such as Twitch, BBC iPlayer and Chaturbate. In theory, it would for for any website \
-          with Streamlink compatibility."
+    body: <Typography variant="h6">
+            Polyglot is mainly intended for Youtube; However, we are aiming to make it work for many 
+            sites such as Twitch, BBC iPlayer and Chaturbate. In theory, it would for for any website
+            with Streamlink compatibility.
+          </Typography>
   }
 ];
 
@@ -115,7 +121,7 @@ export class InformationComponent extends React.Component<InformationProps & Wit
           {informationSegments.map((step, index) => (
             <div key={step.title}>
               {Math.abs(slideIndex - index) <= 2 ? (
-                <Typography variant="h6">{step.body}</Typography>
+                step.body
               ) : null}
             </div>
           ))}
