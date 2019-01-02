@@ -45,8 +45,8 @@ const SubtitleOptionsComponent = (props: SubtitleOptionsProps) => {
               alignItems="center"
               spacing={24}
            >
-            <FontFamilySelector onFontSelection={props.onFontSelection} />
             <FontSizeSlider onFontSizeChange={props.onFontSizeChange} />
+            <FontFamilySelector onFontSelection={props.onFontSelection} />
             <ColorPicker label="Background color" defaultValue="#000000" onChange={props.onBackgroundColorChange} />
             <ColorPicker label="Subtitle color" defaultValue="#000000" onChange={props.onSubtitleColorChange} />
             <SubtitleLanguageDropdown onSubtitleLanguageSelection={props.onSubtitleLanguageChange} />
