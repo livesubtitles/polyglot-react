@@ -33,7 +33,7 @@ describe("Step tests", () => {
       nextBrowserButton.props().onClick();
 
       wrapper.update();
-      expect(wrapper.state().step).toBe(1);
+      expect(wrapper.state("step")).toBe(1);
 
       const backPaymentButton = wrapper.find('#back-Payment').find(Button);
       expect(backPaymentButton).toHaveLength(1);
@@ -58,7 +58,7 @@ describe("Step tests", () => {
     }
 
     wrapper.update();
-    expect(wrapper.state().step).toBe(4);
+    expect(wrapper.state("step")).toBe(4);
     const tryitout = wrapper.find('#tryitout').find(Button);
     tryitout.props().onClick();
     expect(mockfn).toHaveBeenCalledTimes(1);
