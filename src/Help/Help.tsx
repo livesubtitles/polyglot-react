@@ -10,6 +10,7 @@ import Typography from '@material-ui/core/Typography';
 import List from '@material-ui/core/List';
 import ListItem from '@material-ui/core/ListItem';
 import ListItemText from '@material-ui/core/ListItemText';
+import Card from '@material-ui/core/Card';
 
 export interface HelpProps extends WithStyles<typeof styles> {
   onFinish() : void;
@@ -21,7 +22,11 @@ interface HelpState {
 
 const styles = createStyles({
   root: {
-    width: "60%"
+    padding: "2em",
+    display: "flex",
+    flexDirection: "column",
+    justifyContent: "center",
+    alignItems: "center"
   },
   button: {
     marginTop: "10px",
@@ -32,6 +37,10 @@ const styles = createStyles({
   },
   finish: {
     padding: "15px"
+  },
+  stepper: {
+    width: "800px",
+    flexGrow: 1
   }
 });
 
@@ -44,7 +53,7 @@ export const steps : StepInfo[] = [
   {
     title: "Browser",
     description:
-    <Typography variant="body1">
+    <Typography variant="body2">
       If you haven't been redirected from the Polyglot Google Chrome web extension,
       make sure you are using Google Chrome. Polyglot is designed with Google Chrome in mind
       and may not be compatible with other browsers.
@@ -54,7 +63,7 @@ export const steps : StepInfo[] = [
     title: "Payment",
     description:
     <React.Fragment>
-      <Typography variant="body1">
+      <Typography variant="body2">
         You will be entitled to up to one hour of free live subtitle streaming. After this, you can
         pay for exactly as much as you need through the following methods:
       </Typography>
@@ -75,7 +84,7 @@ export const steps : StepInfo[] = [
   {
      title: "Finding the live stream",
      description:
-     <Typography variant="body1">
+     <Typography variant="body2">
        Polyglot was initially designed to support YouTube live streams. However, it can also work for
        Twitch and BBC iPlayer. Any platform supported by Streamlink should also be compatable. Please
        refer to this list <a href="https://streamlink.github.io/plugin_matrix.html#plugin-matrix">here</a> and try it out!
@@ -83,7 +92,7 @@ export const steps : StepInfo[] = [
   },{
     title: "Get live subtitles",
     description:
-    <Typography variant="body1">
+    <Typography variant="body2">
       Navigate to the home page with the sidebar to the left. And enter the link to the live stream souce \
       and the language which the stream is in and go!
     </Typography>
@@ -119,11 +128,12 @@ class HelpComponent extends React.Component<HelpProps, HelpState> {
         <Typography variant="h3" gutterBottom>
           Instructions
         </Typography>
+        <Card className={classes.stepper}>
         <Stepper activeStep={step} orientation="vertical">
           {steps.map((stepInfo : StepInfo, index) => {
             return (
               <Step key={stepInfo.title}>
-                <StepLabel><Typography variant="h6">{stepInfo.title}</Typography></StepLabel>
+                <StepLabel><Typography variant="subtitle2">{stepInfo.title}</Typography></StepLabel>
                 <StepContent>
                   {stepInfo.description}
                   <div className={classes.actions}>
@@ -160,6 +170,7 @@ class HelpComponent extends React.Component<HelpProps, HelpState> {
             </Button>
           </Paper>
         )}
+        </Card>
       </div>
 );
   }
