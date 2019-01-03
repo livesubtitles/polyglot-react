@@ -37,21 +37,21 @@ const styles = createStyles({
 
 interface StepInfo {
   title: string;
-  description: JSX.Element; 
+  description: JSX.Element;
 }
 
-const steps : StepInfo[] = [
-  { 
-    title: "Browser", 
-    description: 
+export const steps : StepInfo[] = [
+  {
+    title: "Browser",
+    description:
     <Typography variant="body1">
       If you haven't been redirected from the Polyglot Google Chrome web extension,
       make sure you are using Google Chrome. Polyglot is designed with Google Chrome in mind
       and may not be compatible with other browsers.
-    </Typography> 
+    </Typography>
   },
-  { 
-    title: "Payment", 
+  {
+    title: "Payment",
     description:
     <React.Fragment>
       <Typography variant="body1">
@@ -74,7 +74,7 @@ const steps : StepInfo[] = [
   },
   {
      title: "Finding the live stream",
-     description: 
+     description:
      <Typography variant="body1">
        Polyglot was initially designed to support YouTube live streams. However, it can also work for
        Twitch and BBC iPlayer. Any platform supported by Streamlink should also be compatable. Please
@@ -129,6 +129,7 @@ class HelpComponent extends React.Component<HelpProps, HelpState> {
                   <div className={classes.actions}>
                     <div>
                       <Button
+                        id={`back-${stepInfo.title}`.replace(/\s/g,'')}
                         disabled={step === 0}
                         onClick={this.handlePrev}
                         className={classes.button}
@@ -136,6 +137,7 @@ class HelpComponent extends React.Component<HelpProps, HelpState> {
                         Back
                       </Button>
                       <Button
+                        id={`next-${stepInfo.title}`.replace(/\s/g,'')}
                         variant="contained"
                         color="primary"
                         onClick={this.handleNext}
@@ -152,7 +154,7 @@ class HelpComponent extends React.Component<HelpProps, HelpState> {
         </Stepper>
         {step === steps.length && (
           <Paper square elevation={0} className={classes.finish}>
-            <Button onClick={this.props.onFinish}
+            <Button id="tryitout" onClick={this.props.onFinish}
                     className={classes.button}>
               Try it now!
             </Button>
