@@ -10,11 +10,10 @@ import { autoPlay } from 'react-swipeable-views-utils';
 import Card from '@material-ui/core/Card';
 import CardContent from '@material-ui/core/CardContent'
 
-const INTERVAL_TIME = 10000;
-export const AutoPlaySwipeableViews = autoPlay(SwipeableViews, 'incremental', INTERVAL_TIME);
+const INTERVAL_TIME = 7500;
+export const AutoPlaySwipeableViews = autoPlay(SwipeableViews);
 
 export interface InformationProps extends WithStyles<typeof styles>{
-  imageWidth?: number
 }
 
 interface InformationState {
@@ -29,27 +28,33 @@ interface InformationSegment {
 
 const informationSegments : InformationSegment[] = [
   {
-    title: "What is Polyglot?",
-    body: <Typography variant="h6">Polyglot is a hack... I mean subtitling provider for livestreams.
-            For the affordable price of $100 per hour of streaming. You can get half-arsed translations
-            courtesy of Google and Microsoft. i.e companies who know what they are doing.
-          </Typography>
-  },
-  {
     title: "What languages are supported?",
-    body:  <Typography variant="h6">
-            The Polyglot has only been tested with Spanish and French however... in theory
-            it should work for many other languages. We can not be bothered to find people of every language \
-            this supports. If you notice an error in the translation.... blame Google.
-           </Typography>
+    body:  <React.Fragment>
+            Polyglot supports the translation of 23 different languages including Spanish, French, 
+            Korean and Japanese. Polyglot can translate live streams from any supported language
+            to any supported language.
+           </React.Fragment>
   },
   {
     title: "What platforms are supported?",
-    body: <Typography variant="h6">
-            Polyglot is mainly intended for Youtube; However, we are aiming to make it work for many 
-            sites such as Twitch, BBC iPlayer and Chaturbate. In theory, it would for for any website
-            with Streamlink compatibility.
-          </Typography>
+    body: <React.Fragment>
+            Polyglot was designed in YouTube in mind. However we support many major live streaming 
+            platforms, such as Twitch, that are supported by <a href="https://streamlink.github.io/plugin_matrix.html#plugin-matrix">Streamlink</a>.
+          </React.Fragment>
+  },
+  {
+    title: "How does this differ from the Chrome extension?",
+    body: <React.Fragment>
+            You can consider this the 'full version' of Polyglot. You will find the subtitles are 
+            more in sync and more customisable in terms of font, color, and size.
+          </React.Fragment>
+  },
+  {
+    title: "What browsers are supported?",
+    body: <React.Fragment>
+            We <b>strongly</b> encourage everyone to use Google Chrome. We cannot guarantee results
+            on other browsers.
+          </React.Fragment>
   }
 ];
 
@@ -65,13 +70,18 @@ const styles = createStyles({
     padding: "10px"
   },
   stepperCard: {
-    maxWidth: "550px",
+    maxWidth: "620px",
     flexGrow: 1,
   },
+  description: {
+    paddingTop: "5px",
+  },
+  intro: {
+    maxWidth: "700px",
+    paddingBottom: "20px"
+  },
   title: {
-    display: "flex",
-    alignItems: "center",
-    height: "50px"
+    paddingBottom: "20px"
   }
 });
 
@@ -107,26 +117,34 @@ export class InformationComponent extends React.Component<InformationProps & Wit
 
     return (
       <div className={classes.root}>
-        <img id="logo" src={Logo} width={this.props.imageWidth ? this.props.imageWidth.toString() + "px" : "250px"}/>
+        <Typography variant="h3" className={classes.title}>About</Typography>
+        <Typography variant="h6" className={classes.intro}>
+            Polyglot offers subtitles for foreign live streams. We support many different
+            live streaming platforms and languages making foreign entertainment 
+            more accessible to everyone. Try up to one hour of translations for <b>Free!</b>
+        </Typography>
+        <Typography variant="h4">FAQs</Typography>
         <div className={classes.stepper}>
         <Card className={classes.stepperCard}>
-        <CardContent>
-        <Typography variant="h5">{informationSegments[slideIndex].title}</Typography>
         <AutoPlaySwipeableViews
           axis={'x'}
           index={slideIndex}
           onChangeIndex={this.handleStepChange}
           enableMouseEvents
+          interval={INTERVAL_TIME}
         >
-          {informationSegments.map((step, index) => (
+          {
+            informationSegments.map((step, index) => (
             <div key={step.title}>
               {Math.abs(slideIndex - index) <= 2 ? (
-                step.body
+                <CardContent>
+                  <Typography variant="h5">{informationSegments[slideIndex].title}</Typography>
+                  <Typography variant="h6" className={classes.description}>{step.body}</Typography>
+                </CardContent>
               ) : null}
             </div>
           ))}
         </AutoPlaySwipeableViews>
-        </CardContent>
         <MobileStepper
           steps={maxIndex}
           position="static"
