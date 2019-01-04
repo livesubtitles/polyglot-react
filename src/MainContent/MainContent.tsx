@@ -34,6 +34,7 @@ interface MainContentState {
 }
 
 export const SERVER_URL = "https://polyglot-livesubtitles.herokuapp.com";
+export const TIMEUPDATE_INTERVAL = 10000;
 
 const styles =  createStyles({
   root: {
@@ -233,6 +234,13 @@ class MainContentComponent extends React.Component<MainContentProps, MainContent
       });
     }
 
+    private startEmissionTimeUpdate() {
+      const self = this;
+      setInterval(() => {
+        self.state.socket.emit("timeupdate", { interval_seconds: TIMEUPDATE_INTERVAL / 1000 });
+      }, TIMEUPDATE_INTERVAL);
+    }
+
     private loadVideo(manifest_url: string): void {
       if (this.state.hls.isSupported()) {
           console.log("Hls Supported. Got manifest url: " + manifest_url);
@@ -257,6 +265,7 @@ class MainContentComponent extends React.Component<MainContentProps, MainContent
             hls.destroy();
             self.setState({ error: PolyglotErrorType.BufferAppendError });
           });
+          this.startEmissionTimeUpdate();
       }
     }
 
