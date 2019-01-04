@@ -47,6 +47,10 @@ export class PolyglotError extends React.Component<PolyglotErrorProps, PolyglotE
     [PolyglotErrorType.MaxTimeExceededLoginRequired]: {
        errorText: "Maximum time without login exceeded. Please log in to continue using Polyglot. Error: MaxTimeExceededLoginRequired.",
        buttonText: PolyglotError.BACK_BUTTON
+     },
+     [PolyglotErrorType.BufferAppendError]: {
+       errorText: "A problem occured with Hls. Please retry. Error: BufferAppendError.",
+       buttonText: PolyglotError.RETRY_BUTTON
      }
   };
 

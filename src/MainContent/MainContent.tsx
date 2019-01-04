@@ -252,6 +252,11 @@ class MainContentComponent extends React.Component<MainContentProps, MainContent
           hls.onManifestParsed((event, data) => {
               console.log("Manifest Loaded");
           });
+          const self = this;
+          hls.onBufferAppendError(() => {
+            hls.destroy();
+            self.setState({ error: PolyglotErrorType.BufferAppendError });
+          });
       }
     }
 

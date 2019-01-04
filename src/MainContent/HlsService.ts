@@ -5,6 +5,7 @@ export interface HlsService {
   loadSource(manifest_url: string): void;
   attachMedia(v: HTMLVideoElement): void;
   onManifestParsed(func: (event, data) => void): void;
+  onBufferAppendError(handleError: () => void): void;
   onBufferAppended(func: () => void): void;
   destroy(): void;
   onPlay(): void;
@@ -32,6 +33,22 @@ export class HlsJS implements HlsService {
 
   public onManifestParsed(func: (event, data) => void): void {
     this.hls.on(Hls.Events.MANIFEST_PARSED, func);
+  }
+
+  public onBufferAppendError(handleError: () => void): void {
+    this.hls.on(Hls.Events.ERROR, (event, data) => {
+      if (data.type == Hls.ErrorTypes.MEDIA_ERROR) {
+        switch (data.details) {
+          case Hls.ErrorDetails.BUFFER_APPENDING_ERROR:
+          case Hls.ErrorDetails.BUFFER_APPEND_ERROR:
+              // handle error
+              handleError();
+              break;
+          default:
+            console.log("Unknown HLS error");
+          }
+      }
+    });
   }
 
   public onBufferAppended(func: () => void): void {

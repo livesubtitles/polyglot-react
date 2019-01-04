@@ -21,7 +21,8 @@ export enum PolyglotErrorType {
   StreamlinkUnavailable         = "StreamlinkUnavailable",
   UninitialisedStreamer         = "UninitialisedStreamer",
   SocketConnection              = "SocketConnection",
-  MaxTimeExceededLoginRequired  = "MaxTimeExceededLoginRequired"
+  MaxTimeExceededLoginRequired  = "MaxTimeExceededLoginRequired",
+  BufferAppendError             = "BufferAppendError"
 }
 
 export interface URLParams {

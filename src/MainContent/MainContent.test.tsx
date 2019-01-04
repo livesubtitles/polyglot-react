@@ -219,6 +219,7 @@ describe("Socket tests", () => {
       attachMedia: jest.fn(),
       onManifestParsed: jest.fn(),
       onBufferAppended: jest.fn(),
+      onBufferAppendError: jest.fn(),
       destroy: jest.fn(),
       onPlay: jest.fn()
     }));
@@ -252,7 +253,7 @@ describe("Socket tests", () => {
   }
 
   function checkRightHlsServiceMethodsAreCalled(mediaURL: string, done, qualities?: Quality[]) {
-    const m = new MockHlsService();
+    const m: HlsService = new MockHlsService();
     const wrapper = createMainContentWithMockHls(m);
 
     setTimeout(() => {
@@ -268,6 +269,7 @@ describe("Socket tests", () => {
       expect(m.attachMedia).toHaveBeenCalledTimes(1);
       expect(m.onManifestParsed).toHaveBeenCalledTimes(1);
       expect(m.onBufferAppended).toHaveBeenCalledTimes(1);
+      expect(m.onBufferAppendError).toHaveBeenCalledTimes(1);
       expect(m.destroy).toHaveBeenCalledTimes(0);
       // check that the onPlay function has been called to show the subtitles onplay
       expect(m.onPlay).toHaveBeenCalledTimes(0);
