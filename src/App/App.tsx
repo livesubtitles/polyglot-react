@@ -20,6 +20,7 @@ import HomeIcon from "@material-ui/icons/Home";
 import InfoIcon from "@material-ui/icons/Info";
 import SettingsIcon from "@material-ui/icons/Settings";
 import HelpIcon from "@material-ui/icons/Help";
+import Chip from "@material-ui/core/Chip";
 import { Information } from 'src/Information/Information';
 import { QualityDropdown } from "src/QualityDropdown/QualityDropdown";
 import $ from 'jquery';
@@ -150,7 +151,6 @@ class AppComponent extends React.Component<URLParams & WithStyles<typeof styles>
   }
 
   private handleHelpClick = () => {
-    console.log("help clicked");
     this.setState({ appMode: APP_MODE.HELP });
   }
 
@@ -167,28 +167,18 @@ class AppComponent extends React.Component<URLParams & WithStyles<typeof styles>
   private signInCallback = async (authResult) => {
     const self = this;
     if (authResult['code']) {
-    // $('#signinButton').attr('style', 'display: none');
-      // const res = await authPostReq(
-      //  'https://polyglot-livesubtitles.herokuapp.com', "storeauthcode",
-      //  authResult['code'],
-      //  'application/octet-stream; charset=utf-8');
-      //
-      //  const result = res as any;
-      //  console.log("Set state log email");
-      //  console.log(result);
-      //  this.setState({ loggedInEmail: result.email });
-    $.ajax({
-      type: 'POST',
-      url: 'https://polyglot-livesubtitles.herokuapp.com/storeauthcode',
-      headers: {
-      },
-      contentType: 'application/octet-stream; charset=utf-8',
-      success: function(result) {
-        self.setState({ loggedInEmail: result.email });
-      },
-      processData: false,
-      data: authResult['code']
-    });
+      $.ajax({
+        type: 'POST',
+        url: 'https://polyglot-livesubtitles.herokuapp.com/storeauthcode',
+        headers: {
+        },
+        contentType: 'application/octet-stream; charset=utf-8',
+        success: function(result) {
+          self.setState({ loggedInEmail: result.email });
+        },
+        processData: false,
+        data: authResult['code']
+      });
     } else {
       console.log("Error");
     }
@@ -210,7 +200,10 @@ class AppComponent extends React.Component<URLParams & WithStyles<typeof styles>
       body = <Help onFinish={() => this.setState({ appMode: APP_MODE.HOME })} />;
     }
 
-    const loggedInComponent = (this.state.loggedInEmail);
+    const loggedInComponent = (<Chip
+                label={`Signed in as ${this.state.loggedInEmail}`}
+                color="secondary"
+                className={classes.button} />);
     const signInComponent = (
       <Button variant="contained" color="secondary" className={classes.button} onClick={this.signInRequest}>
         Sign In
