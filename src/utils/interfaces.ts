@@ -15,6 +15,11 @@ export interface LanguageSuggestion {
   value: string;
 }
 
+
+export interface AuthReply {
+  email: string;
+}
+
 export type Quality = string;
 
 export enum PolyglotErrorType {

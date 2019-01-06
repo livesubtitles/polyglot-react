@@ -24,6 +24,8 @@ import { Information } from 'src/Information/Information';
 import { QualityDropdown } from "src/QualityDropdown/QualityDropdown";
 import $ from 'jquery';
 import { Help } from 'src/Help/Help';
+import { authPostReq } from "src/utils/web";
+import { AuthReply } from "src/utils/interfaces";
 declare const gapi;
 
 const drawerWidth = 240;
@@ -158,20 +160,27 @@ class AppComponent extends React.Component<URLParams & WithStyles<typeof styles>
   }
 
   private signInCallback = (authResult) => {
+    const self = this;
     if (authResult['code']) {
     // $('#signinButton').attr('style', 'display: none');
-    $.ajax({
-      type: 'POST',
-      url: 'https://polyglot-livesubtitles.herokuapp.com/storeauthcode',
-      headers: {
-      },
-      contentType: 'application/octet-stream; charset=utf-8',
-      success: function(result) {
-        this.setState({ loggedInEmail: result.email });
-      },
-      processData: false,
-      data: authResult['code']
-    });
+      authPostReq<AuthReply>(
+       'https://polyglot-livesubtitles.herokuapp.com', "storeauthcode",
+       { auth_code: authResult['code']},
+       'application/octet-stream; charset=utf-8').then(res => {
+         self.setState({ loggedInEmail: res.email });
+       });
+    // $.ajax({
+    //   type: 'POST',
+    //   url: 'https://polyglot-livesubtitles.herokuapp.com/storeauthcode',
+    //   headers: {
+    //   },
+    //   contentType: 'application/octet-stream; charset=utf-8',
+    //   success: function(result) {
+    //     this.setState({ loggedInEmail: result.email });
+    //   },
+    //   processData: false,
+    //   data: authResult['code']
+    // });
     } else {
       console.log("Error");
     }
