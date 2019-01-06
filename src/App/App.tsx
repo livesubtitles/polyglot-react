@@ -155,9 +155,13 @@ class AppComponent extends React.Component<URLParams & WithStyles<typeof styles>
   }
 
   private signInRequest = async () => {
+      console.log("before get getAuthInstance");
      var googleapi = gapi.auth2.getAuthInstance();
+     console.log("before grantOfflineAccess");
      const authResult = await googleapi.grantOfflineAccess();
+     console.log("Before sign in callback");
      await this.signInCallback(authResult);
+     console.log("After sign in callback");
   }
 
   private signInCallback = async (authResult) => {
