@@ -159,17 +159,18 @@ class AppComponent extends React.Component<URLParams & WithStyles<typeof styles>
      googleapi.grantOfflineAccess().then(this.signInCallback);
   }
 
-  private signInCallback = (authResult) => {
-    const self = this;
+  private signInCallback = async (authResult) => {
     if (authResult['code']) {
     // $('#signinButton').attr('style', 'display: none');
-      authPostReq(
+      const res = await authPostReq(
        'https://polyglot-livesubtitles.herokuapp.com', "storeauthcode",
        authResult['code'],
-       'application/octet-stream; charset=utf-8').then(res => {
-         const result = res as any;
-         self.setState({ loggedInEmail: result.email });
-       });
+       'application/octet-stream; charset=utf-8');
+
+       const result = res as any;
+       console.log("Set state log email");
+       console.log(result);
+       this.setState({ loggedInEmail: result.email });
     // $.ajax({
     //   type: 'POST',
     //   url: 'https://polyglot-livesubtitles.herokuapp.com/storeauthcode',
