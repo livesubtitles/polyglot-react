@@ -20,6 +20,6 @@ export function simpleGet(url: string, endpoint: string): Promise<Response> {
   });
 }
 
-export function authPostReq<T>(url: string, endpoint: string, body, headers): Promise<T> {
-  return fetchJSON<T>(url + "/" + endpoint, { method: "POST", body: JSON.stringify(body), headers});
+export function authPostReq(url: string, endpoint: string, body, headers) {
+  return fetch(url + "/" + endpoint, { method: "POST", body: JSON.stringify(body), headers});
 }
