@@ -21,5 +21,5 @@ export function simpleGet(url: string, endpoint: string): Promise<Response> {
 }
 
 export function authPostReq(url: string, endpoint: string, body, headers) {
-  return fetch(url + "/" + endpoint, { method: "POST", body: JSON.stringify(body), headers});
+  return fetch(url + "/" + endpoint, { method: "POST", body: body, headers});
 }

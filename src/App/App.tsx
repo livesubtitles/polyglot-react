@@ -165,9 +165,10 @@ class AppComponent extends React.Component<URLParams & WithStyles<typeof styles>
     // $('#signinButton').attr('style', 'display: none');
       authPostReq(
        'https://polyglot-livesubtitles.herokuapp.com', "storeauthcode",
-       { auth_code: authResult['code']},
+       authResult['code'],
        'application/octet-stream; charset=utf-8').then(res => {
-         self.setState({ loggedInEmail: res.email });
+         const result = res as any;
+         self.setState({ loggedInEmail: result.email });
        });
     // $.ajax({
     //   type: 'POST',
