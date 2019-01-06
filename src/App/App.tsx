@@ -165,29 +165,30 @@ class AppComponent extends React.Component<URLParams & WithStyles<typeof styles>
   }
 
   private signInCallback = async (authResult) => {
+    const self = this;
     if (authResult['code']) {
     // $('#signinButton').attr('style', 'display: none');
-      const res = await authPostReq(
-       'https://polyglot-livesubtitles.herokuapp.com', "storeauthcode",
-       authResult['code'],
-       'application/octet-stream; charset=utf-8');
-
-       const result = res as any;
-       console.log("Set state log email");
-       console.log(result);
-       this.setState({ loggedInEmail: result.email });
-    // $.ajax({
-    //   type: 'POST',
-    //   url: 'https://polyglot-livesubtitles.herokuapp.com/storeauthcode',
-    //   headers: {
-    //   },
-    //   contentType: 'application/octet-stream; charset=utf-8',
-    //   success: function(result) {
-    //     this.setState({ loggedInEmail: result.email });
-    //   },
-    //   processData: false,
-    //   data: authResult['code']
-    // });
+      // const res = await authPostReq(
+      //  'https://polyglot-livesubtitles.herokuapp.com', "storeauthcode",
+      //  authResult['code'],
+      //  'application/octet-stream; charset=utf-8');
+      //
+      //  const result = res as any;
+      //  console.log("Set state log email");
+      //  console.log(result);
+      //  this.setState({ loggedInEmail: result.email });
+    $.ajax({
+      type: 'POST',
+      url: 'https://polyglot-livesubtitles.herokuapp.com/storeauthcode',
+      headers: {
+      },
+      contentType: 'application/octet-stream; charset=utf-8',
+      success: function(result) {
+        self.setState({ loggedInEmail: result.email });
+      },
+      processData: false,
+      data: authResult['code']
+    });
     } else {
       console.log("Error");
     }
