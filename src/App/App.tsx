@@ -115,6 +115,7 @@ enum APP_MODE {
 interface AppState {
   open: boolean;
   appMode: APP_MODE;
+  loggedInEmail: string;
 }
 
 class AppComponent extends React.Component<URLParams & WithStyles<typeof styles>
@@ -124,7 +125,10 @@ class AppComponent extends React.Component<URLParams & WithStyles<typeof styles>
     this.state = {
       open: false,
       appMode: APP_MODE.HOME,
+      loggedInEmail: null,
     };
+
+    this.signInCallback = this.signInCallback.bind(this);
   }
 
   private handleDrawerOpen = () => {
@@ -163,7 +167,7 @@ class AppComponent extends React.Component<URLParams & WithStyles<typeof styles>
       },
       contentType: 'application/octet-stream; charset=utf-8',
       success: function(result) {
-        console.log(result);
+        this.setState({ loggedInEmail: result.email });
       },
       processData: false,
       data: authResult['code']
@@ -188,6 +192,13 @@ class AppComponent extends React.Component<URLParams & WithStyles<typeof styles>
     } else if (this.state.appMode == APP_MODE.HELP) {
       body = <Help onFinish={() => this.setState({ appMode: APP_MODE.HOME })} />;
     }
+
+    const loggedInComponent = (this.state.loggedInEmail);
+    const signInComponent = (
+      <Button variant="contained" color="secondary" className={classes.button} onClick={this.signInRequest}>
+        Sign In
+      </Button>
+    );
 
 
     return (
@@ -215,9 +226,7 @@ class AppComponent extends React.Component<URLParams & WithStyles<typeof styles>
             <Typography variant="h6" color="inherit" noWrap>
             Polyglot
             </Typography>
-            <Button variant="contained" color="secondary" className={classes.button} onClick={this.signInRequest}>
-             Sign In
-            </Button>
+            {this.state.loggedInEmail ? loggedInComponent : signInComponent}
           </Toolbar>
         </AppBar>
         <Drawer
