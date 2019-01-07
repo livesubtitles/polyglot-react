@@ -226,7 +226,7 @@ class MainContentComponent extends React.Component<MainContentProps, MainContent
       hls.onBufferAppended(() => {
         console.log("Buffer appended");
         console.log(this.state.progress);
-        const INCREASE = 7;
+        const INCREASE = 20;
         // Received buffer, so increase progress
         if (this.state.progress + INCREASE >= 100) {
           self.hideLoading("loadingdiv", "videodiv");
