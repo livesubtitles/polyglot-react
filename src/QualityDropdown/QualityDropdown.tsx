@@ -15,7 +15,7 @@ interface QualityDropdownState {
     quality: string;
 }
 
-const DEFAULT_QUALITY = "360p";
+const DEFAULT_QUALITY = "best";
 
 const styles = theme => createStyles({
   formControl: {
