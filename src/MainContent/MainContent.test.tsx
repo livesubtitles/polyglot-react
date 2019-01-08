@@ -305,6 +305,7 @@ describe("Socket tests", () => {
 
   it("Calling handleQualitySelection emits quality and destroys the player", done => {
     const m = new MockHlsService();
+    setUpDefaultMockDocument();
     const MEDIA_URL = "This is a media url, I swear";
     const FAKE_QUALITY = "Top-notch quality";
     // to have the VideoOptions component we need a mediaURL

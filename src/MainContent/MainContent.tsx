@@ -113,8 +113,10 @@ class MainContentComponent extends React.Component<MainContentProps, MainContent
     private handleQualitySelection(quality: string) {
       this.state.socket.emit("quality", { quality: quality });
       this.state.hls.destroy();
-      // reset progress
-      this.setState({ progress: 0 });
+      // reset progress and show loading
+      this.setState({ progress: 0 }, () => {
+        this.showLoading("loadingdiv", "videodiv");
+      });
     }
 
     private handleSubtitleLanguageChange(lang: string) {
