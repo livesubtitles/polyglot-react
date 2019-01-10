@@ -24,7 +24,7 @@
     "fetch-mock": "^7.2.8",
     "hls.js": "^0.11.0",
     "jquery": "^3.3.1",
-    "jss": "^10.0.0-alpha.3",
+    "jss": "^9.8.7",
     "lodash": "^4.17.11",
     "material-ui-color-picker": "^2.1.1",
     "mkdirp": "^0.5.1",
